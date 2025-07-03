@@ -1,0 +1,11 @@
+{
+    "name": "nyangkun-os",
+    "version": "1.0.0",
+    "description": "냥쿤OS - Love Simulator",
+    "scripts": {
+      "dev": "vercel dev"
+    },
+    "dependencies": {
+      "@anthropic-ai/sdk": "^0.24.2"
+    }
+  }
