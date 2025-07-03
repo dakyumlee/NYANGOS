@@ -456,37 +456,37 @@
   </div>
   
   <div id="desktop">
-    <div class="icon" onclick="openApp('chatbot')">
+    <div class="icon" data-app="chatbot">
       <div class="icon-emoji">🤖</div>
       <div class="icon-text">냥GPT<br>AI_CHAT.EXE</div>
     </div>
     
-    <div class="icon" onclick="openApp('photos')">
+    <div class="icon" data-app="photos">
       <div class="icon-emoji">🖼️</div>
       <div class="icon-text">추억보관함<br>MEMORY_BOX.EXE</div>
     </div>
     
-    <div class="icon" onclick="openApp('quotes')">
+    <div class="icon" data-app="quotes">
       <div class="icon-emoji">✨</div>
       <div class="icon-text">마음챙김<br>WISDOM.EXE</div>
     </div>
     
-    <div class="icon" onclick="openApp('timeline')">
+    <div class="icon" data-app="timeline">
       <div class="icon-emoji">🌟</div>
       <div class="icon-text">러브스토리<br>TIMELINE.EXE</div>
     </div>
 
-    <div class="icon" onclick="openApp('letter-to')">
+    <div class="icon" data-app="letter-to">
       <div class="icon-emoji">💝</div>
       <div class="icon-text">편지쓰기<br>LOVE_LETTER.EXE</div>
     </div>
 
-    <div class="icon" onclick="openApp('letter-from')">
+    <div class="icon" data-app="letter-from">
       <div class="icon-emoji">💌</div>
       <div class="icon-text">받은편지함<br>MAILBOX.EXE</div>
     </div>
 
-    <div class="icon" onclick="openApp('admin')">
+    <div class="icon" data-app="admin">
       <div class="icon-emoji">🔧</div>
       <div class="icon-text">시스템설정<br>CONFIG.EXE</div>
     </div>
@@ -679,13 +679,9 @@
       const startDate = new Date('2024-03-11');
       const today = new Date();
       const diffTime = today - startDate;
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
       
-      if (diffDays >= 0) {
-        return `💕 D+${diffDays}`;
-      } else {
-        return `💕 D${diffDays}`;
-      }
+      return `💕 ${diffDays}일째`;
     }
 
     function updateTime() {
@@ -705,7 +701,10 @@
     function openApp(appName) {
       playClickSound();
       const window = document.getElementById(`${appName}-window`);
-      if (!window) return;
+      if (!window) {
+        console.error(`Window not found: ${appName}-window`);
+        return;
+      }
 
       window.style.display = 'flex';
       window.style.zIndex = ++zIndex;
@@ -802,6 +801,15 @@
       playClickSound();
       alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n• 윈도우 타이틀바 → 드래그 이동\n• 윈도우 버튼 → 최소화/최대화/닫기\n• Ctrl+1~7 → 단축키\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
     }
+
+    document.querySelectorAll('.icon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        const appName = this.getAttribute('data-app');
+        if (appName) {
+          openApp(appName);
+        }
+      });
+    });
 
     setInterval(updateTime, 1000);
     updateTime();
