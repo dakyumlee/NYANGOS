@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>냥쿤OS</title>
+  <link rel="stylesheet" href="style/base.css" />
+  <script type="module" src="script/main.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="desktop">
+    <div class="icon" data-app="timeline-window">
+      <img src="assets/icons/timeline.png" alt="Timeline Icon">
+      <span>타임라인</span>
+    </div>
+    <div class="icon" data-app="photos-window">
+      <img src="assets/icons/photo.png" alt="Photos Icon">
+      <span>사진첩</span>
+    </div>
+    <div class="icon" data-app="quotes-window">
+      <img src="assets/icons/quote.png" alt="Quotes Icon">
+      <span>묵상 어록</span>
+    </div>
+    <div class="icon" data-app="chatbot-window">
+      <img src="assets/icons/chat.png" alt="Chatbot Icon">
+      <span>냥GPT</span>
+    </div>
+  </div>
+
+  <div class="window" id="timeline-window">
+    <div class="titlebar">
+      <span>📅 타임라인</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/timeline.html"></iframe>
+  </div>
+
+  <div class="window" id="photos-window">
+    <div class="titlebar">
+      <span>📸 사진첩</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/photos.html"></iframe>
+  </div>
+
+  <div class="window" id="quotes-window">
+    <div class="titlebar">
+      <span>🧘 묵상 어록</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/quotes.html"></iframe>
+  </div>
+
+  <div class="window" id="chatbot-window">
+    <div class="titlebar">
+      <span>🤖 냥GPT</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/chatbot.html"></iframe>
+  </div>
+</body>
+</html>

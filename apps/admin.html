@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>냥쿤OS 관리자</title>
+  <link rel="stylesheet" href="../style/base.css" />
+  <link rel="stylesheet" href="../style/admin.css" />
+  <script type="module" src="../script/admin.js"></script>
+</head>
+<body>
+  <h1>📂 냥쿤OS 관리자 페이지</h1>
+
+  <section id="timeline-section">
+    <h2>📅 연애 타임라인 관리</h2>
+    <form id="timeline-form">
+      <input type="text" id="date" placeholder="날짜 (ex: 2024.03.11)" required />
+      <input type="text" id="title" placeholder="제목" required />
+      <textarea id="content" placeholder="내용"></textarea>
+      <input type="text" id="position" placeholder="좌표 % (ex: 10%)" required />
+      <button type="submit">추가</button>
+    </form>
+    <ul id="timeline-list"></ul>
+  </section>
+
+  <hr>
+
+  <section id="photos-section">
+    <h2>📸 사진 업로드</h2>
+    <form id="photo-form">
+      <input type="file" id="photo-file" accept="image/*" required />
+      <input type="text" id="photo-title" placeholder="사진 제목" required />
+      <input type="text" id="photo-description" placeholder="짧은 설명" />
+      <input type="text" id="photo-date" placeholder="날짜 (ex: 2024.04.01)" required />
+      <button type="submit">사진 업로드</button>
+    </form>
+    <ul id="photo-list"></ul>
+  </section>
+
+  <hr>
+
+  <section id="quotes-section">
+    <h2>🧘 오늘의 묵상 관리</h2>
+    <form id="quote-form">
+      <textarea id="quote-input" placeholder="묵상 어록 입력" required></textarea>
+      <button type="submit">어록 추가</button>
+    </form>
+    <ul id="quote-list"></ul>
+  </section>
+</body>
+</html>

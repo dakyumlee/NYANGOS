@@ -1,0 +1,101 @@
+body {
+    background-color: #fefefe;
+    padding: 40px 20px;
+    font-family: 'Press Start 2P', cursive;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  #photo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .photo-card {
+    background-color: #fff;
+    border: 2px solid #222;
+    box-shadow: 4px 4px 0 #222;
+    width: 240px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  
+  .photo-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .photo-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .photo-info h3 {
+    font-size: 12px;
+    margin: 5px 0;
+  }
+  
+  .photo-info p {
+    font-size: 10px;
+    color: #444;
+    margin-bottom: 5px;
+  }
+  
+  .photo-info span {
+    font-size: 8px;
+    color: #888;
+  }
+  
+  /* 모달 스타일 */
+  #photo-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    border: 3px solid #222;
+    text-align: center;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  
+  .modal-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #888;
+  }
+  
+  .modal-content p {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  
+  .modal-content .close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
