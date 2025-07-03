@@ -3,47 +3,399 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>냥쿤OS 로그인</title>
-  <link rel="stylesheet" href="../style/base.css">
+  <title>냥쿤OS - 시스템 인증</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background: #111;
-      color: white;
+      font-family: 'Press Start 2P', monospace;
+      background: #0f0f0f;
+      overflow: hidden;
+      user-select: none;
+      height: 100vh;
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      font-family: 'Press Start 2P', monospace;
     }
-    .login-box {
-      background: #222;
-      padding: 2rem;
-      border: 2px solid #666;
-      box-shadow: 6px 6px 0 #000;
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, #ff6b6b 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, #4ecdc4 0%, transparent 50%),
+        radial-gradient(circle at 25% 75%, #45b7d1 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #f9ca24 0%, transparent 50%),
+        linear-gradient(45deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      animation: bgShift 15s ease-in-out infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes bgShift {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .login-window {
+      position: relative;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff41;
+      width: 400px;
+      max-width: 90vw;
+      z-index: 100;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.5),
+        inset 0 0 30px rgba(0, 255, 65, 0.1);
+      backdrop-filter: blur(10px);
+      animation: windowAppear 1s ease-out;
+    }
+
+    @keyframes windowAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .titlebar {
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      color: #00ff41;
+      padding: 8px 12px;
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 320px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      user-select: none;
+      border-bottom: 2px solid #00ff41;
+      text-shadow: 0 0 10px currentColor;
     }
-    input {
-      padding: 0.5rem;
-      font-size: 0.9rem;
-      background: #000;
-      color: white;
-      border: 1px solid #555;
+
+    .titlebar-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    button {
-      padding: 0.5rem;
-      font-weight: bold;
-      background: #5df;
-      color: #000;
-      border: none;
+
+    .window-content {
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px inset #00ff41;
+      margin: 4px;
+      padding: 30px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+      color: #00ff41;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px currentColor;
+      animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 10px #00ff41; }
+      to { text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41; }
+    }
+
+    .login-header p {
+      color: #4ecdc4;
+      font-size: 8px;
+      opacity: 0.8;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #00ff41;
+      font-size: 8px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      text-shadow: 0 0 5px currentColor;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 10px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      transition: all 0.3s ease;
+      outline: none;
+      box-shadow: 
+        0 0 10px rgba(0, 255, 65, 0.3),
+        inset 0 0 10px rgba(0, 255, 65, 0.1);
+    }
+
+    .form-group input:focus {
+      border-color: #ff6b6b;
+      color: #ffffff;
+      box-shadow: 
+        0 0 20px rgba(255, 107, 107, 0.6),
+        inset 0 0 20px rgba(255, 107, 107, 0.2);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(0, 255, 65, 0.5);
+      opacity: 1;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 10px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #00ff41;
+      color: #00ff41;
       cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      margin-top: 10px;
+      box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.3),
+        inset 0 0 20px rgba(0, 255, 65, 0.1);
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .login-btn:hover {
+      color: #ffffff;
+      border-color: #ff6b6b;
+      box-shadow: 
+        0 0 40px rgba(255, 107, 107, 0.6),
+        inset 0 0 40px rgba(255, 107, 107, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .login-btn:hover::before {
+      opacity: 1;
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      background: rgba(102, 102, 102, 0.5);
+      border-color: #666;
+      color: #999;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .login-btn:disabled::before {
+      opacity: 0;
+    }
+
+    .status-message {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 8px;
+      text-align: center;
+      border: 2px solid;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .status-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status-success {
+      color: #00ff41;
+      border-color: #00ff41;
+      background: rgba(0, 255, 65, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+
+    .status-error {
+      color: #ff6b6b;
+      border-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .loading-indicator {
+      display: none;
+      text-align: center;
+      color: #4ecdc4;
+      font-size: 8px;
+      margin-top: 10px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .system-info {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      color: rgba(0, 255, 65, 0.5);
+      font-size: 6px;
+      z-index: 1000;
+    }
+
+    .access-denied {
+      animation: glitch 0.3s ease-in-out;
+    }
+
+    @keyframes glitch {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    @media (max-width: 480px) {
+      .login-window {
+        width: 95vw;
+        margin: 20px;
+      }
+      
+      .window-content {
+        padding: 20px;
+      }
+    }
+
+    * {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
     }
   </style>
+</head>
+<body>
+  <div class="login-window">
+    <div class="titlebar">
+      <div class="titlebar-text">
+        <span>🔧 CONFIG.EXE - SYSTEM AUTHENTICATION</span>
+      </div>
+    </div>
+    
+    <div class="window-content">
+      <div class="login-header">
+        <h1>🔐 시스템 접근 제어</h1>
+        <p>>>> ADMIN CREDENTIALS REQUIRED <<<</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">📧 USER_ID</label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="admin@nyangkun.system"
+              required
+              autocomplete="email"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">🔑 AUTH_KEY</label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="••••••••••••"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span class="btn-text">>>> ACCESS SYSTEM <<<</span>
+        </button>
+      </form>
+
+      <div class="loading-indicator" id="loadingIndicator">
+        >>> AUTHENTICATING... <<<
+      </div>
+      
+      <div class="status-message" id="statusMessage"></div>
+    </div>
+  </div>
+
+  <div class="system-info">
+    <div>냥쿤OS v2.1 - SECURE ADMIN PORTAL</div>
+    <div>CONNECTION: ENCRYPTED</div>
+    <div>STATUS: STANDBY</div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword,
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
@@ -57,33 +409,152 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const loginButton = document.getElementById('login-button');
-    const statusText = document.getElementById('login-status');
+    const loginBtn = document.getElementById('loginBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const loadingIndicator = document.getElementById('loadingIndicator');
 
-    loginButton.addEventListener('click', async () => {
-      const email = emailInput.value;
+    function playSystemSound(type = 'click') {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        if (type === 'success') {
+          oscillator.frequency.value = 880;
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } else if (type === 'error') {
+          oscillator.frequency.value = 200;
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        } else {
+          oscillator.frequency.value = 800;
+          gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.1);
+        }
+      } catch(e) {
+        console.log('Audio not available');
+      }
+    }
+
+    function showStatus(message, type = 'error') {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message ${type} show`;
+      
+      if (type === 'error') {
+        document.querySelector('.login-window').classList.add('access-denied');
+        setTimeout(() => {
+          document.querySelector('.login-window').classList.remove('access-denied');
+        }, 300);
+        playSystemSound('error');
+      } else {
+        playSystemSound('success');
+      }
+      
+      setTimeout(() => {
+        statusMessage.classList.remove('show');
+      }, 4000);
+    }
+
+    function setLoading(loading) {
+      loginBtn.disabled = loading;
+      
+      if (loading) {
+        loginBtn.querySelector('.btn-text').textContent = '>>> PROCESSING <<<';
+        loadingIndicator.style.display = 'block';
+      } else {
+        loginBtn.querySelector('.btn-text').textContent = '>>> ACCESS SYSTEM <<<';
+        loadingIndicator.style.display = 'none';
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      playSystemSound('click');
+      
+      const email = emailInput.value.trim();
       const password = passwordInput.value;
+
+      if (!email || !password) {
+        showStatus('>>> MISSING CREDENTIALS <<<', 'error');
+        return;
+      }
+
+      setLoading(true);
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        statusText.textContent = "✅ 로그인 성공!";
-        window.location.href = "admin.html";
+        showStatus('>>> ACCESS GRANTED - REDIRECTING <<<', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 1500);
+        
       } catch (error) {
-        console.error(error);
-        statusText.textContent = "❌ 로그인 실패. 다시 확인하세요.";
+        console.error('Authentication error:', error);
+        
+        let errorMessage = '>>> ACCESS DENIED <<<';
+        
+        switch (error.code) {
+          case 'auth/user-not-found':
+          case 'auth/invalid-email':
+            errorMessage = '>>> USER NOT FOUND <<<';
+            break;
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential':
+            errorMessage = '>>> INVALID AUTH_KEY <<<';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = '>>> SECURITY LOCKOUT - RETRY LATER <<<';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = '>>> NETWORK ERROR <<<';
+            break;
+        }
+        
+        showStatus(errorMessage, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('Already authenticated:', user.email);
       }
     });
+
+    loginForm.addEventListener('submit', handleLogin);
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleLogin(e);
+      }
+    });
+
+    emailInput.addEventListener('input', () => {
+      playSystemSound('click');
+    });
+
+    passwordInput.addEventListener('input', () => {
+      playSystemSound('click');
+    });
+
+    window.addEventListener('load', () => {
+      emailInput.focus();
+    });
   </script>
-</head>
-<body>
-  <div class="login-box">
-    <h2>🔐 관리자 로그인</h2>
-    <input type="email" id="email" placeholder="이메일" />
-    <input type="password" id="password" placeholder="비밀번호" />
-    <button id="login-button">로그인</button>
-    <p id="login-status"></p>
-  </div>
 </body>
 </html>
