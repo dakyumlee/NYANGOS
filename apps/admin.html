@@ -35,11 +35,34 @@
       font-size: 0.75rem;
       color: white;
     }
+    .photo-card {
+      background: #222;
+      color: white;
+      padding: 1rem;
+      margin: 1rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .photo-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border: 2px solid #5df;
+    }
+    .quote-card {
+      background: #1c1c1c;
+      border-left: 4px solid #aaa;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      color: white;
+    }
   </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
@@ -53,6 +76,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     onAuthStateChanged(auth, user => {
       if (!user) {
@@ -72,7 +96,6 @@
 
       const timelineList = document.getElementById("timeline-list");
       const form = document.getElementById("timeline-form");
-
       const loadTimeline = async () => {
         timelineList.innerHTML = "";
         const snapshot = await getDocs(collection(db, "timeline"));
@@ -104,57 +127,85 @@
         form.reset();
         loadTimeline();
       });
-
       window.deleteTimeline = async (id) => {
         if (confirm("정말 삭제할까요?")) {
           await deleteDoc(doc(db, "timeline", id));
           loadTimeline();
         }
       };
-
       loadTimeline();
+
+      const photoForm = document.getElementById("photo-form");
+      const photoList = document.getElementById("photo-list");
+      const loadPhotos = async () => {
+        photoList.innerHTML = "";
+        const snapshot = await getDocs(collection(db, "photos"));
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const li = document.createElement("li");
+          li.className = "photo-card";
+          li.innerHTML = `
+            <img src="${data.url}" />
+            <div>
+              <strong>${data.title}</strong><br />
+              <small>${data.date}</small>
+              <p>${data.description || ""}</p>
+              <button onclick="deletePhoto('${docSnap.id}')">삭제</button>
+            </div>
+          `;
+          photoList.appendChild(li);
+        });
+      };
+      photoForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const file = document.getElementById("photo-file").files[0];
+        const title = document.getElementById("photo-title").value;
+        const description = document.getElementById("photo-description").value;
+        const date = document.getElementById("photo-date").value;
+        const storageRef = ref(storage, `photos/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        await addDoc(collection(db, "photos"), { title, description, date, url });
+        photoForm.reset();
+        loadPhotos();
+      });
+      window.deletePhoto = async (id) => {
+        if (confirm("사진을 삭제할까요?")) {
+          await deleteDoc(doc(db, "photos", id));
+          loadPhotos();
+        }
+      };
+      loadPhotos();
+
+      const quoteForm = document.getElementById("quote-form");
+      const quoteList = document.getElementById("quote-list");
+      const loadQuotes = async () => {
+        quoteList.innerHTML = "";
+        const snapshot = await getDocs(collection(db, "quotes"));
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const li = document.createElement("li");
+          li.className = "quote-card";
+          li.innerHTML = `
+            <p>${data.text}</p>
+            <button onclick="deleteQuote('${docSnap.id}')">삭제</button>
+          `;
+          quoteList.appendChild(li);
+        });
+      };
+      quoteForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const text = document.getElementById("quote-input").value;
+        await addDoc(collection(db, "quotes"), { text });
+        quoteForm.reset();
+        loadQuotes();
+      });
+      window.deleteQuote = async (id) => {
+        if (confirm("어록을 삭제할까요?")) {
+          await deleteDoc(doc(db, "quotes", id));
+          loadQuotes();
+        }
+      };
+      loadQuotes();
     });
   </script>
-</head>
-<body>
-  <button id="logout-btn">로그아웃</button>
-  <h1>📂 냥쿤OS 관리자 페이지</h1>
-
-  <section id="timeline-section">
-    <h2>📅 연애 타임라인 관리</h2>
-    <form id="timeline-form">
-      <input type="text" id="date" placeholder="날짜 (ex: 2024.03.11)" required />
-      <input type="text" id="title" placeholder="제목" required />
-      <textarea id="content" placeholder="내용"></textarea>
-      <input type="text" id="position" placeholder="좌표 % (ex: 10%)" required />
-      <button type="submit">추가</button>
-    </form>
-    <ul id="timeline-list"></ul>
-  </section>
-
-  <hr>
-
-  <section id="photos-section">
-    <h2>📸 사진 업로드</h2>
-    <form id="photo-form">
-      <input type="file" id="photo-file" accept="image/*" required />
-      <input type="text" id="photo-title" placeholder="사진 제목" required />
-      <input type="text" id="photo-description" placeholder="짧은 설명" />
-      <input type="text" id="photo-date" placeholder="날짜 (ex: 2024.04.01)" required />
-      <button type="submit">사진 업로드</button>
-    </form>
-    <ul id="photo-list"></ul>
-  </section>
-
-  <hr>
-
-  <section id="quotes-section">
-    <h2>🧘 오늘의 묵상 관리</h2>
-    <form id="quote-form">
-      <textarea id="quote-input" placeholder="묵상 어록 입력" required></textarea>
-      <button type="submit">어록 추가</button>
-    </form>
-    <ul id="quote-list"></ul>
-  </section>
-</body>
-</html>

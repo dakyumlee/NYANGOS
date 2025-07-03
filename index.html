@@ -3,72 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>냥쿤OS 관리자</title>
-  <link rel="stylesheet" href="../style/base.css" />
-  <link rel="stylesheet" href="../style/admin.css" />
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-      authDomain: "nyangos-fdbe6.firebaseapp.com",
-      projectId: "nyangos-fdbe6",
-      storageBucket: "nyangos-fdbe6.appspot.com",
-      messagingSenderId: "349621507711",
-      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        alert("로그인이 필요합니다.");
-        window.location.href = "login.html";
-      }
-    });
-  </script>
-  <script type="module" src="../script/admin.js"></script>
+  <title>냥쿤OS</title>
+  <link rel="stylesheet" href="style/base.css" />
+  <script type="module" src="script/main.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <h1>📂 냥쿤OS 관리자 페이지</h1>
+  <div id="desktop">
+    <div class="icon" data-app="timeline-window">
+      <img src="assets/icons/timeline.png" alt="Timeline Icon">
+      <span>타임라인</span>
+    </div>
+    <div class="icon" data-app="photos-window">
+      <img src="assets/icons/photo.png" alt="Photos Icon">
+      <span>사진첩</span>
+    </div>
+    <div class="icon" data-app="quotes-window">
+      <img src="assets/icons/quote.png" alt="Quotes Icon">
+      <span>묵상 어록</span>
+    </div>
+    <div class="icon" data-app="chatbot-window">
+      <img src="assets/icons/chat.png" alt="Chatbot Icon">
+      <span>냥GPT</span>
+    </div>
+  </div>
 
-  <section id="timeline-section">
-    <h2>📅 연애 타임라인 관리</h2>
-    <form id="timeline-form">
-      <input type="text" id="date" placeholder="날짜 (ex: 2024.03.11)" required />
-      <input type="text" id="title" placeholder="제목" required />
-      <textarea id="content" placeholder="내용"></textarea>
-      <input type="text" id="position" placeholder="좌표 % (ex: 10%)" required />
-      <button type="submit">추가</button>
-    </form>
-    <ul id="timeline-list"></ul>
-  </section>
+  <div class="window" id="timeline-window">
+    <div class="titlebar">
+      <span>📅 타임라인</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/timeline.html"></iframe>
+  </div>
 
-  <hr>
+  <div class="window" id="photos-window">
+    <div class="titlebar">
+      <span>📸 사진첩</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/photos.html"></iframe>
+  </div>
 
-  <section id="photos-section">
-    <h2>📸 사진 업로드</h2>
-    <form id="photo-form">
-      <input type="file" id="photo-file" accept="image/*" required />
-      <input type="text" id="photo-title" placeholder="사진 제목" required />
-      <input type="text" id="photo-description" placeholder="짧은 설명" />
-      <input type="text" id="photo-date" placeholder="날짜 (ex: 2024.04.01)" required />
-      <button type="submit">사진 업로드</button>
-    </form>
-    <ul id="photo-list"></ul>
-  </section>
+  <div class="window" id="quotes-window">
+    <div class="titlebar">
+      <span>🧘 묵상 어록</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/quotes.html"></iframe>
+  </div>
 
-  <hr>
-
-  <section id="quotes-section">
-    <h2>🧘 오늘의 묵상 관리</h2>
-    <form id="quote-form">
-      <textarea id="quote-input" placeholder="묵상 어록 입력" required></textarea>
-      <button type="submit">어록 추가</button>
-    </form>
-    <ul id="quote-list"></ul>
-  </section>
+  <div class="window" id="chatbot-window">
+    <div class="titlebar">
+      <span>🤖 냥GPT</span>
+      <button class="close">X</button>
+    </div>
+    <iframe src="apps/chatbot.html"></iframe>
+  </div>
 </body>
 </html>
