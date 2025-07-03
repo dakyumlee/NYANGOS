@@ -396,8 +396,8 @@
       <button class="tab-button active" data-tab="system">⚙️ 시스템</button>
       <button class="tab-button" data-tab="timeline">🌟 타임라인</button>
       <button class="tab-button" data-tab="photos">📸 사진관리</button>
+      <button class="tab-button" data-tab="letters">💌 편지작성</button>
       <button class="tab-button" data-tab="chat">🤖 채팅로그</button>
-      <button class="tab-button" data-tab="letters">💌 편지관리</button>
     </div>
 
     <div id="system-tab" class="tab-content active">
@@ -505,15 +505,63 @@
     </div>
 
     <div id="letters-tab" class="tab-content">
-      <div class="section-header">💌 MAILBOX.EXE - 편지함 관리</div>
+      <div class="section-header">💌 LOVE_LETTER.EXE - 편지 작성 및 관리</div>
       
-      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <button onclick="loadLettersTo()">>>> LOAD SENT LETTERS <<<</button>
-        <button onclick="loadLettersFrom()">>>> LOAD RECEIVED LETTERS <<<</button>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+        <div style="background: rgba(0,0,0,0.8); border: 2px solid #ec4899; padding: 20px;">
+          <h3 style="color: #ec4899; margin-bottom: 16px; font-size: 10px;">💝 내가 냥쿤에게 쓰는 편지</h3>
+          <form id="letter-to-form">
+            <div class="form-group">
+              <label for="letter-to-title">편지 제목</label>
+              <input type="text" id="letter-to-title" placeholder="사랑의 편지" required />
+            </div>
+            <div class="form-group">
+              <label for="letter-to-content">편지 내용</label>
+              <textarea id="letter-to-content" placeholder="냥쿤에게 전하고 싶은 마음을 적어보세요..." required style="min-height: 120px;"></textarea>
+            </div>
+            <button type="submit" style="background: rgba(236, 72, 153, 0.2); border-color: #ec4899; color: #ec4899;">>>> SEND LETTER TO NYANGKUN <<<</button>
+          </form>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.8); border: 2px solid #f59e0b; padding: 20px;">
+          <h3 style="color: #f59e0b; margin-bottom: 16px; font-size: 10px;">📨 냥쿤이 나에게 쓰는 편지</h3>
+          <form id="letter-from-form">
+            <div class="form-group">
+              <label for="letter-from-name">보내는 이름</label>
+              <input type="text" id="letter-from-name" placeholder="냥쿤" value="냥쿤" required />
+            </div>
+            <div class="form-group">
+              <label for="letter-from-content">편지 내용</label>
+              <textarea id="letter-from-content" placeholder="냥쿤이 전하고 싶은 말을 적어보세요..." required style="min-height: 120px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="letter-from-password">삭제 비밀번호</label>
+              <input type="password" id="letter-from-password" placeholder="편지 삭제시 필요" required />
+            </div>
+            <button type="submit" style="background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #f59e0b;">>>> SEND LETTER FROM NYANGKUN <<<</button>
+          </form>
+        </div>
       </div>
-      
-      <div id="letters-status" class="status-message"></div>
-      <div id="letters-list" class="loading">편지를 불러오려면 버튼을 클릭하세요</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button onclick="loadLettersTo()" style="border-color: #ec4899; color: #ec4899;">>>> LOAD SENT LETTERS <<<</button>
+            <button onclick="clearLettersTo()" class="btn-danger btn-small">CLEAR</button>
+          </div>
+          <div id="letters-to-status" class="status-message"></div>
+          <div id="letters-to-list" style="max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.5); border: 1px solid #ec4899; padding: 12px;"></div>
+        </div>
+
+        <div>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button onclick="loadLettersFrom()" style="border-color: #f59e0b; color: #f59e0b;">>>> LOAD RECEIVED LETTERS <<<</button>
+            <button onclick="clearLettersFrom()" class="btn-danger btn-small">CLEAR</button>
+          </div>
+          <div id="letters-from-status" class="status-message"></div>
+          <div id="letters-from-list" style="max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.5); border: 1px solid #f59e0b; padding: 12px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -700,7 +748,7 @@
     window.loadChatLogs = function() {
       const listEl = document.getElementById('chat-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING CHAT LOGS <<<</div>';
-
+      
       setTimeout(() => {
         listEl.innerHTML = `
           <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
@@ -724,42 +772,195 @@
     };
 
     window.loadLettersTo = function() {
-      const listEl = document.getElementById('letters-list');
+      const listEl = document.getElementById('letters-to-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING SENT LETTERS <<<</div>';
       
-      setTimeout(() => {
-        listEl.innerHTML = `
-          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
-            <div style="color: #4ecdc4; font-size: 8px;">보낸 편지</div>
-            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">제목: 사랑의 편지</div>
-            <div style="color: #86efac; font-size: 8px;">내용: 너를 사랑해...</div>
-          </div>
-          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
-            Firebase 연결 후 실제 데이터가 표시됩니다
-          </div>
-        `;
-        showStatus('letters-status', 'SAMPLE SENT LETTERS LOADED');
-      }, 1500);
+      if (isConnected && db) {
+        setTimeout(async () => {
+          try {
+            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+            const snapshot = await getDocs(collection(db, 'lettersToNyangkun'));
+            
+            if (snapshot.empty) {
+              listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">보낸 편지가 없습니다</div>';
+            } else {
+              listEl.innerHTML = '';
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                const item = document.createElement('div');
+                item.style.cssText = 'background: rgba(236,72,153,0.1); border: 1px solid #ec4899; padding: 8px; margin: 4px 0; font-size: 7px;';
+                item.innerHTML = `
+                  <div style="color: #ec4899; font-weight: bold;">${data.title || 'Untitled'}</div>
+                  <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(data.content || '').substring(0, 100)}...</div>
+                  <div style="color: #666; font-size: 6px;">${data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'}</div>
+                  <button onclick="deleteLetter('lettersToNyangkun', '${doc.id}')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
+                `;
+                listEl.appendChild(item);
+              });
+            }
+            showStatus('letters-to-status', 'SENT LETTERS LOADED');
+          } catch (error) {
+            console.error('편지 로딩 실패:', error);
+            listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+            showStatus('letters-to-status', 'LOAD FAILED', 'error');
+          }
+        }, 500);
+      } else {
+        setTimeout(() => {
+          listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">Firebase 연결이 필요합니다</div>';
+          showStatus('letters-to-status', 'NO CONNECTION', 'error');
+        }, 500);
+      }
     };
 
     window.loadLettersFrom = function() {
-      const listEl = document.getElementById('letters-list');
+      const listEl = document.getElementById('letters-from-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING RECEIVED LETTERS <<<</div>';
       
-      setTimeout(() => {
-        listEl.innerHTML = `
-          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
-            <div style="color: #4ecdc4; font-size: 8px;">받은 편지</div>
-            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">From: 냥쿤</div>
-            <div style="color: #86efac; font-size: 8px;">내용: 나도 사랑해냥!</div>
-          </div>
-          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
-            Firebase 연결 후 실제 데이터가 표시됩니다
-          </div>
-        `;
-        showStatus('letters-status', 'SAMPLE RECEIVED LETTERS LOADED');
-      }, 1500);
+      if (isConnected && db) {
+        setTimeout(async () => {
+          try {
+            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+            const snapshot = await getDocs(collection(db, 'lettersFromNyangkun'));
+            
+            if (snapshot.empty) {
+              listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">받은 편지가 없습니다</div>';
+            } else {
+              listEl.innerHTML = '';
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                const item = document.createElement('div');
+                item.style.cssText = 'background: rgba(245,158,11,0.1); border: 1px solid #f59e0b; padding: 8px; margin: 4px 0; font-size: 7px;';
+                item.innerHTML = `
+                  <div style="color: #f59e0b; font-weight: bold;">From: ${data.name || 'Anonymous'}</div>
+                  <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(data.message || '').substring(0, 100)}...</div>
+                  <div style="color: #666; font-size: 6px;">${data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'}</div>
+                  <button onclick="deleteLetter('lettersFromNyangkun', '${doc.id}')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
+                `;
+                listEl.appendChild(item);
+              });
+            }
+            showStatus('letters-from-status', 'RECEIVED LETTERS LOADED');
+          } catch (error) {
+            console.error('편지 로딩 실패:', error);
+            listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+            showStatus('letters-from-status', 'LOAD FAILED', 'error');
+          }
+        }, 500);
+      } else {
+        setTimeout(() => {
+          listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">Firebase 연결이 필요합니다</div>';
+          showStatus('letters-from-status', 'NO CONNECTION', 'error');
+        }, 500);
+      }
     };
+
+    window.clearLettersTo = function() {
+      if (confirm('>>> DELETE ALL SENT LETTERS? <<<')) {
+        document.getElementById('letters-to-list').innerHTML = '<div style="color: #666; font-size: 8px;">편지가 삭제되었습니다</div>';
+        showStatus('letters-to-status', 'SENT LETTERS CLEARED');
+      }
+    };
+
+    window.clearLettersFrom = function() {
+      if (confirm('>>> DELETE ALL RECEIVED LETTERS? <<<')) {
+        document.getElementById('letters-from-list').innerHTML = '<div style="color: #666; font-size: 8px;">편지가 삭제되었습니다</div>';
+        showStatus('letters-from-status', 'RECEIVED LETTERS CLEARED');
+      }
+    };
+
+    window.deleteLetter = async function(collectionName, id) {
+      if (confirm('>>> DELETE THIS LETTER? <<<')) {
+        try {
+          if (db) {
+            const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+            await deleteDoc(doc(db, collectionName, id));
+            
+              if (collectionName === 'lettersToNyangkun') {
+              loadLettersTo();
+            } else {
+              loadLettersFrom();
+            }
+          }
+        } catch (error) {
+          console.error('편지 삭제 실패:', error);
+          showStatus(collectionName === 'lettersToNyangkun' ? 'letters-to-status' : 'letters-from-status', 'DELETE FAILED', 'error');
+        }
+      }
+    };
+
+    const letterToForm = document.getElementById('letter-to-form');
+    if (letterToForm) {
+      letterToForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const title = document.getElementById('letter-to-title').value;
+        const content = document.getElementById('letter-to-content').value;
+
+        if (!title || !content) {
+          showStatus('letters-to-status', 'FILL ALL FIELDS', 'error');
+          return;
+        }
+
+        if (db) {
+          try {
+            const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+            await addDoc(collection(db, 'lettersToNyangkun'), {
+              title: title,
+              content: content,
+              timestamp: serverTimestamp()
+            });
+            
+            showStatus('letters-to-status', 'LETTER SENT TO NYANGKUN');
+            letterToForm.reset();
+            loadLettersTo();
+          } catch (error) {
+            console.error('편지 전송 실패:', error);
+            showStatus('letters-to-status', 'SEND FAILED', 'error');
+          }
+        } else {
+          showStatus('letters-to-status', 'FIREBASE NOT CONNECTED', 'error');
+        }
+      });
+    }
+
+    const letterFromForm = document.getElementById('letter-from-form');
+    if (letterFromForm) {
+      letterFromForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('letter-from-name').value;
+        const content = document.getElementById('letter-from-content').value;
+        const password = document.getElementById('letter-from-password').value;
+
+        if (!name || !content || !password) {
+          showStatus('letters-from-status', 'FILL ALL FIELDS', 'error');
+          return;
+        }
+
+        if (db) {
+          try {
+            const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+            await addDoc(collection(db, 'lettersFromNyangkun'), {
+              name: name,
+              message: content,
+              password: password,
+              timestamp: serverTimestamp()
+            });
+            
+            showStatus('letters-from-status', 'LETTER SENT FROM NYANGKUN');
+            letterFromForm.reset();
+            document.getElementById('letter-from-name').value = '냥쿤';
+            loadLettersFrom();
+          } catch (error) {
+            console.error('편지 전송 실패:', error);
+            showStatus('letters-from-status', 'SEND FAILED', 'error');
+          }
+        } else {
+          showStatus('letters-from-status', 'FIREBASE NOT CONNECTED', 'error');
+        }
+      });
+    }
 
     const timelineForm = document.getElementById('timeline-form');
     if (timelineForm) {
