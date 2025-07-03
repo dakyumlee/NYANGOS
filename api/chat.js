@@ -17,14 +17,16 @@ export default async function handler(req, res) {
     }
   
     try {
-      if (!process.env.CLAUDE_API_KEY && !process.env.ANTHROPIC_API_KEY) {
+      const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
+      
+      if (!apiKey) {
         console.error('API 키가 설정되지 않음');
-        return res.status(500).json({ 
+        return res.status(200).json({ 
           content: [{ text: '시스템 설정 중이야... 잠시만 기다려줘!' }]
         });
       }
   
-      const apiKey = process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY;
+      console.log('Anthropic API 호출 시도...');
   
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -41,32 +43,37 @@ export default async function handler(req, res) {
         })
       });
   
+      console.log('Anthropic API 응답 상태:', response.status);
+  
       if (!response.ok) {
         const errorData = await response.text();
         console.error('Anthropic API 에러:', response.status, errorData);
         
+        let errorMessage = '으아... 뭔가 이상하다냥. 다시 말해볼래?';
+        
         if (response.status === 429) {
-          return res.status(200).json({ 
-            content: [{ text: '지금 너무 바쁘다냥... 잠시만 기다려줄래?' }]
-          });
+          errorMessage = '지금 너무 바쁘다냥... 잠시만 기다려줄래?';
         } else if (response.status === 401) {
-          return res.status(200).json({ 
-            content: [{ text: '아... 권한이 없다냥. 관리자한테 말해봐!' }]
-          });
-        } else {
-          return res.status(200).json({ 
-            content: [{ text: '으아... 뭔가 이상하다냥. 다시 말해볼래?' }]
-          });
+          errorMessage = '아... 권한이 없다냥. 관리자한테 말해봐!';
+        } else if (response.status === 400) {
+          errorMessage = '뭔가 이상한 말을 했다냥? 다시 말해봐!';
         }
+        
+        return res.status(200).json({ 
+          content: [{ text: errorMessage }]
+        });
       }
   
       const data = await response.json();
+      console.log('Anthropic API 응답 데이터:', data);
       
       if (!data.content || !data.content[0] || !data.content[0].text) {
-        throw new Error('Invalid response format');
+        throw new Error('Invalid response format from Anthropic API');
       }
   
       const reply = data.content[0].text;
+      console.log('AI 응답:', reply);
+      
       return res.status(200).json({ 
         content: [{ text: reply }]
       });
