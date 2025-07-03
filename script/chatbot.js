@@ -30,7 +30,7 @@ const appendMessage = (text, role) => {
 const showTyping = () => {
   const typingDiv = document.createElement('div');
   typingDiv.className = 'message bot';
-  typingDiv.textContent = '...';
+  typingDiv.textContent = '냥쿤이 입력중...';
   typingDiv.id = 'typing';
   chatLog.appendChild(typingDiv);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -51,7 +51,10 @@ const sendMessage = async () => {
   showTyping();
 
   try {
-    const res = await fetch('/api/claude', {
+    const response = await fetch('../script/chat.js');
+    const chatModule = await import('./chat.js');
+    
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: userText })
@@ -64,7 +67,7 @@ const sendMessage = async () => {
     saveMessage('bot', reply);
   } catch (err) {
     removeTyping();
-    appendMessage('(에러 발생)', 'bot');
+    appendMessage('냥쿤이 잠시 자리를 비웠어요... 😴', 'bot');
     console.error(err);
   }
 };
