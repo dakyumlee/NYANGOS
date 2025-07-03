@@ -9,7 +9,6 @@ const appendMessage = (text, role) => {
   div.textContent = text;
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
-  return div;
 };
 
 const showTyping = () => {
@@ -42,7 +41,7 @@ const sendMessage = async () => {
     });
 
     const data = await res.json();
-    const reply = data?.content?.[0]?.text || '(응답 없음)';
+    const reply = data?.text || '(응답 없음)';
     removeTyping();
     appendMessage(reply, 'bot');
   } catch (err) {
