@@ -19,8 +19,6 @@
       height: 100vh;
       overflow: hidden;
       image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
     }
 
     .mailbox-system {
@@ -29,20 +27,11 @@
       background: 
         radial-gradient(circle at 30% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 20% 70%, rgba(147, 51, 234, 0.02) 0%, transparent 50%),
-        repeating-linear-gradient(
-          120deg,
-          transparent,
-          transparent 4px,
-          rgba(74, 222, 128, 0.008) 4px,
-          rgba(74, 222, 128, 0.008) 8px
-        );
+        repeating-linear-gradient(120deg, transparent, transparent 4px, rgba(74, 222, 128, 0.008) 4px, rgba(74, 222, 128, 0.008) 8px);
       display: flex;
       flex-direction: column;
       border: 2px solid #4ade80;
-      box-shadow: 
-        inset 0 0 40px rgba(74, 222, 128, 0.05),
-        0 0 30px rgba(74, 222, 128, 0.1);
+      box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
     }
 
     .mailbox-header {
@@ -71,18 +60,6 @@
       padding: 4px 8px;
       border: 1px solid #f59e0b;
       box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-      animation: counterGlow 3s ease-in-out infinite;
-    }
-
-    @keyframes counterGlow {
-      0%, 100% { 
-        box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-        color: #f59e0b;
-      }
-      50% { 
-        box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
-        color: #fbbf24;
-      }
     }
 
     .mailbox-controls {
@@ -141,8 +118,6 @@
       border-right: 2px solid rgba(74, 222, 128, 0.3);
       overflow-y: auto;
       background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
     }
 
     .letters-panel.hidden {
@@ -167,7 +142,6 @@
       border-bottom: 1px solid rgba(74, 222, 128, 0.2);
       cursor: pointer;
       transition: all 0.2s;
-      position: relative;
     }
 
     .letter-item:hover {
@@ -181,10 +155,6 @@
       border-left: 3px solid #f59e0b;
       padding-left: 13px;
       box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.2);
-    }
-
-    .letter-preview {
-      margin-bottom: 8px;
     }
 
     .letter-title {
@@ -209,6 +179,7 @@
       padding: 2px 6px;
       border: 1px solid rgba(147, 51, 234, 0.3);
       display: inline-block;
+      margin-top: 4px;
     }
 
     .content-area {
@@ -221,62 +192,25 @@
       justify-content: center;
     }
 
-    .content-area::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .content-area::-webkit-scrollbar-track {
-      background: rgba(74, 222, 128, 0.05);
-    }
-
-    .content-area::-webkit-scrollbar-thumb {
-      background: #4ade80;
-      box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
-    }
-
     .letter-viewer {
       max-width: 500px;
       width: 100%;
       background: rgba(0, 0, 0, 0.8);
       border: 3px solid #f59e0b;
       padding: 32px;
-      position: relative;
-      box-shadow: 
-        0 0 30px rgba(245, 158, 11, 0.3),
-        inset 0 0 30px rgba(245, 158, 11, 0.05);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
       animation: letterGlow 4s ease-in-out infinite;
     }
 
     @keyframes letterGlow {
       0%, 100% { 
         border-color: #f59e0b;
-        box-shadow: 
-          0 0 30px rgba(245, 158, 11, 0.3),
-          inset 0 0 30px rgba(245, 158, 11, 0.05);
+        box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
       }
       50% { 
         border-color: #fbbf24;
-        box-shadow: 
-          0 0 40px rgba(251, 191, 36, 0.4),
-          inset 0 0 40px rgba(251, 191, 36, 0.08);
+        box-shadow: 0 0 40px rgba(251, 191, 36, 0.4), inset 0 0 40px rgba(251, 191, 36, 0.08);
       }
-    }
-
-    .letter-viewer::before {
-      content: '';
-      position: absolute;
-      top: -3px;
-      left: -3px;
-      right: -3px;
-      bottom: -3px;
-      background: linear-gradient(45deg, #f59e0b, #4ade80, #ec4899, #f59e0b);
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-
-    .letter-viewer:hover::before {
-      opacity: 0.3;
     }
 
     .letter-header {
@@ -330,9 +264,7 @@
       background: rgba(0, 0, 0, 0.8);
       border: 3px solid #4ade80;
       padding: 32px;
-      box-shadow: 
-        0 0 30px rgba(74, 222, 128, 0.3),
-        inset 0 0 30px rgba(74, 222, 128, 0.05);
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.3), inset 0 0 30px rgba(74, 222, 128, 0.05);
       display: none;
     }
 
@@ -379,9 +311,6 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 7px;
       outline: none;
-      box-shadow: 
-        0 0 10px rgba(74, 222, 128, 0.2),
-        inset 0 0 10px rgba(74, 222, 128, 0.05);
       transition: all 0.2s;
     }
 
@@ -393,9 +322,6 @@
 
     .form-input:focus {
       border-color: #f59e0b;
-      box-shadow: 
-        0 0 15px rgba(245, 158, 11, 0.3),
-        inset 0 0 15px rgba(245, 158, 11, 0.05);
       color: #fbbf24;
     }
 
@@ -419,14 +345,12 @@
       cursor: pointer;
       font-family: 'Press Start 2P', monospace;
       transition: all 0.2s;
-      box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
     }
 
     .form-btn:hover {
       background: #4ade80;
       color: #000000;
       transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
     }
 
     .form-btn.cancel {
@@ -437,17 +361,16 @@
     .form-btn.cancel:hover {
       background: #ef4444;
       color: #000000;
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
     }
 
-    .no-letters {
+    .empty-state {
       text-align: center;
       color: rgba(74, 222, 128, 0.5);
       font-size: 10px;
       line-height: 1.8;
     }
 
-    .no-letters-icon {
+    .empty-icon {
       font-size: 64px;
       margin-bottom: 20px;
       opacity: 0.3;
@@ -478,7 +401,7 @@
       50% { transform: translateY(-8px); }
     }
 
-    .loading-letters {
+    .loading {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -487,10 +410,9 @@
       flex-direction: column;
       align-items: center;
       gap: 16px;
-      z-index: 100;
     }
 
-    .loading-letters.hidden {
+    .loading.hidden {
       display: none;
     }
 
@@ -512,12 +434,18 @@
       font-size: 8px;
       color: #4ade80;
       text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-      animation: textBlink 2s ease-in-out infinite;
     }
 
-    @keyframes textBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .connection-status {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #4ade80;
+      padding: 4px 8px;
+      font-size: 6px;
+      color: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
     }
 
     @media (max-width: 768px) {
@@ -539,25 +467,17 @@
       .letter-viewer, .write-letter-form {
         padding: 20px;
       }
-      
-      .mailbox-header {
-        flex-direction: column;
-        gap: 8px;
-        align-items: stretch;
-      }
-      
-      .mailbox-controls {
-        justify-content: center;
-      }
     }
   </style>
 </head>
 <body>
   <div class="mailbox-system">
+    <div class="connection-status" id="connection-status">CONNECTING...</div>
+    
     <div class="mailbox-header">
       <div class="mailbox-title">
         <span>💌 MAILBOX.EXE - 냥쿤이 나에게 쓴 편지</span>
-        <div class="letter-counter" id="letter-counter">LOADING...</div>
+        <div class="letter-counter" id="letter-counter">-</div>
       </div>
       <div class="mailbox-controls">
         <button class="control-btn active" id="read-btn" onclick="setReadMode()">READ</button>
@@ -567,12 +487,17 @@
     </div>
 
     <div class="main-area">
-      <div class="loading-letters" id="loading-letters">
+      <div class="loading" id="loading">
         <div class="loading-spinner"></div>
         <div class="loading-text">편지함 로딩중...</div>
       </div>
 
-      <div class="letters-panel" id="letters-panel"></div>
+      <div class="letters-panel" id="letters-panel">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div>편지를 불러오는 중...</div>
+        </div>
+      </div>
       
       <div class="content-area" id="content-area">
         <div class="select-letter" id="select-message">
@@ -588,7 +513,7 @@
           
           <div class="form-group">
             <label class="form-label">닉네임/별명</label>
-            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" required>
+            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
           </div>
           
           <div class="form-group">
@@ -619,6 +544,45 @@
     let letters = [];
     let selectedLetter = null;
     let mode = 'read';
+    let db = null;
+    let isConnected = false;
+
+    async function initFirebase() {
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+        const { getFirestore, collection, getDocs, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+          authDomain: "nyangos-fdbe6.firebaseapp.com",
+          projectId: "nyangos-fdbe6",
+          storageBucket: "nyangos-fdbe6.firebasestorage.app",
+          messagingSenderId: "349621507711",
+          appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        
+        // 연결 테스트
+        await getDocs(collection(db, 'lettersFromNyangkun'));
+        isConnected = true;
+        updateConnectionStatus('CONNECTED', '#00ff41');
+        console.log('✅ Firebase 연결 성공');
+        return true;
+      } catch (error) {
+        console.error('❌ Firebase 연결 실패:', error);
+        isConnected = false;
+        updateConnectionStatus('OFFLINE', '#ff6b6b');
+        return false;
+      }
+    }
+
+    function updateConnectionStatus(text, color) {
+      const status = document.getElementById('connection-status');
+      status.textContent = text;
+      status.style.color = color;
+    }
 
     function playSound(type = 'default') {
       try {
@@ -665,38 +629,31 @@
           oscillator.start(audioContext.currentTime);
           oscillator.stop(audioContext.currentTime + 0.3);
         }
-      } catch(e) {
-        console.log('Audio not available');
-      }
+      } catch(e) {}
     }
 
     function renderLettersList() {
       const panel = document.getElementById('letters-panel');
       const counter = document.getElementById('letter-counter');
-      const loading = document.getElementById('loading-letters');
-      
-      loading.classList.add('hidden');
       
       if (letters.length === 0) {
         panel.innerHTML = `
-          <div class="no-letters">
-            <div class="no-letters-icon">📭</div>
-            <div>아직 받은 편지가 없습니다.<br>냥쿤이 첫 번째 편지를 써보세요!</div>
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div>아직 받은 편지가 없습니다.<br>새 편지를 작성해보세요!</div>
           </div>
         `;
-        counter.textContent = 'NO LETTERS';
+        counter.textContent = '0';
         return;
       }
       
-      counter.textContent = `${letters.length} LETTERS`;
+      counter.textContent = letters.length.toString();
       
       panel.innerHTML = letters.map((letter, index) => `
         <div class="letter-item" onclick="selectLetter(${index})">
-          <div class="letter-preview">
-            <div class="letter-title">${letter.title}</div>
-            <div class="letter-snippet">${letter.content.substring(0, 80)}...</div>
-          </div>
-          <div class="letter-date">${letter.timestamp || letter.date}</div>
+          <div class="letter-title">${letter.name} 💌</div>
+          <div class="letter-snippet">${letter.message.substring(0, 60)}...</div>
+          <div class="letter-date">${letter.timestamp}</div>
         </div>
       `).join('');
     }
@@ -708,23 +665,55 @@
         <div class="letter-viewer">
           <div class="letter-header">
             <div class="letter-from">From. ${letter.name} 🐱</div>
-            <div class="letter-display-title">${letter.title}</div>
-            <div class="letter-display-date">${letter.timestamp || letter.date}</div>
+            <div class="letter-display-title">편지</div>
+            <div class="letter-display-date">${letter.timestamp}</div>
           </div>
-          <div class="letter-content">${letter.content}</div>
+          <div class="letter-content">${letter.message}</div>
           <div class="letter-signature">사랑을 담아, ${letter.name}로부터 💕</div>
         </div>
       `;
     }
 
     async function loadLetters() {
-      document.getElementById('loading-letters').classList.remove('hidden');
+      const loadingEl = document.getElementById('loading');
+      loadingEl.classList.remove('hidden');
+      updateConnectionStatus('LOADING...', '#f59e0b');
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (!isConnected) {
+        await initFirebase();
+      }
       
-      letters = [
-      ];
+      if (isConnected && db) {
+        try {
+          const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+          const snapshot = await getDocs(collection(db, 'lettersFromNyangkun'));
+          
+          letters = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            letters.push({
+              id: doc.id,
+              name: data.name || 'Anonymous',
+              message: data.message || '',
+              timestamp: data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'
+            });
+          });
+          
+          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          
+          console.log(`✅ ${letters.length}개의 편지를 불러왔습니다`);
+          updateConnectionStatus('LOADED', '#00ff41');
+        } catch (error) {
+          console.error('❌ 편지 로딩 실패:', error);
+          updateConnectionStatus('ERROR', '#ff6b6b');
+          letters = [];
+        }
+      } else {
+        updateConnectionStatus('NO CONNECTION', '#ff6b6b');
+        letters = [];
+      }
       
+      loadingEl.classList.add('hidden');
       renderLettersList();
     }
 
@@ -739,7 +728,7 @@
         displayLetter(selectedLetter);
       } else {
         document.getElementById('content-area').innerHTML = `
-          <div class="select-letter" id="select-message">
+          <div class="select-letter">
             <div class="select-icon">📨</div>
             <div>왼쪽에서 편지를 선택하면<br>여기에 내용이 표시됩니다.</div>
           </div>
@@ -754,6 +743,7 @@
       document.getElementById('write-btn').classList.add('active');
       document.getElementById('read-btn').classList.remove('active');
       document.getElementById('letters-panel').classList.add('hidden');
+      
       document.getElementById('content-area').innerHTML = `
         <div class="write-letter-form active">
           <div class="form-header">
@@ -764,11 +754,6 @@
           <div class="form-group">
             <label class="form-label">닉네임/별명</label>
             <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">편지 제목</label>
-            <input type="text" class="form-input" id="letter-title" placeholder="제목을 입력하세요" required>
           </div>
           
           <div class="form-group">
@@ -794,46 +779,49 @@
     window.selectLetter = function(index) {
       const items = document.querySelectorAll('.letter-item');
       items.forEach(item => item.classList.remove('active'));
-      items[index].classList.add('active');
+      if (items[index]) items[index].classList.add('active');
       
       selectedLetter = letters[index];
-      displayLetter(selectedLetter);
+      if (selectedLetter) {
+        displayLetter(selectedLetter);
+      }
       playSound();
     };
 
-    window.sendLetter = function() {
+    window.sendLetter = async function() {
       const name = document.getElementById('sender-name').value.trim();
-      const title = document.getElementById('letter-title').value.trim();
       const content = document.getElementById('letter-content').value.trim();
       const password = document.getElementById('delete-password').value.trim();
       
-      if (!name || !title || !content || !password) {
+      if (!name || !content || !password) {
         alert('모든 항목을 입력해주세요!');
         return;
       }
       
-      const newLetter = {
-        name: name,
-        title: title,
-        content: content,
-        password: password,
-        timestamp: new Date().toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        date: new Date().toISOString().split('T')[0].replace(/-/g, '.')
-      };
+      if (!isConnected || !db) {
+        alert('Firebase 연결이 필요합니다!');
+        return;
+      }
       
-      letters.unshift(newLetter);
-      
-      playSound('send');
-      alert('편지가 성공적으로 전송되었습니다! 💌');
-      
-      setReadMode();
-      renderLettersList();
+      try {
+        const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+        
+        await addDoc(collection(db, 'lettersFromNyangkun'), {
+          name: name,
+          message: content,
+          password: password,
+          timestamp: serverTimestamp()
+        });
+        
+        playSound('send');
+        alert('편지가 성공적으로 전송되었습니다! 💌');
+        
+        setReadMode();
+        loadLetters();
+      } catch (error) {
+        console.error('편지 전송 실패:', error);
+        alert('편지 전송에 실패했습니다.');
+      }
     };
 
     window.cancelWrite = function() {
@@ -846,17 +834,10 @@
       loadLetters();
     };
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '1') {
-        setReadMode();
-      } else if (e.key === '2') {
-        setWriteMode();
-      } else if (e.key === 'r' || e.key === 'R') {
-        refreshLetters();
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('💌 받은편지함 시스템 시작');
+      loadLetters();
     });
-
-    loadLetters();
   </script>
 </body>
 </html>

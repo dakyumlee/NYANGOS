@@ -19,8 +19,6 @@
       height: 100vh;
       overflow: hidden;
       image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
     }
 
     .world-map {
@@ -30,19 +28,11 @@
         radial-gradient(circle at 20% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.02) 0%, transparent 50%),
-        repeating-linear-gradient(
-          30deg,
-          transparent,
-          transparent 4px,
-          rgba(74, 222, 128, 0.005) 4px,
-          rgba(74, 222, 128, 0.005) 8px
-        );
+        repeating-linear-gradient(30deg, transparent, transparent 4px, rgba(74, 222, 128, 0.005) 4px, rgba(74, 222, 128, 0.005) 8px);
       display: flex;
       flex-direction: column;
       border: 2px solid #4ade80;
-      box-shadow: 
-        inset 0 0 40px rgba(74, 222, 128, 0.05),
-        0 0 30px rgba(74, 222, 128, 0.1);
+      box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
       position: relative;
     }
 
@@ -73,18 +63,6 @@
       padding: 4px 8px;
       border: 1px solid #f59e0b;
       box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-      animation: counterGlow 3s ease-in-out infinite;
-    }
-
-    @keyframes counterGlow {
-      0%, 100% { 
-        box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-        color: #f59e0b;
-      }
-      50% { 
-        box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
-        color: #fbbf24;
-      }
     }
 
     .map-controls {
@@ -120,12 +98,7 @@
       flex: 1;
       position: relative;
       overflow: hidden;
-      background: 
-        linear-gradient(180deg, 
-          rgba(5, 5, 5, 0.9) 0%, 
-          rgba(10, 10, 10, 0.8) 50%, 
-          rgba(5, 5, 5, 0.9) 100%
-        );
+      background: linear-gradient(180deg, rgba(5, 5, 5, 0.9) 0%, rgba(10, 10, 10, 0.8) 50%, rgba(5, 5, 5, 0.9) 100%);
     }
 
     .world-grid {
@@ -192,52 +165,26 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 
-        0 0 20px rgba(74, 222, 128, 0.4),
-        inset 0 0 20px rgba(74, 222, 128, 0.1);
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
       animation: waypointPulse 3s ease-in-out infinite;
     }
 
     @keyframes waypointPulse {
       0%, 100% { 
         transform: scale(1);
-        box-shadow: 
-          0 0 20px rgba(74, 222, 128, 0.4),
-          inset 0 0 20px rgba(74, 222, 128, 0.1);
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
       }
       50% { 
         transform: scale(1.05);
-        box-shadow: 
-          0 0 30px rgba(74, 222, 128, 0.6),
-          inset 0 0 30px rgba(74, 222, 128, 0.2);
+        box-shadow: 0 0 30px rgba(74, 222, 128, 0.6), inset 0 0 30px rgba(74, 222, 128, 0.2);
       }
-    }
-
-    .waypoint-marker::before {
-      content: '';
-      position: absolute;
-      top: -3px;
-      left: -3px;
-      right: -3px;
-      bottom: -3px;
-      background: linear-gradient(45deg, #4ade80, #f59e0b, #ec4899, #4ade80);
-      border-radius: 50%;
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.3s;
     }
 
     .memory-waypoint:hover .waypoint-marker {
       transform: scale(1.15);
       border-color: #f59e0b;
-      box-shadow: 
-        0 0 40px rgba(245, 158, 11, 0.6),
-        inset 0 0 40px rgba(245, 158, 11, 0.2);
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), inset 0 0 40px rgba(245, 158, 11, 0.2);
       animation: none;
-    }
-
-    .memory-waypoint:hover .waypoint-marker::before {
-      opacity: 1;
     }
 
     .waypoint-icon {
@@ -312,9 +259,7 @@
       padding: 24px;
       max-width: 500px;
       width: 90%;
-      box-shadow: 
-        0 0 50px rgba(74, 222, 128, 0.4),
-        inset 0 0 50px rgba(74, 222, 128, 0.1);
+      box-shadow: 0 0 50px rgba(74, 222, 128, 0.4), inset 0 0 50px rgba(74, 222, 128, 0.1);
       animation: modalSlideIn 0.3s ease-out;
       position: relative;
     }
@@ -450,12 +395,19 @@
       font-size: 8px;
       color: #4ade80;
       text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-      animation: textBlink 2s ease-in-out infinite;
     }
 
-    @keyframes textBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .connection-status {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #4ade80;
+      padding: 4px 8px;
+      font-size: 6px;
+      color: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+      z-index: 200;
     }
 
     @media (max-width: 768px) {
@@ -476,29 +428,21 @@
       .modal-icon {
         font-size: 40px;
       }
-      
-      .map-header {
-        flex-direction: column;
-        gap: 8px;
-        align-items: stretch;
-      }
-      
-      .map-controls {
-        justify-content: center;
-      }
     }
   </style>
 </head>
 <body>
   <div class="world-map">
+    <div class="connection-status" id="connection-status">CONNECTING...</div>
+    
     <div class="map-header">
       <div class="map-title">
         <span>🌟 TIMELINE.EXE - 러브스토리 월드맵</span>
-        <div class="journey-counter" id="journey-counter">LOADING...</div>
+        <div class="journey-counter" id="journey-counter">-</div>
       </div>
       <div class="map-controls">
-        <button class="control-btn active" id="timeline-btn" onclick="setTimelineView()">TIMELINE</button>
-        <button class="control-btn" id="journey-btn" onclick="setJourneyView()">JOURNEY</button>
+        <button class="control-btn active" onclick="refreshTimeline()">REFRESH</button>
+        <button class="control-btn" onclick="sortByDate()">SORT</button>
       </div>
     </div>
 
@@ -508,7 +452,7 @@
       
       <div class="loading-world" id="loading-world">
         <div class="loading-spinner"></div>
-        <div class="loading-text">월드맵 로딩중...</div>
+        <div class="loading-text">타임라인 로딩중...</div>
       </div>
 
       <div class="empty-journey" id="empty-journey" style="display: none;">
@@ -536,7 +480,44 @@
 
   <script type="module">
     let memories = [];
-    let viewMode = 'timeline';
+    let db = null;
+    let isConnected = false;
+
+    async function initFirebase() {
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+        const { getFirestore, collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+          authDomain: "nyangos-fdbe6.firebaseapp.com",
+          projectId: "nyangos-fdbe6",
+          storageBucket: "nyangos-fdbe6.firebasestorage.app",
+          messagingSenderId: "349621507711",
+          appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        
+        await getDocs(collection(db, 'timeline'));
+        isConnected = true;
+        updateConnectionStatus('CONNECTED', '#00ff41');
+        console.log('✅ Firebase 연결 성공');
+        return true;
+      } catch (error) {
+        console.error('❌ Firebase 연결 실패:', error);
+        isConnected = false;
+        updateConnectionStatus('OFFLINE', '#ff6b6b');
+        return false;
+      }
+    }
+
+    function updateConnectionStatus(text, color) {
+      const status = document.getElementById('connection-status');
+      status.textContent = text;
+      status.style.color = color;
+    }
 
     function playSound() {
       try {
@@ -555,9 +536,7 @@
         
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.2);
-      } catch(e) {
-        console.log('Audio not available');
-      }
+      } catch(e) {}
     }
 
     function renderWaypoints() {
@@ -571,12 +550,12 @@
       if (memories.length === 0) {
         container.innerHTML = '';
         empty.style.display = 'block';
-        counter.textContent = 'NO MEMORIES';
+        counter.textContent = '0';
         return;
       }
       
       empty.style.display = 'none';
-      counter.textContent = `${memories.length} MEMORIES`;
+      counter.textContent = memories.length.toString();
       
       const screenWidth = window.innerWidth;
       const spacing = Math.min(screenWidth / (memories.length + 1), 200);
@@ -599,29 +578,59 @@
     }
 
     async function loadMemories() {
-      document.getElementById('loading-world').classList.remove('hidden');
+      const loadingEl = document.getElementById('loading-world');
+      loadingEl.classList.remove('hidden');
+      updateConnectionStatus('LOADING...', '#f59e0b');
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (!isConnected) {
+        await initFirebase();
+      }
       
-      memories = [
-        
-      ];
+      if (isConnected && db) {
+        try {
+          const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+          const snapshot = await getDocs(collection(db, 'timeline'));
+          
+          memories = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            memories.push({
+              id: doc.id,
+              title: data.title || 'Untitled',
+              content: data.content || '',
+              date: data.date || 'No Date',
+              position: data.position || '50%'
+            });
+          });
+          
+          memories.sort((a, b) => new Date(a.date) - new Date(b.date));
+          
+          console.log(`✅ ${memories.length}개의 타임라인 이벤트를 불러왔습니다`);
+          updateConnectionStatus('LOADED', '#00ff41');
+        } catch (error) {
+          console.error('❌ 타임라인 로딩 실패:', error);
+          updateConnectionStatus('ERROR', '#ff6b6b');
+          memories = [];
+        }
+      } else {
+        updateConnectionStatus('NO CONNECTION', '#ff6b6b');
+        memories = [];
+      }
       
       renderWaypoints();
     }
 
-    window.setTimelineView = function() {
-      viewMode = 'timeline';
-      document.getElementById('timeline-btn').classList.add('active');
-      document.getElementById('journey-btn').classList.remove('active');
+    window.refreshTimeline = function() {
       playSound();
+      loadMemories();
     };
 
-    window.setJourneyView = function() {
-      viewMode = 'journey';
-      document.getElementById('journey-btn').classList.add('active');
-      document.getElementById('timeline-btn').classList.remove('active');
-      playSound();
+    window.sortByDate = function() {
+      if (memories.length > 0) {
+        memories.sort((a, b) => new Date(a.date) - new Date(b.date));
+        renderWaypoints();
+        playSound();
+      }
     };
 
     window.openMemoryModal = function(index) {
@@ -629,7 +638,7 @@
       if (!memory) return;
       
       document.getElementById('modal-title').textContent = memory.title;
-      document.getElementById('modal-icon').textContent = memory.icon;
+      document.getElementById('modal-icon').textContent = '💕';
       document.getElementById('modal-content').textContent = memory.content;
       document.getElementById('modal-date').textContent = memory.date;
       
@@ -647,14 +656,17 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
-      } else if (e.key === '1') {
-        setTimelineView();
-      } else if (e.key === '2') {
-        setJourneyView();
+      } else if (e.key === 'r' || e.key === 'R') {
+        refreshTimeline();
+      } else if (e.key === 's' || e.key === 'S') {
+        sortByDate();
       }
     });
 
-    loadMemories();
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🌟 타임라인 시스템 시작');
+      loadMemories();
+    });
   </script>
 </body>
 </html>
