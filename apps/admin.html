@@ -19,10 +19,27 @@
       cursor: pointer;
       font-family: 'Press Start 2P', monospace;
     }
+    .timeline-item {
+      background: #333;
+      color: white;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-left: 4px solid #5df;
+    }
+    .timeline-controls button {
+      margin-right: 0.5rem;
+      background: #444;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: white;
+    }
   </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
@@ -35,6 +52,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     onAuthStateChanged(auth, user => {
       if (!user) {
@@ -43,7 +61,7 @@
       }
     });
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const logoutBtn = document.getElementById("logout-btn");
       if (logoutBtn) {
         logoutBtn.addEventListener("click", async () => {
@@ -51,9 +69,52 @@
           window.location.href = "login.html";
         });
       }
+
+      const timelineList = document.getElementById("timeline-list");
+      const form = document.getElementById("timeline-form");
+
+      const loadTimeline = async () => {
+        timelineList.innerHTML = "";
+        const snapshot = await getDocs(collection(db, "timeline"));
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const li = document.createElement("li");
+          li.className = "timeline-item";
+          li.innerHTML = `
+            <strong>${data.date}</strong> - <em>${data.title}</em><br />
+            <p>${data.content || ""}</p>
+            <p>위치: ${data.position}</p>
+            <div class="timeline-controls">
+              <button onclick="deleteTimeline('${docSnap.id}')">삭제</button>
+            </div>
+          `;
+          timelineList.appendChild(li);
+        });
+      };
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newData = {
+          date: document.getElementById("date").value,
+          title: document.getElementById("title").value,
+          content: document.getElementById("content").value,
+          position: document.getElementById("position").value,
+        };
+        await addDoc(collection(db, "timeline"), newData);
+        form.reset();
+        loadTimeline();
+      });
+
+      window.deleteTimeline = async (id) => {
+        if (confirm("정말 삭제할까요?")) {
+          await deleteDoc(doc(db, "timeline", id));
+          loadTimeline();
+        }
+      };
+
+      loadTimeline();
     });
   </script>
-  <script type="module" src="../script/admin.js"></script>
 </head>
 <body>
   <button id="logout-btn">로그아웃</button>
