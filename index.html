@@ -456,37 +456,37 @@
   </div>
   
   <div id="desktop">
-    <div class="icon" onclick="openWindow('chatbot')">
+    <div class="icon" onclick="document.getElementById('chatbot-window').style.display='flex'">
       <div class="icon-emoji">🤖</div>
       <div class="icon-text">냥GPT<br>AI_CHAT.EXE</div>
     </div>
     
-    <div class="icon" onclick="openWindow('photos')">
+    <div class="icon" onclick="document.getElementById('photos-window').style.display='flex'">
       <div class="icon-emoji">🖼️</div>
       <div class="icon-text">추억보관함<br>MEMORY_BOX.EXE</div>
     </div>
     
-    <div class="icon" onclick="openWindow('quotes')">
+    <div class="icon" onclick="document.getElementById('quotes-window').style.display='flex'">
       <div class="icon-emoji">✨</div>
       <div class="icon-text">마음챙김<br>WISDOM.EXE</div>
     </div>
     
-    <div class="icon" onclick="openWindow('timeline')">
+    <div class="icon" onclick="document.getElementById('timeline-window').style.display='flex'">
       <div class="icon-emoji">🌟</div>
       <div class="icon-text">러브스토리<br>TIMELINE.EXE</div>
     </div>
 
-    <div class="icon" onclick="openWindow('letter-to')">
+    <div class="icon" onclick="document.getElementById('letter-to-window').style.display='flex'">
       <div class="icon-emoji">💝</div>
       <div class="icon-text">편지쓰기<br>LOVE_LETTER.EXE</div>
     </div>
 
-    <div class="icon" onclick="openWindow('letter-from')">
+    <div class="icon" onclick="document.getElementById('letter-from-window').style.display='flex'">
       <div class="icon-emoji">💌</div>
       <div class="icon-text">받은편지함<br>MAILBOX.EXE</div>
     </div>
 
-    <div class="icon" onclick="openWindow('admin')">
+    <div class="icon" onclick="document.getElementById('admin-window').style.display='flex'">
       <div class="icon-emoji">🔧</div>
       <div class="icon-text">시스템설정<br>CONFIG.EXE</div>
     </div>
@@ -506,9 +506,9 @@
         <span>🤖 AI_CHAT.EXE - 냥GPT</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('chatbot')">_</button>
-        <button onclick="toggleMaximize('chatbot')">□</button>
-        <button onclick="closeWindow('chatbot')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -522,9 +522,9 @@
         <span>🖼️ MEMORY_BOX.EXE - 추억보관함</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('photos')">_</button>
-        <button onclick="toggleMaximize('photos')">□</button>
-        <button onclick="closeWindow('photos')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -538,9 +538,9 @@
         <span>✨ WISDOM.EXE - 마음챙김</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('quotes')">_</button>
-        <button onclick="toggleMaximize('quotes')">□</button>
-        <button onclick="closeWindow('quotes')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -554,9 +554,9 @@
         <span>🌟 TIMELINE.EXE - 러브스토리</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('timeline')">_</button>
-        <button onclick="toggleMaximize('timeline')">□</button>
-        <button onclick="closeWindow('timeline')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -570,9 +570,9 @@
         <span>💝 LOVE_LETTER.EXE - 편지쓰기</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('letter-to')">_</button>
-        <button onclick="toggleMaximize('letter-to')">□</button>
-        <button onclick="closeWindow('letter-to')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -586,9 +586,9 @@
         <span>💌 MAILBOX.EXE - 받은편지함</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('letter-from')">_</button>
-        <button onclick="toggleMaximize('letter-from')">□</button>
-        <button onclick="closeWindow('letter-from')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -602,9 +602,9 @@
         <span>🔧 CONFIG.EXE - 시스템설정</span>
       </div>
       <div class="window-controls">
-        <button onclick="minimizeWindow('admin')">_</button>
-        <button onclick="toggleMaximize('admin')">□</button>
-        <button onclick="closeWindow('admin')">×</button>
+        <button onclick="this.closest('.window').style.display='none'">_</button>
+        <button onclick="this.closest('.window').classList.toggle('maximized')">□</button>
+        <button onclick="this.closest('.window').style.display='none'">×</button>
       </div>
     </div>
     <div class="window-content">
@@ -799,8 +799,7 @@
     }
 
     function showGameInfo() {
-      playClickSound();
-      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n• 윈도우 타이틀바 → 드래그 이동\n• 윈도우 버튼 → 최소화/최대화/닫기\n• Ctrl+1~7 → 단축키\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
+      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n• 윈도우 타이틀바 → 드래그 이동\n• 윈도우 버튼 → 최소화/최대화/닫기\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
     }
 
     setInterval(updateTime, 1000);
