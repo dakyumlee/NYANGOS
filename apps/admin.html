@@ -3,64 +3,1094 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>냥쿤OS 관리자</title>
-  <link rel="stylesheet" href="../style/base.css" />
-  <link rel="stylesheet" href="../style/admin.css" />
-  <script type="module" src="../script/admin.js"></script>
+  <title>냥쿤OS - 관리자 콘솔</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0f0f0f;
+      color: #00ff41;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, #ff6b6b 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, #4ecdc4 0%, transparent 50%),
+        radial-gradient(circle at 25% 75%, #45b7d1 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #f9ca24 0%, transparent 50%),
+        linear-gradient(45deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      animation: bgShift 15s ease-in-out infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes bgShift {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .admin-container {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff41;
+      padding: 20px;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.5),
+        inset 0 0 30px rgba(0, 255, 65, 0.1);
+    }
+
+    .admin-header h1 {
+      font-size: 20px;
+      color: #00ff41;
+      text-shadow: 0 0 20px currentColor;
+      margin-bottom: 10px;
+      animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 20px #00ff41; }
+      to { text-shadow: 0 0 30px #00ff41, 0 0 40px #00ff41; }
+    }
+
+    .admin-header p {
+      font-size: 8px;
+      color: #4ecdc4;
+      opacity: 0.8;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+    }
+
+    .admin-section {
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff41;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.5),
+        inset 0 0 30px rgba(0, 255, 65, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-header {
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      color: #00ff41;
+      padding: 12px 16px;
+      border-bottom: 2px solid #00ff41;
+      font-size: 10px;
+      text-shadow: 0 0 10px currentColor;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-content {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #00ff41;
+      font-size: 8px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      text-shadow: 0 0 5px currentColor;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 9px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      transition: all 0.3s ease;
+      outline: none;
+      box-shadow: 
+        0 0 10px rgba(0, 255, 65, 0.3),
+        inset 0 0 10px rgba(0, 255, 65, 0.1);
+    }
+
+    input:focus, textarea:focus {
+      border-color: #ff6b6b;
+      color: #ffffff;
+      box-shadow: 
+        0 0 20px rgba(255, 107, 107, 0.6),
+        inset 0 0 20px rgba(255, 107, 107, 0.2);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(0, 255, 65, 0.5);
+      opacity: 1;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-row input, .form-row select {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 9px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #00ff41;
+      color: #00ff41;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.3),
+        inset 0 0 20px rgba(0, 255, 65, 0.1);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    button:hover {
+      color: #ffffff;
+      border-color: #ff6b6b;
+      box-shadow: 
+        0 0 40px rgba(255, 107, 107, 0.6),
+        inset 0 0 40px rgba(255, 107, 107, 0.2);
+      transform: translateY(-2px);
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: rgba(102, 102, 102, 0.5);
+      border-color: #666;
+      color: #999;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      border-color: #ff6b6b;
+      color: #ff6b6b;
+    }
+
+    .btn-danger:hover {
+      background: #ff6b6b;
+      color: #000;
+    }
+
+    .status-message {
+      margin: 12px 0;
+      padding: 8px;
+      font-size: 8px;
+      text-align: center;
+      border: 2px solid;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .status-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .status-success {
+      color: #00ff41;
+      border-color: #00ff41;
+      background: rgba(0, 255, 65, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+
+    .status-error {
+      color: #ff6b6b;
+      border-color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .item-list {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .item {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #00ff41;
+      margin-bottom: 8px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .item:hover {
+      border-color: #4ecdc4;
+      background: rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 10px rgba(76, 205, 196, 0.3);
+    }
+
+    .item-content {
+      flex: 1;
+    }
+
+    .item-content h4 {
+      color: #4ecdc4;
+      margin: 0 0 6px 0;
+      font-size: 9px;
+    }
+
+    .item-content p {
+      margin: 3px 0;
+      font-size: 7px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    .item-meta {
+      font-size: 6px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .item-actions button {
+      padding: 4px 8px;
+      font-size: 6px;
+    }
+
+    .photo-preview {
+      width: 60px;
+      height: 45px;
+      object-fit: cover;
+      border: 1px solid #00ff41;
+      margin-right: 8px;
+    }
+
+    .system-stats {
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff41;
+      padding: 16px;
+      margin-top: 20px;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.5),
+        inset 0 0 30px rgba(0, 255, 65, 0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #00ff41;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .stat-label {
+      font-size: 7px;
+      color: #4ecdc4;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 10px;
+      color: #00ff41;
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .loading {
+      text-align: center;
+      color: #4ecdc4;
+      font-size: 8px;
+      padding: 20px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .admin-header h1 {
+        font-size: 16px;
+      }
+      
+      .item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .item-actions {
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+    }
+
+    * {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+  </style>
 </head>
 <body>
-  <h1>📂 냥쿤OS 관리자 페이지</h1>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>🛠️ 냥쿤OS 관리자 콘솔</h1>
+      <p>>>> SYSTEM CONTROL PANEL v2.1 <<<</p>
+    </div>
 
-  <section id="timeline-section">
-    <h2>📅 연애 타임라인 관리</h2>
-    <form id="timeline-form">
-      <input type="text" id="date" placeholder="날짜 (ex: 2024.03.11)" required />
-      <input type="text" id="title" placeholder="제목" required />
-      <textarea id="content" placeholder="내용"></textarea>
-      <input type="text" id="position" placeholder="좌표 % (ex: 10%)" required />
-      <button type="submit">추가</button>
-    </form>
-    <ul id="timeline-list"></ul>
-  </section>
+    <div class="admin-grid">
+      <div class="admin-section">
+        <div class="section-header">
+          <span>🌟 TIMELINE.EXE - 러브스토리 관리</span>
+        </div>
+        <div class="section-content">
+          <form id="timeline-form">
+            <div class="form-group">
+              <div class="form-row">
+                <div>
+                  <label for="timeline-date">날짜</label>
+                  <input type="text" id="timeline-date" placeholder="2024.03.11" required />
+                </div>
+                <div>
+                  <label for="timeline-position">위치 %</label>
+                  <input type="text" id="timeline-position" placeholder="25%" required />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="timeline-title">제목</label>
+              <input type="text" id="timeline-title" placeholder="특별한 날" required />
+            </div>
+            <div class="form-group">
+              <label for="timeline-content">내용</label>
+              <textarea id="timeline-content" placeholder="이 날에 일어난 특별한 일을 적어보세요"></textarea>
+            </div>
+            <button type="submit">>>> ADD TO TIMELINE <<<</button>
+          </form>
+          <div id="timeline-status" class="status-message"></div>
+          <div id="timeline-list" class="item-list"></div>
+        </div>
+      </div>
 
-  <hr>
+      <div class="admin-section">
+        <div class="section-header">
+          <span>📸 MEMORY_BOX.EXE - 사진 갤러리 관리</span>
+        </div>
+        <div class="section-content">
+          <form id="photo-form">
+            <div class="form-group">
+              <label for="photo-file">사진 파일</label>
+              <input type="file" id="photo-file" accept="image/*" required />
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div>
+                  <label for="photo-title">제목</label>
+                  <input type="text" id="photo-title" placeholder="추억의 한 장면" required />
+                </div>
+                <div>
+                  <label for="photo-date">날짜</label>
+                  <input type="text" id="photo-date" placeholder="2024.04.01" required />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="photo-description">설명</label>
+              <textarea id="photo-description" placeholder="이 사진에 대한 설명을 적어보세요"></textarea>
+            </div>
+            <button type="submit">>>> UPLOAD IMAGE <<<</button>
+          </form>
+          <div id="photo-status" class="status-message"></div>
+          <div id="photo-list" class="item-list"></div>
+        </div>
+      </div>
 
-  <section id="photos-section">
-    <h2>📸 사진 업로드</h2>
-    <form id="photo-form">
-      <input type="file" id="photo-file" accept="image/*" required />
-      <input type="text" id="photo-title" placeholder="사진 제목" required />
-      <input type="text" id="photo-description" placeholder="짧은 설명" />
-      <input type="text" id="photo-date" placeholder="날짜 (ex: 2024.04.01)" required />
-      <button type="submit">사진 업로드</button>
-    </form>
-    <ul id="photo-list"></ul>
-  </section>
+      <div class="admin-section">
+        <div class="section-header">
+          <span>🤖 CHATBOT.EXE - 채팅 로그 & 통계</span>
+        </div>
+        <div class="section-content">
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="load-chat-logs">>>> LOAD CHAT LOGS <<<</button>
+            <button id="clear-chat-logs" class="btn-danger">>>> CLEAR ALL LOGS <<<</button>
+          </div>
+          <div class="stats-grid" style="margin-bottom: 20px;">
+            <div class="stat-item">
+              <div class="stat-label">총 메시지</div>
+              <div class="stat-value" id="total-messages">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">사용자 메시지</div>
+              <div class="stat-value" id="user-messages">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">봇 응답</div>
+              <div class="stat-value" id="bot-messages">-</div>
+            </div>
+          </div>
+          <div id="chat-status" class="status-message"></div>
+          <div id="chat-list" class="item-list"></div>
+        </div>
+      </div>
 
-  <hr>
+      <div class="admin-section">
+        <div class="section-header">
+          <span>💌 MAILBOX.EXE - 편지함 관리</span>
+        </div>
+        <div class="section-content">
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="load-letters-to">>>> LOAD SENT LETTERS <<<</button>
+            <button id="load-letters-from">>>> LOAD RECEIVED LETTERS <<<</button>
+          </div>
+          <div id="letters-status" class="status-message"></div>
+          <div id="letters-list" class="item-list"></div>
+        </div>
+      </div>
 
-  <section id="quotes-section">
-    <h2>🧘 오늘의 묵상 관리</h2>
-    <form id="quote-form">
-      <textarea id="quote-input" placeholder="묵상 어록 입력" required></textarea>
-      <button type="submit">어록 추가</button>
-    </form>
-    <ul id="quote-list"></ul>
-  </section>
+      <div class="admin-section">
+        <div class="section-header">
+          <span>⚙️ SYSTEM.EXE - 시스템 관리</span>
+        </div>
+        <div class="section-content">
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="backup-data">>>> BACKUP DATA <<<</button>
+            <button id="clear-cache">>>> CLEAR CACHE <<<</button>
+            <button id="system-logout" class="btn-danger">>>> LOGOUT <<<</button>
+          </div>
+          <div id="system-status" class="status-message"></div>
+        </div>
+      </div>
+    </div>
 
-  <hr>
+    <div class="system-stats">
+      <div class="section-header">
+        <span>📊 SYSTEM STATISTICS</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">타임라인 이벤트</div>
+          <div class="stat-value" id="timeline-count">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">저장된 사진</div>
+          <div class="stat-value" id="photos-count">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">채팅 메시지</div>
+          <div class="stat-value" id="chats-count">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">시스템 상태</div>
+          <div class="stat-value" id="system-health">ONLINE</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <section id="letters-to-nyang">
-    <h2>💌 냥쿤에게 쓰는 편지</h2>
-    <iframe src="letterToNyangkun.html" width="100%" height="400" style="border:2px inset #999;"></iframe>
-  </section>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      getDocs, 
+      deleteDoc, 
+      doc, 
+      updateDoc, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { 
+      getStorage, 
+      ref, 
+      uploadBytes, 
+      getDownloadURL, 
+      deleteObject 
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-  <hr>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+      authDomain: "nyangos-fdbe6.firebaseapp.com",
+      projectId: "nyangos-fdbe6",
+      storageBucket: "nyangos-fdbe6.appspot.com",
+      messagingSenderId: "349621507711",
+      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+    };
 
-  <section id="letters-from-nyang">
-    <h2>📨 냥쿤이 나에게 쓴 편지</h2>
-    <iframe src="letterFromNyangkun.html" width="100%" height="400" style="border:2px inset #999;"></iframe>
-  </section>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const auth = getAuth(app);
 
+    const chatsRef = collection(db, "chats");
+
+    function playSystemSound(type = 'click') {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        if (type === 'success') {
+          oscillator.frequency.value = 880;
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } else if (type === 'error') {
+          oscillator.frequency.value = 200;
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        } else {
+          oscillator.frequency.value = 800;
+          gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.1);
+        }
+      } catch(e) {
+        console.log('Audio not available');
+      }
+    }
+
+    function showStatus(elementId, message, type = 'success') {
+      const statusEl = document.getElementById(elementId);
+      statusEl.textContent = `>>> ${message} <<<`;
+      statusEl.className = `status-message ${type} show`;
+      
+      playSystemSound(type);
+      
+      setTimeout(() => {
+        statusEl.classList.remove('show');
+      }, 3000);
+    }
+
+    async function updateStats() {
+      try {
+        const timelineSnap = await getDocs(timelineRef);
+        const photosSnap = await getDocs(photosRef);
+        const lettersToSnap = await getDocs(lettersToRef);
+        const lettersFromSnap = await getDocs(lettersFromRef);
+        const chatsSnap = await getDocs(chatsRef);
+
+        document.getElementById('timeline-count').textContent = timelineSnap.size;
+        document.getElementById('photos-count').textContent = photosSnap.size;
+        document.getElementById('chats-count').textContent = chatsSnap.size;
+        document.getElementById('system-health').textContent = 'ONLINE';
+
+        let userCount = 0, botCount = 0;
+        chatsSnap.forEach(doc => {
+          const data = doc.data();
+          if (data.sender === 'user') userCount++;
+          else if (data.sender === 'bot') botCount++;
+        });
+        
+        document.getElementById('total-messages').textContent = chatsSnap.size;
+        document.getElementById('user-messages').textContent = userCount;
+        document.getElementById('bot-messages').textContent = botCount;
+      } catch (error) {
+        console.error('Stats update error:', error);
+        document.getElementById('system-health').textContent = 'ERROR';
+      }
+    }
+
+    const timelineForm = document.getElementById('timeline-form');
+    const timelineList = document.getElementById('timeline-list');
+
+    async function loadTimeline() {
+      timelineList.innerHTML = '<div class="loading">>>> LOADING TIMELINE DATA <<<</div>';
+      
+      try {
+        const snapshot = await getDocs(timelineRef);
+        timelineList.innerHTML = '';
+        
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <div class="item-content">
+              <h4>${data.title}</h4>
+              <p>${data.content || '내용 없음'}</p>
+              <div class="item-meta">날짜: ${data.date} | 위치: ${data.position}</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="editTimeline('${docSnap.id}', '${data.title}', '${data.content || ''}', '${data.position}')">수정</button>
+              <button onclick="deleteTimeline('${docSnap.id}')" class="btn-danger">삭제</button>
+            </div>
+          `;
+          timelineList.appendChild(item);
+        });
+        
+        if (snapshot.empty) {
+          timelineList.innerHTML = '<div class="loading">>>> NO TIMELINE DATA <<<</div>';
+        }
+      } catch (error) {
+        console.error('Timeline load error:', error);
+        showStatus('timeline-status', 'TIMELINE LOAD FAILED', 'error');
+      }
+    }
+
+    timelineForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {
+        date: document.getElementById('timeline-date').value,
+        title: document.getElementById('timeline-title').value,
+        content: document.getElementById('timeline-content').value,
+        position: document.getElementById('timeline-position').value,
+        timestamp: serverTimestamp()
+      };
+
+      try {
+        await addDoc(timelineRef, data);
+        showStatus('timeline-status', 'TIMELINE EVENT ADDED');
+        timelineForm.reset();
+        loadTimeline();
+        updateStats();
+      } catch (error) {
+        console.error('Timeline add error:', error);
+        showStatus('timeline-status', 'TIMELINE ADD FAILED', 'error');
+      }
+    });
+
+    window.deleteTimeline = async (id) => {
+      if (confirm('>>> DELETE TIMELINE EVENT? <<<')) {
+        try {
+          await deleteDoc(doc(db, "timeline", id));
+          showStatus('timeline-status', 'TIMELINE EVENT DELETED');
+          loadTimeline();
+          updateStats();
+        } catch (error) {
+          console.error('Timeline delete error:', error);
+          showStatus('timeline-status', 'DELETE FAILED', 'error');
+        }
+      }
+    };
+
+    window.editTimeline = async (id, currentTitle, currentContent, currentPosition) => {
+      const newTitle = prompt('>>> NEW TITLE <<<', currentTitle);
+      const newContent = prompt('>>> NEW CONTENT <<<', currentContent);
+      const newPosition = prompt('>>> NEW POSITION <<<', currentPosition);
+      
+      if (newTitle && newContent && newPosition) {
+        try {
+          await updateDoc(doc(db, "timeline", id), {
+            title: newTitle,
+            content: newContent,
+            position: newPosition
+          });
+          showStatus('timeline-status', 'TIMELINE EVENT UPDATED');
+          loadTimeline();
+        } catch (error) {
+          console.error('Timeline update error:', error);
+          showStatus('timeline-status', 'UPDATE FAILED', 'error');
+        }
+      }
+    };
+
+    const photoForm = document.getElementById('photo-form');
+    const photoList = document.getElementById('photo-list');
+
+    async function loadPhotos() {
+      photoList.innerHTML = '<div class="loading">>>> LOADING PHOTO DATA <<<</div>';
+      
+      try {
+        const snapshot = await getDocs(photosRef);
+        photoList.innerHTML = '';
+        
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <img src="${data.url}" class="photo-preview" alt="${data.title}" />
+            <div class="item-content">
+              <h4>${data.title}</h4>
+              <p>${data.description || '설명 없음'}</p>
+              <div class="item-meta">날짜: ${data.date}</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="deletePhoto('${docSnap.id}', '${data.url}')" class="btn-danger">삭제</button>
+            </div>
+          `;
+          photoList.appendChild(item);
+        });
+        
+        if (snapshot.empty) {
+          photoList.innerHTML = '<div class="loading">>>> NO PHOTO DATA <<<</div>';
+        }
+      } catch (error) {
+        console.error('Photos load error:', error);
+        showStatus('photo-status', 'PHOTO LOAD FAILED', 'error');
+      }
+    }
+
+    photoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const file = document.getElementById('photo-file').files[0];
+      const title = document.getElementById('photo-title').value;
+      const description = document.getElementById('photo-description').value;
+      const date = document.getElementById('photo-date').value;
+
+      if (!file) {
+        showStatus('photo-status', 'NO FILE SELECTED', 'error');
+        return;
+      }
+
+      try {
+        showStatus('photo-status', 'UPLOADING...', 'success');
+        
+        const storageRef = ref(storage, `photos/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+
+        await addDoc(photosRef, { url, title, description, date, timestamp: serverTimestamp() });
+        
+        showStatus('photo-status', 'PHOTO UPLOADED');
+        photoForm.reset();
+        loadPhotos();
+        updateStats();
+      } catch (error) {
+        console.error('Photo upload error:', error);
+        showStatus('photo-status', 'UPLOAD FAILED', 'error');
+      }
+    });
+
+    window.deletePhoto = async (id, url) => {
+      if (confirm('>>> DELETE PHOTO? <<<')) {
+        try {
+          await deleteDoc(doc(db, "photos", id));
+          
+          const storageRef = ref(storage, url);
+          await deleteObject(storageRef);
+          
+          showStatus('photo-status', 'PHOTO DELETED');
+          loadPhotos();
+          updateStats();
+        } catch (error) {
+          console.error('Photo delete error:', error);
+          showStatus('photo-status', 'DELETE FAILED', 'error');
+        }
+      }
+    };
+
+    const chatList = document.getElementById('chat-list');
+    
+    document.getElementById('load-chat-logs').addEventListener('click', async () => {
+      chatList.innerHTML = '<div class="loading">>>> LOADING CHAT LOGS <<<</div>';
+      
+      try {
+        const snapshot = await getDocs(chatsRef);
+        chatList.innerHTML = '';
+        
+        const messages = [];
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          messages.push({
+            id: docSnap.id,
+            ...data,
+            timestamp: data.timestamp?.toDate?.() || new Date()
+          });
+        });
+
+        messages.sort((a, b) => b.timestamp - a.timestamp);
+        
+        messages.forEach((data) => {
+          const item = document.createElement('div');
+          item.className = 'item';
+          const isUser = data.sender === 'user';
+          const timeStr = data.timestamp.toLocaleString('ko-KR');
+          
+          item.innerHTML = `
+            <div class="item-content">
+              <h4>${isUser ? '👤 USER' : '🤖 BOT'}</h4>
+              <p>${data.message}</p>
+              <div class="item-meta">${timeStr}</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="deleteChat('${data.id}')" class="btn-danger">삭제</button>
+            </div>
+          `;
+          chatList.appendChild(item);
+        });
+        
+        if (snapshot.empty) {
+          chatList.innerHTML = '<div class="loading">>>> NO CHAT LOGS <<<</div>';
+        }
+        
+        showStatus('chat-status', 'CHAT LOGS LOADED');
+        updateStats();
+      } catch (error) {
+        console.error('Chat logs load error:', error);
+        showStatus('chat-status', 'LOAD FAILED', 'error');
+      }
+    });
+
+    document.getElementById('clear-chat-logs').addEventListener('click', async () => {
+      if (confirm('>>> DELETE ALL CHAT LOGS? <<<')) {
+        try {
+          const snapshot = await getDocs(chatsRef);
+          const deletePromises = [];
+          snapshot.forEach((docSnap) => {
+            deletePromises.push(deleteDoc(doc(db, "chats", docSnap.id)));
+          });
+          
+          await Promise.all(deletePromises);
+          showStatus('chat-status', 'ALL CHAT LOGS DELETED');
+          chatList.innerHTML = '<div class="loading">>>> CHAT LOGS CLEARED <<<</div>';
+          updateStats();
+        } catch (error) {
+          console.error('Clear chat logs error:', error);
+          showStatus('chat-status', 'CLEAR FAILED', 'error');
+        }
+      }
+    });
+
+    window.deleteChat = async (id) => {
+      if (confirm('>>> DELETE THIS MESSAGE? <<<')) {
+        try {
+          await deleteDoc(doc(db, "chats", id));
+          showStatus('chat-status', 'MESSAGE DELETED');
+          document.getElementById('load-chat-logs').click();
+        } catch (error) {
+          console.error('Chat delete error:', error);
+          showStatus('chat-status', 'DELETE FAILED', 'error');
+        }
+      }
+    };
+
+    const lettersList = document.getElementById('letters-list');
+    
+    document.getElementById('load-letters-to').addEventListener('click', async () => {
+      lettersList.innerHTML = '<div class="loading">>>> LOADING SENT LETTERS <<<</div>';
+      
+      try {
+        const snapshot = await getDocs(lettersToRef);
+        lettersList.innerHTML = '';
+        
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <div class="item-content">
+              <h4>📤 ${data.title}</h4>
+              <p>${data.content}</p>
+              <div class="item-meta">보낸 편지</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="deleteLetter('lettersToNyangkun', '${docSnap.id}')" class="btn-danger">삭제</button>
+            </div>
+          `;
+          lettersList.appendChild(item);
+        });
+        
+        if (snapshot.empty) {
+          lettersList.innerHTML = '<div class="loading">>>> NO SENT LETTERS <<<</div>';
+        }
+        
+        showStatus('letters-status', 'SENT LETTERS LOADED');
+      } catch (error) {
+        console.error('Letters load error:', error);
+        showStatus('letters-status', 'LOAD FAILED', 'error');
+      }
+    });
+
+    document.getElementById('load-letters-from').addEventListener('click', async () => {
+      lettersList.innerHTML = '<div class="loading">>>> LOADING RECEIVED LETTERS <<<</div>';
+      
+      try {
+        const snapshot = await getDocs(lettersFromRef);
+        lettersList.innerHTML = '';
+        
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <div class="item-content">
+              <h4>📥 ${data.name}</h4>
+              <p>${data.message}</p>
+              <div class="item-meta">받은 편지</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="deleteLetter('lettersFromNyangkun', '${docSnap.id}')" class="btn-danger">삭제</button>
+            </div>
+          `;
+          lettersList.appendChild(item);
+        });
+        
+        if (snapshot.empty) {
+          lettersList.innerHTML = '<div class="loading">>>> NO RECEIVED LETTERS <<<</div>';
+        }
+        
+        showStatus('letters-status', 'RECEIVED LETTERS LOADED');
+      } catch (error) {
+        console.error('Letters load error:', error);
+        showStatus('letters-status', 'LOAD FAILED', 'error');
+      }
+    });
+
+    window.deleteLetter = async (collectionName, id) => {
+      if (confirm('>>> DELETE LETTER? <<<')) {
+        try {
+          await deleteDoc(doc(db, collectionName, id));
+          showStatus('letters-status', 'LETTER DELETED');
+          
+          if (collectionName === 'lettersToNyangkun') {
+            document.getElementById('load-letters-to').click();
+          } else {
+            document.getElementById('load-letters-from').click();
+          }
+          updateStats();
+        } catch (error) {
+          console.error('Letter delete error:', error);
+          showStatus('letters-status', 'DELETE FAILED', 'error');
+        }
+      }
+    };
+
+    document.getElementById('backup-data').addEventListener('click', () => {
+      showStatus('system-status', 'BACKUP FEATURE COMING SOON');
+    });
+
+    document.getElementById('clear-cache').addEventListener('click', () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      showStatus('system-status', 'CACHE CLEARED');
+    });
+
+    document.getElementById('system-logout').addEventListener('click', async () => {
+      if (confirm('>>> LOGOUT FROM SYSTEM? <<<')) {
+        try {
+          await signOut(auth);
+          showStatus('system-status', 'LOGOUT SUCCESSFUL');
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1000);
+        } catch (error) {
+          console.error('Logout error:', error);
+          showStatus('system-status', 'LOGOUT FAILED', 'error');
+        }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') {
+        playSystemSound('click');
+      }
+    });
+
+    window.addEventListener('load', () => {
+      loadTimeline();
+      loadPhotos();
+      updateStats();
+      
+      console.log('>>> 냥쿤OS ADMIN CONSOLE LOADED <<<');
+    });
+  </script>
 </body>
 </html>
