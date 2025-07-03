@@ -1,3 +1,19 @@
+import { db } from './firebase.js';
+import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const saveMessage = async (role, message) => {
+  try {
+    await addDoc(collection(db, "chats"), {
+      sender: role,
+      message: message,
+      timestamp: serverTimestamp()
+    });
+  } catch (e) {
+    console.error("💥 메시지 저장 실패", e);
+  }
+};
+
+
 const input = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-button');
 const chatLog = document.getElementById('chat-log');
@@ -25,13 +41,34 @@ const removeTyping = () => {
   if (typingDiv) typingDiv.remove();
 };
 
-const sendMessage = async () => {
+const sendMessage = async () => {const sendMessage = async () => {
   const userText = input.value.trim();
   if (!userText) return;
 
   appendMessage(userText, 'user');
+  saveMessage('user', userText);
   input.value = '';
   showTyping();
+
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userText })
+    });
+
+    const data = await res.json();
+    const reply = data?.content?.[0]?.text || '(응답 없음)';
+    removeTyping();
+    appendMessage(reply, 'bot');
+    saveMessage('bot', reply);
+  } catch (err) {
+    removeTyping();
+    appendMessage('(에러 발생)', 'bot');
+    console.error(err);
+  }
+};
+
 
   try {
     const res = await fetch('/api/claude', {
