@@ -4,55 +4,878 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>냥쿤OS</title>
-  <link rel="stylesheet" href="./style/main.css" />
-  <script type="module" src="./script/main.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0f0f0f;
+      overflow: hidden;
+      user-select: none;
+      height: 100vh;
+      position: relative;
+      cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPAQMAAABP1IbCAAAAA1BMVEXGxsb///8bKz/wAAAAE0lEQVQI12NgwAK+//8PQYyMDQAAYgDHAAAAAElFTkSuQmCC'), auto;
+    }
+
+    /* 픽셀 배경 애니메이션 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, #ff6b6b 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, #4ecdc4 0%, transparent 50%),
+        radial-gradient(circle at 25% 75%, #45b7d1 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #f9ca24 0%, transparent 50%),
+        linear-gradient(45deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      animation: bgShift 15s ease-in-out infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes bgShift {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    /* 게임 스타일 스캔라인 */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #desktop {
+      position: relative;
+      width: 100vw;
+      height: calc(100vh - 48px);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 140px);
+      gap: 32px;
+      padding: 40px 40px 20px 40px;
+      align-content: start;
+      z-index: 1;
+      overflow-y: auto;
+    }
+
+    .icon {
+      width: 140px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #00ff41;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #00ff41;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.3),
+        inset 0 0 20px rgba(0, 255, 65, 0.1);
+      animation: iconGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes iconGlow {
+      from { 
+        box-shadow: 
+          0 0 20px rgba(0, 255, 65, 0.3),
+          inset 0 0 20px rgba(0, 255, 65, 0.1);
+      }
+      to { 
+        box-shadow: 
+          0 0 30px rgba(0, 255, 65, 0.5),
+          inset 0 0 30px rgba(0, 255, 65, 0.2);
+      }
+    }
+
+    .icon::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .icon:hover {
+      transform: scale(1.05) translateY(-5px);
+      color: #ffffff;
+      border-color: #ff6b6b;
+      box-shadow: 
+        0 0 40px rgba(255, 107, 107, 0.6),
+        inset 0 0 40px rgba(255, 107, 107, 0.2);
+      animation: none;
+    }
+
+    .icon:hover::before {
+      opacity: 1;
+    }
+
+    .icon:active {
+      transform: scale(0.95) translateY(-2px);
+      box-shadow: 
+        0 0 20px rgba(255, 107, 107, 0.8),
+        inset 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .icon-emoji {
+      font-size: 36px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 10px currentColor);
+      animation: emojiFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes emojiFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .icon-text {
+      font-size: 9px;
+      line-height: 1.3;
+      text-shadow: 0 0 10px currentColor;
+      font-weight: bold;
+    }
+
+    /* 게임 스타일 윈도우 */
+    .window {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #00ff41;
+      display: none;
+      flex-direction: column;
+      min-width: 400px;
+      min-height: 300px;
+      z-index: 100;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.5),
+        inset 0 0 30px rgba(0, 255, 65, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .window.maximized {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0;
+    }
+
+    .titlebar {
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      color: #00ff41;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      font-size: 10px;
+      user-select: none;
+      border-bottom: 2px solid #00ff41;
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .titlebar-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 4px;
+    }
+
+    .window-controls button {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #00ff41;
+      background: rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: bold;
+      color: #00ff41;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .window-controls button:hover {
+      background: #00ff41;
+      color: #000000;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
+      transform: scale(1.1);
+    }
+
+    .window-controls button:active {
+      transform: scale(0.9);
+    }
+
+    .window-content {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px inset #00ff41;
+      margin: 4px;
+      overflow: hidden;
+    }
+
+    .window-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000000;
+    }
+
+    /* 게임 스타일 HUD */
+    .game-hud {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff41;
+      padding: 12px;
+      color: #00ff41;
+      font-size: 8px;
+      z-index: 1000;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .hud-item {
+      margin: 4px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .love-counter {
+      color: #ff6b6b;
+      text-shadow: 0 0 10px #ff6b6b;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* 게임 스타일 로딩 */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000000;
+      color: #00ff41;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-size: 12px;
+    }
+
+    .loading-title {
+      font-size: 24px;
+      margin-bottom: 40px;
+      text-shadow: 0 0 20px currentColor;
+      animation: titlePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes titlePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .loading-text {
+      margin: 8px 0;
+      opacity: 0;
+      animation: textFadeIn 0.5s forwards;
+    }
+
+    @keyframes textFadeIn {
+      to { opacity: 1; }
+    }
+
+    .loading-bar-container {
+      width: 400px;
+      height: 20px;
+      border: 2px solid #00ff41;
+      margin-top: 30px;
+      position: relative;
+      background: rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+
+    .loading-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff41, #4ecdc4, #00ff41);
+      width: 0%;
+      animation: loadProgress 4s ease-out forwards;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
+    }
+
+    @keyframes loadProgress {
+      to { width: 100%; }
+    }
+
+    /* 게임 스타일 메뉴 바 */
+    .game-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.95);
+      border-top: 3px solid #00ff41;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      z-index: 999;
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.5);
+    }
+
+    .menu-button {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff41;
+      padding: 8px 16px;
+      font-size: 9px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      color: #00ff41;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .menu-button:hover {
+      background: #00ff41;
+      color: #000000;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
+      transform: translateY(-2px);
+    }
+
+    .menu-clock {
+      margin-left: auto;
+      padding: 8px 16px;
+      border: 2px solid #00ff41;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: 9px;
+      color: #00ff41;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+      #desktop {
+        grid-template-columns: repeat(auto-fit, 110px);
+        gap: 20px;
+        padding: 20px 20px 60px 20px;
+      }
+
+      .icon {
+        width: 110px;
+        height: 110px;
+      }
+
+      .icon-emoji {
+        font-size: 28px;
+      }
+
+      .icon-text {
+        font-size: 7px;
+      }
+
+      .window {
+        min-width: 95vw;
+        min-height: calc(95vh - 60px);
+        top: 2.5vh !important;
+        left: 2.5vw !important;
+      }
+    }
+
+    /* 픽셀 퍼펙트 렌더링 */
+    * {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+  </style>
 </head>
 <body>
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-title">냥쿤OS</div>
+    <div class="loading-text" style="animation-delay: 0s;">>> INITIALIZING LOVE.EXE</div>
+    <div class="loading-text" style="animation-delay: 0.5s;">>> LOADING MEMORIES...</div>
+    <div class="loading-text" style="animation-delay: 1s;">>> CONNECTING HEARTS...</div>
+    <div class="loading-text" style="animation-delay: 1.5s;">>> SYNCING EMOTIONS...</div>
+    <div class="loading-text" style="animation-delay: 2s;">>> READY TO PLAY!</div>
+    <div class="loading-bar-container" style="animation-delay: 2.5s;">
+      <div class="loading-bar"></div>
+    </div>
+  </div>
+
+  <div class="game-hud">
+    <div class="hud-item">
+      <span>LOVE:</span>
+      <span id="love-level" class="love-counter">💕 D+0</span>
+    </div>
+    <div class="hud-item">
+      <span>TIME:</span>
+      <span id="game-time"></span>
+    </div>
+    <div class="hud-item">
+      <span>STATUS:</span>
+      <span id="status">ONLINE</span>
+    </div>
+  </div>
+  
   <div id="desktop">
-    <div class="icon" onclick="openWindow('chatbot')">
-      <div>💬 냥GPT</div>
+    <div class="icon" data-app="chatbot">
+      <div class="icon-emoji">💬</div>
+      <div class="icon-text">냥GPT<br>CHAT.EXE</div>
     </div>
-    <div class="icon" onclick="openWindow('photos')">
-      <div>📷 사진첩</div>
+    
+    <div class="icon" data-app="photos">
+      <div class="icon-emoji">📷</div>
+      <div class="icon-text">사진첩<br>GALLERY.EXE</div>
     </div>
-    <div class="icon" onclick="openWindow('quotes')">
-      <div>📜 명언</div>
+    
+    <div class="icon" data-app="quotes">
+      <div class="icon-emoji">📜</div>
+      <div class="icon-text">오늘의 묵상<br>WISDOM.EXE</div>
     </div>
-    <div class="icon" onclick="openWindow('timeline')">
-      <div>🗓️ 타임라인</div>
+    
+    <div class="icon" data-app="timeline">
+      <div class="icon-emoji">💕</div>
+      <div class="icon-text">타임라인<br>MEMORY.EXE</div>
+    </div>
+
+    <div class="icon" data-app="letter-to">
+      <div class="icon-emoji">💌</div>
+      <div class="icon-text">냥쿤에게<br>SEND.EXE</div>
+    </div>
+
+    <div class="icon" data-app="letter-from">
+      <div class="icon-emoji">📨</div>
+      <div class="icon-text">냥쿤편지<br>INBOX.EXE</div>
+    </div>
+
+    <div class="icon" data-app="admin">
+      <div class="icon-emoji">⚙️</div>
+      <div class="icon-text">관리자<br>ADMIN.EXE</div>
     </div>
   </div>
 
-  <div id="chatbot" class="window">
-    <div class="titlebar">
-      <span>💬 냥GPT</span>
-      <button class="close" onclick="closeWindow('chatbot')">X</button>
-    </div>
-    <iframe src="./apps/chatbot.html"></iframe>
+  <div class="game-menu">
+    <button class="menu-button" onclick="showGameInfo()">
+      <span>🎮</span>
+      <span>GAME INFO</span>
+    </button>
+    <div class="menu-clock" id="menu-clock"></div>
   </div>
 
-  <div id="photos" class="window">
+  <div id="chatbot-window" class="window">
     <div class="titlebar">
-      <span>📷 사진첩</span>
-      <button class="close" onclick="closeWindow('photos')">X</button>
+      <div class="titlebar-text">
+        <span>💬 CHAT.EXE - 냥GPT</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('chatbot')">_</button>
+        <button onclick="toggleMaximize('chatbot')">□</button>
+        <button onclick="closeWindow('chatbot')">×</button>
+      </div>
     </div>
-    <iframe src="./apps/photos.html"></iframe>
+    <div class="window-content">
+      <iframe src="./apps/chatbot.html"></iframe>
+    </div>
   </div>
 
-  <div id="quotes" class="window">
+  <div id="photos-window" class="window">
     <div class="titlebar">
-      <span>📜 명언</span>
-      <button class="close" onclick="closeWindow('quotes')">X</button>
+      <div class="titlebar-text">
+        <span>📷 GALLERY.EXE - 사진첩</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('photos')">_</button>
+        <button onclick="toggleMaximize('photos')">□</button>
+        <button onclick="closeWindow('photos')">×</button>
+      </div>
     </div>
-    <iframe src="./apps/quotes.html"></iframe>
+    <div class="window-content">
+      <iframe src="./apps/photos.html"></iframe>
+    </div>
   </div>
 
-  <div id="timeline" class="window">
+  <div id="quotes-window" class="window">
     <div class="titlebar">
-      <span>🗓️ 타임라인</span>
-      <button class="close" onclick="closeWindow('timeline')">X</button>
+      <div class="titlebar-text">
+        <span>📜 WISDOM.EXE - 오늘의 묵상</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('quotes')">_</button>
+        <button onclick="toggleMaximize('quotes')">□</button>
+        <button onclick="closeWindow('quotes')">×</button>
+      </div>
     </div>
-    <iframe src="./apps/timeline.html"></iframe>
+    <div class="window-content">
+      <iframe src="./apps/quotes.html"></iframe>
+    </div>
   </div>
+
+  <div id="timeline-window" class="window">
+    <div class="titlebar">
+      <div class="titlebar-text">
+        <span>💕 MEMORY.EXE - 타임라인</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('timeline')">_</button>
+        <button onclick="toggleMaximize('timeline')">□</button>
+        <button onclick="closeWindow('timeline')">×</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <iframe src="./apps/timeline.html"></iframe>
+    </div>
+  </div>
+
+  <div id="letter-to-window" class="window">
+    <div class="titlebar">
+      <div class="titlebar-text">
+        <span>💌 SEND.EXE - 냥쿤에게 편지</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('letter-to')">_</button>
+        <button onclick="toggleMaximize('letter-to')">□</button>
+        <button onclick="closeWindow('letter-to')">×</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <iframe src="./apps/lettersToNyangkun.html"></iframe>
+    </div>
+  </div>
+
+  <div id="letter-from-window" class="window">
+    <div class="titlebar">
+      <div class="titlebar-text">
+        <span>📨 INBOX.EXE - 냥쿤이 쓴 편지</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('letter-from')">_</button>
+        <button onclick="toggleMaximize('letter-from')">□</button>
+        <button onclick="closeWindow('letter-from')">×</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <iframe src="./apps/lettersFromNyangkun.html"></iframe>
+    </div>
+  </div>
+
+  <div id="admin-window" class="window">
+    <div class="titlebar">
+      <div class="titlebar-text">
+        <span>⚙️ ADMIN.EXE - 관리자</span>
+      </div>
+      <div class="window-controls">
+        <button onclick="minimizeWindow('admin')">_</button>
+        <button onclick="toggleMaximize('admin')">□</button>
+        <button onclick="closeWindow('admin')">×</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <iframe src="./apps/login.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      document.getElementById('loading-screen').style.opacity = '0';
+      document.getElementById('loading-screen').style.transition = 'opacity 1s';
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        playGameStartSound();
+      }, 1000);
+    }, 6500);
+
+    function playGameStartSound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      const notes = [440, 554.37, 659.25, 880];
+      let time = audioContext.currentTime;
+      
+      notes.forEach((freq, i) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = freq;
+        oscillator.type = 'square';
+        
+        gainNode.gain.setValueAtTime(0.1, time + i * 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + i * 0.2 + 0.3);
+        
+        oscillator.start(time + i * 0.2);
+        oscillator.stop(time + i * 0.2 + 0.3);
+      });
+    }
+
+    function playClickSound() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 800;
+      oscillator.type = 'square';
+      
+      gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    function calculateDday() {
+      const startDate = new Date('2024-03-11');
+      const today = new Date();
+      const diffTime = today - startDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays >= 0) {
+        return `💕 D+${diffDays}`;
+      } else {
+        return `💕 D${diffDays}`;
+      }
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toLocaleString('ko-KR', {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      document.getElementById('game-time').textContent = timeString;
+      document.getElementById('menu-clock').textContent = timeString;
+      
+      document.getElementById('love-level').textContent = calculateDday();
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    let zIndex = 100;
+    let draggedWindow = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    document.querySelectorAll('.icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        const appName = icon.dataset.app;
+        openWindow(appName);
+        playClickSound();
+      });
+
+      icon.addEventListener('dblclick', () => {
+        const appName = icon.dataset.app;
+        openWindow(appName);
+        toggleMaximize(appName);
+      });
+    });
+
+    function openWindow(appName) {
+      const window = document.getElementById(`${appName}-window`);
+      if (!window) return;
+
+      window.style.display = 'flex';
+      window.style.zIndex = ++zIndex;
+
+      if (!window.dataset.positioned) {
+        const maxX = window.innerWidth - 400;
+        const maxY = window.innerHeight - 360;
+        const x = Math.random() * Math.max(0, maxX) + 50;
+        const y = Math.random() * Math.max(0, maxY) + 50;
+        
+        window.style.left = `${x}px`;
+        window.style.top = `${y}px`;
+        window.style.width = '600px';
+        window.style.height = '400px';
+        window.dataset.positioned = 'true';
+      }
+
+      focusWindow(window);
+    }
+
+    function closeWindow(appName) {
+      const window = document.getElementById(`${appName}-window`);
+      if (window) {
+        window.style.display = 'none';
+        window.classList.remove('maximized');
+        playClickSound();
+      }
+    }
+
+    function minimizeWindow(appName) {
+      const window = document.getElementById(`${appName}-window`);
+      if (window) {
+        window.style.display = 'none';
+        playClickSound();
+      }
+    }
+
+    function toggleMaximize(appName) {
+      const window = document.getElementById(`${appName}-window`);
+      if (window) {
+        window.classList.toggle('maximized');
+        focusWindow(window);
+        playClickSound();
+      }
+    }
+
+    function focusWindow(window) {
+      document.querySelectorAll('.window').forEach(w => {
+        w.style.borderColor = '#00ff41';
+        w.style.boxShadow = '0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.1)';
+      });
+      
+      window.style.zIndex = ++zIndex;
+      window.style.borderColor = '#ff6b6b';
+      window.style.boxShadow = '0 0 40px rgba(255, 107, 107, 0.8), inset 0 0 40px rgba(255, 107, 107, 0.2)';
+    }
+
+    document.querySelectorAll('.titlebar').forEach(titlebar => {
+      titlebar.addEventListener('mousedown', startDrag);
+    });
+
+    function startDrag(e) {
+      const window = e.target.closest('.window');
+      if (!window || window.classList.contains('maximized')) return;
+
+      draggedWindow = window;
+      const rect = window.getBoundingClientRect();
+      dragOffset.x = e.clientX - rect.left;
+      dragOffset.y = e.clientY - rect.top;
+
+      focusWindow(window);
+
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+      e.preventDefault();
+    }
+
+    function drag(e) {
+      if (!draggedWindow) return;
+
+      const x = e.clientX - dragOffset.x;
+      const y = e.clientY - dragOffset.y;
+
+      const maxX = window.innerWidth - draggedWindow.offsetWidth;
+      const maxY = window.innerHeight - draggedWindow.offsetHeight - 48;
+
+      draggedWindow.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+      draggedWindow.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    }
+
+    function stopDrag() {
+      draggedWindow = null;
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+    }
+
+    document.querySelectorAll('.window').forEach(window => {
+      window.addEventListener('mousedown', () => {
+        focusWindow(window);
+      });
+    });
+
+    function showGameInfo() {
+      playClickSound();
+      alert('🎮 냥쿤OS - 8BIT LOVE SIMULATOR\n\nVersion: 1.0\nGenre: Romance Simulation\nDeveloper: 냥쿤 Studios\nEngine: Pure Love™\n\n"픽셀로 만들어진 사랑 이야기"\n\nPress any key to continue...');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+          case '1':
+            e.preventDefault();
+            openWindow('chatbot');
+            break;
+          case '2':
+            e.preventDefault();
+            openWindow('photos');
+            break;
+          case '3':
+            e.preventDefault();
+            openWindow('quotes');
+            break;
+          case '4':
+            e.preventDefault();
+            openWindow('timeline');
+            break;
+          case '5':
+            e.preventDefault();
+            openWindow('letter-to');
+            break;
+          case '6':
+            e.preventDefault();
+            openWindow('letter-from');
+            break;
+          case '7':
+            e.preventDefault();
+            openWindow('admin');
+            break;
+        }
+      }
+    });
+
+    setTimeout(() => {
+      console.log('🎮 냥쿤OS - 8BIT LOVE SIMULATOR 로드 완료!');
+      console.log('Game Ready! Press Ctrl+1~7 for shortcuts');
+      
+      document.getElementById('status').textContent = 'READY';
+    }, 7000);
+
+    document.querySelectorAll('button, .icon').forEach(element => {
+      element.addEventListener('click', playClickSound);
+    });
+  </script>
 </body>
 </html>
