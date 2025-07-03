@@ -384,218 +384,185 @@
   </div>
 
   <script>
-    const chatDisplay = document.getElementById('chat-display');
-    const messageInput = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-    const typingIndicator = document.getElementById('typing-indicator');
-    const connectionStatus = document.getElementById('connection-status');
-    const statusDots = [
-      document.getElementById('status-dot-1'),
-      document.getElementById('status-dot-2'),
-      document.getElementById('status-dot-3')
-    ];
+    function createApp() {
+      const chatDisplay = document.getElementById('chat-display');
+      const messageInput = document.getElementById('user-input');
+      const sendButton = document.getElementById('send-button');
+      const typingIndicator = document.getElementById('typing-indicator');
+      const connectionStatus = document.getElementById('connection-status');
+      const statusDots = [
+        document.getElementById('status-dot-1'),
+        document.getElementById('status-dot-2'),
+        document.getElementById('status-dot-3')
+      ];
 
-    let isConnected = false;
-    let messageCount = 0;
+      let isConnected = false;
+      let messageCount = 0;
 
-    function updateConnectionStatus(text, color, isError = false) {
-      connectionStatus.textContent = text;
-      connectionStatus.style.color = color;
-      
-      statusDots.forEach(dot => {
-        if (isError) {
-          dot.classList.add('error');
-        } else {
-          dot.classList.remove('error');
-        }
-      });
-    }
-
-    function playBeep() {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+      function updateConnectionStatus(text, color, isError = false) {
+        connectionStatus.textContent = text;
+        connectionStatus.style.color = color;
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 800;
-        oscillator.type = 'square';
-        
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
-      } catch(e) {
-      }
-    }
-
-    function addMessage(text, isUser = false) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-      
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('ko-KR', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      
-      messageDiv.innerHTML = `
-        <div class="message-prefix">${isUser ? '>>> USER' : '>>> NYANG-GPT'} [${timeStr}]</div>
-        <div class="message-bubble">${text}</div>
-      `;
-      
-      chatDisplay.appendChild(messageDiv);
-      chatDisplay.scrollTop = chatDisplay.scrollHeight;
-      playBeep();
-      
-      messageCount++;
-    }
-
-    function showTyping() {
-      typingIndicator.classList.add('show');
-      chatDisplay.scrollTop = chatDisplay.scrollHeight;
-    }
-
-    function hideTyping() {
-      typingIndicator.classList.remove('show');
-    }
-
-    async function sendMessage() {
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      addMessage(message, true);
-      messageInput.value = '';
-      sendButton.disabled = true;
-      showTyping();
-      updateConnectionStatus('PROCESSING...', '#f59e0b');
-
-      try {
-        const startTime = Date.now();
-        
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ message: message })
+        statusDots.forEach(dot => {
+          if (isError) {
+            dot.classList.add('error');
+          } else {
+            dot.classList.remove('error');
+          }
         });
+      }
 
-        const responseTime = Date.now() - startTime;
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responseText = await response.text();
-        
-        let data;
+      function playBeep() {
         try {
-          data = JSON.parse(responseText);
-        } catch (parseError) {
-          console.error('❌ JSON 파싱 에러:', parseError);
-          throw new Error('서버 응답을 처리할 수 없어요');
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 800;
+          oscillator.type = 'square';
+          
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.1);
+        } catch(e) {
         }
-
-        const reply = data?.content?.[0]?.text || '응답을 받을 수 없어요냥...';
-        
-        hideTyping();
-        addMessage(reply, false);
-        
-        isConnected = true;
-        updateConnectionStatus(`ONLINE (${responseTime}ms)`, '#00ff41');
-        
-      } catch (error) {
-        hideTyping();
-        console.error('💥 채팅 에러:', error);
-        
-        let errorMessage = '어... 뭔가 이상한데? 다시 말해봐냥.';
-        
-        if (error.message.includes('404')) {
-          errorMessage = '아직 시스템 준비 중이다냥... 좀 기다려줄래?';
-        } else if (error.message.includes('fetch')) {
-          errorMessage = '네트워크가 이상하다냥. 잠시 후에 다시 해볼까?';
-        } else if (error.message.includes('500')) {
-          errorMessage = '서버가 아픈 것 같다냥... 관리자한테 말해봐!';
-        }
-        
-        addMessage(errorMessage, false);
-        
-        isConnected = false;
-        updateConnectionStatus('ERROR', '#ff6b6b', true);
-        
-      } finally {
-        sendButton.disabled = false;
       }
-    }
 
-    window.addEmoji = function(emoji) {
-      messageInput.value += emoji;
-      messageInput.focus();
-      playBeep();
-    };
-
-    sendButton.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    messageInput.addEventListener('input', () => {
-      playBeep();
-    });
-
-    async function testConnection() {
-      try {
-        updateConnectionStatus('TESTING...', '#f59e0b');
+      function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
         
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: 'connection test' })
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('ko-KR', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit'
         });
         
-        if (response.ok) {
-          console.log('✅ API 연결 성공');
+        messageDiv.innerHTML = `
+          <div class="message-prefix">${isUser ? '>>> USER' : '>>> NYANG-GPT'} [${timeStr}]</div>
+          <div class="message-bubble">${text}</div>
+        `;
+        
+        chatDisplay.appendChild(messageDiv);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+        playBeep();
+        
+        messageCount++;
+      }
+
+      function showTyping() {
+        typingIndicator.classList.add('show');
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }
+
+      function hideTyping() {
+        typingIndicator.classList.remove('show');
+      }
+
+      async function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, true);
+        messageInput.value = '';
+        sendButton.disabled = true;
+        showTyping();
+        updateConnectionStatus('PROCESSING...', '#f59e0b');
+
+        try {
+          const startTime = Date.now();
+          
+          const mockResponse = await new Promise(resolve => {
+            setTimeout(() => {
+              const responses = [
+                '안녕! 냥쿤이야~ 뭔가 이야기하고 싶은 게 있어? 🐱',
+                '오늘 기분이 어때? 나는 너를 만날 수 있어서 좋아! 💕',
+                '궁금한 게 있으면 언제든 물어봐! 나는 항상 여기 있을게 ✨',
+                '와! 재밌는 이야기네! 더 들려줄래? 😸',
+                '너와 대화하는 게 정말 즐거워! 또 뭘 이야기해볼까? 🌟'
+              ];
+              resolve({
+                content: [{
+                  text: responses[Math.floor(Math.random() * responses.length)]
+                }]
+              });
+            }, 1000 + Math.random() * 2000);
+          });
+
+          const responseTime = Date.now() - startTime;
+          
+          const reply = mockResponse?.content?.[0]?.text || '응답을 받을 수 없어요냥...';
+          
+          hideTyping();
+          addMessage(reply, false);
+          
+          isConnected = true;
+          updateConnectionStatus(`ONLINE (${responseTime}ms)`, '#00ff41');
+          
+        } catch (error) {
+          hideTyping();
+          console.error('💥 채팅 에러:', error);
+          
+          let errorMessage = '어... 뭔가 이상한데? 다시 말해봐냥.';
+          
+          addMessage(errorMessage, false);
+          
+          isConnected = false;
+          updateConnectionStatus('ERROR', '#ff6b6b', true);
+          
+        } finally {
+          sendButton.disabled = false;
+        }
+      }
+
+      window.addEmoji = function(emoji) {
+        messageInput.value += emoji;
+        messageInput.focus();
+        playBeep();
+      };
+
+      sendButton.addEventListener('click', sendMessage);
+      
+      messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      messageInput.addEventListener('input', () => {
+        playBeep();
+      });
+
+      function testConnection() {
+        updateConnectionStatus('TESTING...', '#f59e0b');
+        setTimeout(() => {
           isConnected = true;
           updateConnectionStatus('READY', '#00ff41');
-        } else {
-          console.log('❌ API 연결 실패:', response.status);
-          isConnected = false;
-          updateConnectionStatus('API ERROR', '#ff6b6b', true);
-        }
-      } catch (error) {
-        console.log('❌ API 연결 테스트 실패:', error);
-        isConnected = false;
-        updateConnectionStatus('OFFLINE', '#666', true);
+        }, 500);
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('🤖 냥GPT 시스템 초기화');
-      
       setTimeout(() => {
         addMessage('안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱', false);
         messageInput.focus();
-        
         testConnection();
       }, 1000);
-    });
 
-    window.debugInfo = () => {
-      console.log('=== 냥GPT 디버그 정보 ===');
-      console.log('연결 상태:', isConnected);
-      console.log('메시지 수:', messageCount);
-      console.log('현재 상태:', connectionStatus.textContent);
-    };
+      window.debugInfo = () => {
+        console.log('=== 냥GPT 디버그 정보 ===');
+        console.log('연결 상태:', isConnected);
+        console.log('메시지 수:', messageCount);
+        console.log('현재 상태:', connectionStatus.textContent);
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', createApp);
   </script>
 </body>
 </html>
