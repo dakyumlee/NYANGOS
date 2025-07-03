@@ -379,14 +379,14 @@
   <div class="admin-container">
     <div class="admin-header">
       <h1>🛠️ 냥쿤OS 관리자 콘솔</h1>
-      <p>>>> SYSTEM CONTROL PANEL v2.1 <<<</p>
+      <p>>>> SYSTEM CONTROL PANEL v2.1 - BLOB STORAGE <<<</p>
     </div>
 
     <div class="connection-test">
-      <div class="connection-status" id="firebase-status">Firebase: 테스트 중...</div>
+      <div class="connection-status" id="blob-status">Blob Storage: 테스트 중...</div>
       <div class="connection-status" id="api-status">ChatBot API: 테스트 중...</div>
       <div class="test-buttons">
-        <button onclick="testFirebase()">Firebase 테스트</button>
+        <button onclick="testBlobStorage()">Blob Storage 테스트</button>
         <button onclick="testChatAPI()">ChatBot API 테스트</button>
         <button onclick="testAll()">전체 테스트</button>
       </div>
@@ -411,8 +411,8 @@
             <div style="font-size: 12px; color: #00ff41;" id="system-health">ONLINE</div>
           </div>
           <div style="background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #00ff41;">
-            <div style="font-size: 8px; color: #4ecdc4;">Firebase 연결</div>
-            <div style="font-size: 12px;" id="firebase-health">테스트 중...</div>
+            <div style="font-size: 8px; color: #4ecdc4;">Blob Storage 연결</div>
+            <div style="font-size: 12px;" id="blob-health">테스트 중...</div>
           </div>
           <div style="background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #00ff41;">
             <div style="font-size: 8px; color: #4ecdc4;">API 상태</div>
@@ -425,6 +425,7 @@
         <button onclick="clearCache()">>>> CLEAR CACHE <<<</button>
         <button onclick="systemLogout()" class="btn-danger">>>> LOGOUT <<<</button>
         <button onclick="goHome()">>>> HOME <<<</button>
+        <button onclick="getStats()">>>> DATA STATS <<<</button>
       </div>
       
       <div id="system-status" class="status-message"></div>
@@ -566,38 +567,11 @@
   </div>
 
   <script type="module">
-    let db = null;
-    let auth = null;
-    let storage = null;
-
-    async function initFirebase() {
-      try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
-        const { getFirestore } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const { getAuth } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
-        const { getStorage } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js");
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-          authDomain: "nyangos-fdbe6.firebaseapp.com",
-          projectId: "nyangos-fdbe6",
-          storageBucket: "nyangos-fdbe6.firebasestorage.app",
-          messagingSenderId: "349621507711",
-          appId: "1:349621507711:web:2201669ae265cfbbfad14a",
-          measurementId: "G-Y59YH5ZE5B"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-        storage = getStorage(app);
-        
-        return true;
-      } catch (error) {
-        console.error('Firebase 초기화 실패:', error);
-        return false;
-      }
-    }
+    import BlobStorageManager from '../script/blob-manager.js';
+    
+    window.blobManager = new BlobStorageManager();
+    window.db = window.blobManager;
+    let isConnected = false;
 
     function playSystemSound(type = 'click') {
       try {
@@ -658,31 +632,33 @@
       });
     });
 
-    window.testFirebase = async function() {
-      const statusEl = document.getElementById('firebase-status');
-      const healthEl = document.getElementById('firebase-health');
+    window.testBlobStorage = async function() {
+      const statusEl = document.getElementById('blob-status');
+      const healthEl = document.getElementById('blob-health');
       
-      statusEl.textContent = 'Firebase: 테스트 중...';
+      statusEl.textContent = 'Blob Storage: 테스트 중...';
       statusEl.className = 'connection-status';
       
       try {
-        const success = await initFirebase();
-        if (success && db) {
-          statusEl.textContent = 'Firebase: 연결 성공 ✅';
+        const success = await window.blobManager.testConnection();
+        if (success) {
+          statusEl.textContent = 'Blob Storage: 연결 성공 ✅';
           statusEl.className = 'connection-status connected';
           healthEl.textContent = 'CONNECTED';
           healthEl.style.color = '#00ff41';
+          isConnected = true;
           playSystemSound('success');
         } else {
-          throw new Error('초기화 실패');
+          throw new Error('연결 실패');
         }
       } catch (error) {
-        statusEl.textContent = 'Firebase: 연결 실패 ❌';
+        statusEl.textContent = 'Blob Storage: 연결 실패 ❌';
         statusEl.className = 'connection-status error';
         healthEl.textContent = 'ERROR';
         healthEl.style.color = '#ff6b6b';
+        isConnected = false;
         playSystemSound('error');
-        console.error('Firebase 테스트 실패:', error);
+        console.error('Blob Storage 테스트 실패:', error);
       }
     };
 
@@ -720,7 +696,7 @@
     };
 
     window.testAll = async function() {
-      await testFirebase();
+      await testBlobStorage();
       await new Promise(resolve => setTimeout(resolve, 1000));
       await testChatAPI();
     };
@@ -742,149 +718,138 @@
     };
 
     window.goHome = function() {
-      window.location.href = 'index.html';
+      window.location.href = '../index.html';
     };
 
-    window.loadChatLogs = function() {
+    window.getStats = async function() {
+      try {
+        const stats = await window.blobManager.getStats();
+        const message = `채팅: ${stats.chats || 0}, 편지(보낸): ${stats.letters_to || 0}, 편지(받은): ${stats.letters_from || 0}, 사진: ${stats.photos || 0}, 타임라인: ${stats.timeline || 0}`;
+        showStatus('system-status', message);
+      } catch (error) {
+        showStatus('system-status', 'STATS LOAD FAILED', 'error');
+      }
+    };
+
+    window.loadChatLogs = async function() {
       const listEl = document.getElementById('chat-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING CHAT LOGS <<<</div>';
       
-      setTimeout(() => {
-        listEl.innerHTML = `
-          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
-            <div style="color: #4ecdc4; font-size: 8px;">샘플 채팅 로그</div>
-            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">User: 안녕하냥!</div>
-            <div style="color: #86efac; font-size: 10px;">Bot: 안녕하다냥! 무엇을 도와줄까?</div>
-          </div>
-          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
-            Firebase 연결 후 실제 데이터가 표시됩니다
-          </div>
-        `;
-        showStatus('chat-status', 'SAMPLE CHAT LOGS LOADED');
-      }, 1500);
-    };
-
-    window.clearChatLogs = function() {
-      if (confirm('>>> DELETE ALL CHAT LOGS? <<<')) {
-        showStatus('chat-status', 'CHAT LOGS CLEARED');
-        document.getElementById('chat-list').innerHTML = '<div class="loading">채팅 로그가 삭제되었습니다</div>';
+      try {
+        const chats = await window.blobManager.getChatHistory(20);
+        if (chats.length === 0) {
+          listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">채팅 로그가 없습니다</div>';
+        } else {
+          listEl.innerHTML = '';
+          chats.forEach(chat => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;';
+            item.innerHTML = `
+              <div style="color: #4ecdc4; font-size: 8px;">${chat.timestamp}</div>
+              <div style="color: ${chat.sender === 'user' ? '#f87171' : '#86efac'}; font-size: 10px; margin: 4px 0;">${chat.sender}: ${chat.message}</div>
+            `;
+            listEl.appendChild(item);
+          });
+        }
+        showStatus('chat-status', 'CHAT LOGS LOADED');
+      } catch (error) {
+        listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+        showStatus('chat-status', 'LOAD FAILED', 'error');
       }
     };
 
-    window.loadLettersTo = function() {
+    window.clearChatLogs = async function() {
+      if (confirm('>>> DELETE ALL CHAT LOGS? <<<')) {
+        try {
+          await window.blobManager.clearChats();
+          showStatus('chat-status', 'CHAT LOGS CLEARED');
+          document.getElementById('chat-list').innerHTML = '<div class="loading">채팅 로그가 삭제되었습니다</div>';
+        } catch (error) {
+          showStatus('chat-status', 'CLEAR FAILED', 'error');
+        }
+      }
+    };
+
+    window.loadLettersTo = async function() {
       const listEl = document.getElementById('letters-to-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING SENT LETTERS <<<</div>';
       
-      if (isConnected && db) {
-        setTimeout(async () => {
-          try {
-            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-            const snapshot = await getDocs(collection(db, 'lettersToNyangkun'));
-            
-            if (snapshot.empty) {
-              listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">보낸 편지가 없습니다</div>';
-            } else {
-              listEl.innerHTML = '';
-              snapshot.forEach((doc) => {
-                const data = doc.data();
-                const item = document.createElement('div');
-                item.style.cssText = 'background: rgba(236,72,153,0.1); border: 1px solid #ec4899; padding: 8px; margin: 4px 0; font-size: 7px;';
-                item.innerHTML = `
-                  <div style="color: #ec4899; font-weight: bold;">${data.title || 'Untitled'}</div>
-                  <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(data.content || '').substring(0, 100)}...</div>
-                  <div style="color: #666; font-size: 6px;">${data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'}</div>
-                  <button onclick="deleteLetter('lettersToNyangkun', '${doc.id}')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
-                `;
-                listEl.appendChild(item);
-              });
-            }
-            showStatus('letters-to-status', 'SENT LETTERS LOADED');
-          } catch (error) {
-            console.error('편지 로딩 실패:', error);
-            listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
-            showStatus('letters-to-status', 'LOAD FAILED', 'error');
-          }
-        }, 500);
-      } else {
-        setTimeout(() => {
-          listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">Firebase 연결이 필요합니다</div>';
-          showStatus('letters-to-status', 'NO CONNECTION', 'error');
-        }, 500);
+      try {
+        const letters = await window.blobManager.getLetters('to');
+        if (letters.length === 0) {
+          listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">보낸 편지가 없습니다</div>';
+        } else {
+          listEl.innerHTML = '';
+          letters.forEach(letter => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background: rgba(236,72,153,0.1); border: 1px solid #ec4899; padding: 8px; margin: 4px 0; font-size: 7px;';
+            item.innerHTML = `
+              <div style="color: #ec4899; font-weight: bold;">${letter.title || 'Untitled'}</div>
+              <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(letter.content || '').substring(0, 100)}...</div>
+              <div style="color: #666; font-size: 6px;">${letter.timestamp || 'No Date'}</div>
+              <button onclick="deleteLetter('${letter.id}', '')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
+            `;
+            listEl.appendChild(item);
+          });
+        }
+        showStatus('letters-to-status', 'SENT LETTERS LOADED');
+      } catch (error) {
+        listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+        showStatus('letters-to-status', 'LOAD FAILED', 'error');
       }
     };
 
-    window.loadLettersFrom = function() {
+    window.loadLettersFrom = async function() {
       const listEl = document.getElementById('letters-from-list');
       listEl.innerHTML = '<div class="loading">>>> LOADING RECEIVED LETTERS <<<</div>';
       
-      if (isConnected && db) {
-        setTimeout(async () => {
-          try {
-            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-            const snapshot = await getDocs(collection(db, 'lettersFromNyangkun'));
-            
-            if (snapshot.empty) {
-              listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">받은 편지가 없습니다</div>';
-            } else {
-              listEl.innerHTML = '';
-              snapshot.forEach((doc) => {
-                const data = doc.data();
-                const item = document.createElement('div');
-                item.style.cssText = 'background: rgba(245,158,11,0.1); border: 1px solid #f59e0b; padding: 8px; margin: 4px 0; font-size: 7px;';
-                item.innerHTML = `
-                  <div style="color: #f59e0b; font-weight: bold;">From: ${data.name || 'Anonymous'}</div>
-                  <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(data.message || '').substring(0, 100)}...</div>
-                  <div style="color: #666; font-size: 6px;">${data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'}</div>
-                  <button onclick="deleteLetter('lettersFromNyangkun', '${doc.id}')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
-                `;
-                listEl.appendChild(item);
-              });
-            }
-            showStatus('letters-from-status', 'RECEIVED LETTERS LOADED');
-          } catch (error) {
-            console.error('편지 로딩 실패:', error);
-            listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
-            showStatus('letters-from-status', 'LOAD FAILED', 'error');
-          }
-        }, 500);
-      } else {
-        setTimeout(() => {
-          listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">Firebase 연결이 필요합니다</div>';
-          showStatus('letters-from-status', 'NO CONNECTION', 'error');
-        }, 500);
+      try {
+        const letters = await window.blobManager.getLetters('from');
+        if (letters.length === 0) {
+          listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">받은 편지가 없습니다</div>';
+        } else {
+          listEl.innerHTML = '';
+          letters.forEach(letter => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background: rgba(245,158,11,0.1); border: 1px solid #f59e0b; padding: 8px; margin: 4px 0; font-size: 7px;';
+            item.innerHTML = `
+              <div style="color: #f59e0b; font-weight: bold;">From: ${letter.name || 'Anonymous'}</div>
+              <div style="color: #86efac; margin: 4px 0; line-height: 1.4;">${(letter.message || letter.content || '').substring(0, 100)}...</div>
+              <div style="color: #666; font-size: 6px;">${letter.timestamp || 'No Date'}</div>
+              <button onclick="deleteLetter('${letter.id}', '')" class="btn-danger btn-small" style="margin-top: 4px;">삭제</button>
+            `;
+            listEl.appendChild(item);
+          });
+        }
+        showStatus('letters-from-status', 'RECEIVED LETTERS LOADED');
+      } catch (error) {
+        listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+        showStatus('letters-from-status', 'LOAD FAILED', 'error');
       }
     };
 
-    window.clearLettersTo = function() {
+    window.clearLettersTo = async function() {
       if (confirm('>>> DELETE ALL SENT LETTERS? <<<')) {
         document.getElementById('letters-to-list').innerHTML = '<div style="color: #666; font-size: 8px;">편지가 삭제되었습니다</div>';
         showStatus('letters-to-status', 'SENT LETTERS CLEARED');
       }
     };
 
-    window.clearLettersFrom = function() {
+    window.clearLettersFrom = async function() {
       if (confirm('>>> DELETE ALL RECEIVED LETTERS? <<<')) {
         document.getElementById('letters-from-list').innerHTML = '<div style="color: #666; font-size: 8px;">편지가 삭제되었습니다</div>';
         showStatus('letters-from-status', 'RECEIVED LETTERS CLEARED');
       }
     };
 
-    window.deleteLetter = async function(collectionName, id) {
+    window.deleteLetter = async function(id, password) {
       if (confirm('>>> DELETE THIS LETTER? <<<')) {
         try {
-          if (db) {
-            const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-            await deleteDoc(doc(db, collectionName, id));
-            
-              if (collectionName === 'lettersToNyangkun') {
-              loadLettersTo();
-            } else {
-              loadLettersFrom();
-            }
-          }
+          await window.blobManager.deleteLetter(id, password);
+          loadLettersTo();
+          loadLettersFrom();
         } catch (error) {
-          console.error('편지 삭제 실패:', error);
-          showStatus(collectionName === 'lettersToNyangkun' ? 'letters-to-status' : 'letters-from-status', 'DELETE FAILED', 'error');
+          showStatus('letters-to-status', 'DELETE FAILED', 'error');
         }
       }
     };
@@ -902,24 +867,13 @@
           return;
         }
 
-        if (db) {
-          try {
-            const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-            await addDoc(collection(db, 'lettersToNyangkun'), {
-              title: title,
-              content: content,
-              timestamp: serverTimestamp()
-            });
-            
-            showStatus('letters-to-status', 'LETTER SENT TO NYANGKUN');
-            letterToForm.reset();
-            loadLettersTo();
-          } catch (error) {
-            console.error('편지 전송 실패:', error);
-            showStatus('letters-to-status', 'SEND FAILED', 'error');
-          }
-        } else {
-          showStatus('letters-to-status', 'FIREBASE NOT CONNECTED', 'error');
+        try {
+          await window.blobManager.saveLetter('to', { title, content });
+          showStatus('letters-to-status', 'LETTER SENT TO NYANGKUN');
+          letterToForm.reset();
+          loadLettersTo();
+        } catch (error) {
+          showStatus('letters-to-status', 'SEND FAILED', 'error');
         }
       });
     }
@@ -938,26 +892,14 @@
           return;
         }
 
-        if (db) {
-          try {
-            const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-            await addDoc(collection(db, 'lettersFromNyangkun'), {
-              name: name,
-              message: content,
-              password: password,
-              timestamp: serverTimestamp()
-            });
-            
-            showStatus('letters-from-status', 'LETTER SENT FROM NYANGKUN');
-            letterFromForm.reset();
-            document.getElementById('letter-from-name').value = '냥쿤';
-            loadLettersFrom();
-          } catch (error) {
-            console.error('편지 전송 실패:', error);
-            showStatus('letters-from-status', 'SEND FAILED', 'error');
-          }
-        } else {
-          showStatus('letters-from-status', 'FIREBASE NOT CONNECTED', 'error');
+        try {
+          await window.blobManager.saveLetter('from', { name, message: content, password });
+          showStatus('letters-from-status', 'LETTER SENT FROM NYANGKUN');
+          letterFromForm.reset();
+          document.getElementById('letter-from-name').value = '냥쿤';
+          loadLettersFrom();
+        } catch (error) {
+          showStatus('letters-from-status', 'SEND FAILED', 'error');
         }
       });
     }
@@ -974,15 +916,13 @@
           position: document.getElementById('timeline-position').value
         };
 
-        if (db) {
-          try {
-            showStatus('timeline-status', 'TIMELINE EVENT ADDED');
-            timelineForm.reset();
-          } catch (error) {
-            showStatus('timeline-status', 'TIMELINE ADD FAILED', 'error');
-          }
-        } else {
-          showStatus('timeline-status', 'FIREBASE NOT CONNECTED - DEMO MODE', 'error');
+        try {
+          await window.blobManager.saveTimelineEvent(data);
+          showStatus('timeline-status', 'TIMELINE EVENT ADDED');
+          timelineForm.reset();
+          loadTimelineEvents();
+        } catch (error) {
+          showStatus('timeline-status', 'TIMELINE ADD FAILED', 'error');
         }
       });
     }
@@ -1002,25 +942,80 @@
           return;
         }
 
-        if (storage) {
-          try {
-            showStatus('photo-status', 'UPLOADING...', 'success');
-            showStatus('photo-status', 'PHOTO UPLOADED');
-            photoForm.reset();
-          } catch (error) {
-            showStatus('photo-status', 'UPLOAD FAILED', 'error');
-          }
-        } else {
-          showStatus('photo-status', 'FIREBASE NOT CONNECTED - DEMO MODE', 'error');
+        try {
+          showStatus('photo-status', 'UPLOADING...');
+          await window.blobManager.savePhoto(file, title, description, date);
+          showStatus('photo-status', 'PHOTO UPLOADED');
+          photoForm.reset();
+          loadPhotos();
+        } catch (error) {
+          showStatus('photo-status', 'UPLOAD FAILED', 'error');
         }
       });
     }
 
+    async function loadTimelineEvents() {
+      const listEl = document.getElementById('timeline-list');
+      listEl.innerHTML = '<div class="loading">>>> LOADING TIMELINE DATA <<<</div>';
+      
+      try {
+        const events = await window.blobManager.getTimelineEvents();
+        if (events.length === 0) {
+          listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">타임라인 이벤트가 없습니다</div>';
+        } else {
+          listEl.innerHTML = '';
+          events.forEach(event => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #4ecdc4;';
+            item.innerHTML = `
+              <div style="color: #4ecdc4; font-size: 8px;">${event.date} (${event.position})</div>
+              <div style="color: #86efac; font-size: 10px; margin: 4px 0; font-weight: bold;">${event.title}</div>
+              <div style="color: #ffffff; font-size: 8px;">${event.content}</div>
+            `;
+            listEl.appendChild(item);
+          });
+        }
+      } catch (error) {
+        listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+      }
+    }
+
+    async function loadPhotos() {
+      const listEl = document.getElementById('photo-list');
+      listEl.innerHTML = '<div class="loading">>>> LOADING PHOTO DATA <<<</div>';
+      
+      try {
+        const photos = await window.blobManager.getPhotos();
+        if (photos.length === 0) {
+          listEl.innerHTML = '<div style="color: #666; font-size: 8px; text-align: center;">사진이 없습니다</div>';
+        } else {
+          listEl.innerHTML = '';
+          photos.forEach(photo => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #9333ea; display: flex; gap: 12px;';
+            item.innerHTML = `
+              <img src="${photo.url}" style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #666;" />
+              <div style="flex: 1;">
+                <div style="color: #9333ea; font-size: 8px; font-weight: bold;">${photo.title}</div>
+                <div style="color: #86efac; font-size: 7px; margin: 2px 0;">${photo.description}</div>
+                <div style="color: #666; font-size: 6px;">${photo.date}</div>
+              </div>
+            `;
+            listEl.appendChild(item);
+          });
+        }
+      } catch (error) {
+        listEl.innerHTML = '<div style="color: #ff6b6b; font-size: 8px;">로딩 실패</div>';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('🛠️ 냥쿤OS 관리자 콘솔 시작됨');
+      console.log('🛠️ 냥쿤OS 관리자 콘솔 시작됨 - Blob Storage 버전');
       
       setTimeout(() => {
         testAll();
+        loadTimelineEvents();
+        loadPhotos();
       }, 1000);
       
       document.addEventListener('click', (e) => {
