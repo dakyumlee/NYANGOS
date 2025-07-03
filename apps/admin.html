@@ -64,7 +64,7 @@
       position: relative;
       z-index: 2;
       padding: 20px;
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
@@ -98,35 +98,66 @@
       opacity: 0.8;
     }
 
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 30px;
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .admin-section {
+    .tab-button {
+      padding: 12px 16px;
+      font-size: 9px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      box-shadow: 
+        0 0 10px rgba(0, 255, 65, 0.3),
+        inset 0 0 10px rgba(0, 255, 65, 0.1);
+    }
+
+    .tab-button.active {
+      background: #00ff41;
+      color: #000;
+      box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.8),
+        inset 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+
+    .tab-button:hover:not(.active) {
+      border-color: #ff6b6b;
+      color: #ff6b6b;
+      box-shadow: 
+        0 0 15px rgba(255, 107, 107, 0.5),
+        inset 0 0 15px rgba(255, 107, 107, 0.2);
+    }
+
+    .tab-content {
+      display: none;
       background: rgba(0, 0, 0, 0.95);
       border: 3px solid #00ff41;
+      padding: 20px;
       box-shadow: 
         0 0 30px rgba(0, 255, 65, 0.5),
         inset 0 0 30px rgba(0, 255, 65, 0.1);
       backdrop-filter: blur(10px);
     }
 
-    .section-header {
-      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
-      color: #00ff41;
-      padding: 12px 16px;
-      border-bottom: 2px solid #00ff41;
-      font-size: 10px;
-      text-shadow: 0 0 10px currentColor;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .tab-content.active {
+      display: block;
     }
 
-    .section-content {
-      padding: 20px;
+    .section-header {
+      color: #4ecdc4;
+      font-size: 12px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px currentColor;
+      text-align: center;
     }
 
     .form-group {
@@ -247,9 +278,9 @@
       color: #ff6b6b;
     }
 
-    .btn-danger:hover {
-      background: #ff6b6b;
-      color: #000;
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 7px;
     }
 
     .status-message {
@@ -284,7 +315,7 @@
 
     .item-list {
       margin-top: 20px;
-      max-height: 300px;
+      max-height: 400px;
       overflow-y: auto;
     }
 
@@ -293,10 +324,6 @@
       border: 1px solid #00ff41;
       margin-bottom: 8px;
       padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
       transition: all 0.3s ease;
     }
 
@@ -306,13 +333,16 @@
       box-shadow: 0 0 10px rgba(76, 205, 196, 0.3);
     }
 
-    .item-content {
-      flex: 1;
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
     }
 
     .item-content h4 {
       color: #4ecdc4;
-      margin: 0 0 6px 0;
+      margin: 0;
       font-size: 9px;
     }
 
@@ -335,33 +365,20 @@
       flex-shrink: 0;
     }
 
-    .item-actions button {
-      padding: 4px 8px;
-      font-size: 6px;
-    }
-
     .photo-preview {
-      width: 60px;
-      height: 45px;
+      width: 80px;
+      height: 60px;
       object-fit: cover;
       border: 1px solid #00ff41;
-      margin-right: 8px;
-    }
-
-    .system-stats {
-      background: rgba(0, 0, 0, 0.95);
-      border: 3px solid #00ff41;
-      padding: 16px;
-      margin-top: 20px;
-      box-shadow: 
-        0 0 30px rgba(0, 255, 65, 0.5),
-        inset 0 0 30px rgba(0, 255, 65, 0.1);
+      margin-bottom: 8px;
+      cursor: pointer;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .stat-item {
@@ -397,9 +414,22 @@
       50% { opacity: 1; }
     }
 
+    .edit-form {
+      display: none;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #ff6b6b;
+      padding: 15px;
+      margin-top: 10px;
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .edit-form.active {
+      display: block;
+    }
+
     @media (max-width: 768px) {
-      .admin-grid {
-        grid-template-columns: 1fr;
+      .tab-nav {
+        flex-direction: column;
       }
       
       .form-row {
@@ -410,7 +440,7 @@
         font-size: 16px;
       }
       
-      .item {
+      .item-header {
         flex-direction: column;
         align-items: stretch;
       }
@@ -435,134 +465,118 @@
       <p>>>> SYSTEM CONTROL PANEL v2.1 <<<</p>
     </div>
 
-    <div class="admin-grid">
-      <div class="admin-section">
-        <div class="section-header">
-          <span>🌟 TIMELINE.EXE - 러브스토리 관리</span>
-        </div>
-        <div class="section-content">
-          <form id="timeline-form">
-            <div class="form-group">
-              <div class="form-row">
-                <div>
-                  <label for="timeline-date">날짜</label>
-                  <input type="text" id="timeline-date" placeholder="2024.03.11" required />
-                </div>
-                <div>
-                  <label for="timeline-position">위치 %</label>
-                  <input type="text" id="timeline-position" placeholder="25%" required />
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="timeline-title">제목</label>
-              <input type="text" id="timeline-title" placeholder="특별한 날" required />
-            </div>
-            <div class="form-group">
-              <label for="timeline-content">내용</label>
-              <textarea id="timeline-content" placeholder="이 날에 일어난 특별한 일을 적어보세요"></textarea>
-            </div>
-            <button type="submit">>>> ADD TO TIMELINE <<<</button>
-          </form>
-          <div id="timeline-status" class="status-message"></div>
-          <div id="timeline-list" class="item-list"></div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="section-header">
-          <span>📸 MEMORY_BOX.EXE - 사진 갤러리 관리</span>
-        </div>
-        <div class="section-content">
-          <form id="photo-form">
-            <div class="form-group">
-              <label for="photo-file">사진 파일</label>
-              <input type="file" id="photo-file" accept="image/*" required />
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div>
-                  <label for="photo-title">제목</label>
-                  <input type="text" id="photo-title" placeholder="추억의 한 장면" required />
-                </div>
-                <div>
-                  <label for="photo-date">날짜</label>
-                  <input type="text" id="photo-date" placeholder="2024.04.01" required />
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="photo-description">설명</label>
-              <textarea id="photo-description" placeholder="이 사진에 대한 설명을 적어보세요"></textarea>
-            </div>
-            <button type="submit">>>> UPLOAD IMAGE <<<</button>
-          </form>
-          <div id="photo-status" class="status-message"></div>
-          <div id="photo-list" class="item-list"></div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="section-header">
-          <span>🤖 CHATBOT.EXE - 채팅 로그 & 통계</span>
-        </div>
-        <div class="section-content">
-          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button id="load-chat-logs">>>> LOAD CHAT LOGS <<<</button>
-            <button id="clear-chat-logs" class="btn-danger">>>> CLEAR ALL LOGS <<<</button>
-          </div>
-          <div class="stats-grid" style="margin-bottom: 20px;">
-            <div class="stat-item">
-              <div class="stat-label">총 메시지</div>
-              <div class="stat-value" id="total-messages">-</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">사용자 메시지</div>
-              <div class="stat-value" id="user-messages">-</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">봇 응답</div>
-              <div class="stat-value" id="bot-messages">-</div>
-            </div>
-          </div>
-          <div id="chat-status" class="status-message"></div>
-          <div id="chat-list" class="item-list"></div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="section-header">
-          <span>💌 MAILBOX.EXE - 편지함 관리</span>
-        </div>
-        <div class="section-content">
-          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button id="load-letters-to">>>> LOAD SENT LETTERS <<<</button>
-            <button id="load-letters-from">>>> LOAD RECEIVED LETTERS <<<</button>
-          </div>
-          <div id="letters-status" class="status-message"></div>
-          <div id="letters-list" class="item-list"></div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="section-header">
-          <span>⚙️ SYSTEM.EXE - 시스템 관리</span>
-        </div>
-        <div class="section-content">
-          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button id="backup-data">>>> BACKUP DATA <<<</button>
-            <button id="clear-cache">>>> CLEAR CACHE <<<</button>
-            <button id="system-logout" class="btn-danger">>>> LOGOUT <<<</button>
-          </div>
-          <div id="system-status" class="status-message"></div>
-        </div>
-      </div>
+    <div class="tab-nav">
+      <button class="tab-button active" data-tab="timeline">🌟 타임라인</button>
+      <button class="tab-button" data-tab="photos">📸 사진관리</button>
+      <button class="tab-button" data-tab="chat">🤖 채팅로그</button>
+      <button class="tab-button" data-tab="letters">💌 편지관리</button>
+      <button class="tab-button" data-tab="system">⚙️ 시스템</button>
     </div>
 
-    <div class="system-stats">
-      <div class="section-header">
-        <span>📊 SYSTEM STATISTICS</span>
+    <div id="timeline-tab" class="tab-content active">
+      <div class="section-header">🌟 TIMELINE.EXE - 러브스토리 관리</div>
+      
+      <form id="timeline-form">
+        <div class="form-group">
+          <div class="form-row">
+            <div>
+              <label for="timeline-date">날짜</label>
+              <input type="text" id="timeline-date" placeholder="2024.03.11" required />
+            </div>
+            <div>
+              <label for="timeline-position">위치 %</label>
+              <input type="text" id="timeline-position" placeholder="25%" required />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="timeline-title">제목</label>
+          <input type="text" id="timeline-title" placeholder="특별한 날" required />
+        </div>
+        <div class="form-group">
+          <label for="timeline-content">내용</label>
+          <textarea id="timeline-content" placeholder="이 날에 일어난 특별한 일을 적어보세요"></textarea>
+        </div>
+        <button type="submit">>>> ADD TO TIMELINE <<<</button>
+      </form>
+      
+      <div id="timeline-status" class="status-message"></div>
+      <div id="timeline-list" class="item-list"></div>
+    </div>
+
+    <div id="photos-tab" class="tab-content">
+      <div class="section-header">📸 MEMORY_BOX.EXE - 사진 갤러리 관리</div>
+      
+      <form id="photo-form">
+        <div class="form-group">
+          <label for="photo-file">사진 파일</label>
+          <input type="file" id="photo-file" accept="image/*" required />
+        </div>
+        <div class="form-group">
+          <div class="form-row">
+            <div>
+              <label for="photo-title">제목</label>
+              <input type="text" id="photo-title" placeholder="추억의 한 장면" required />
+            </div>
+            <div>
+              <label for="photo-date">날짜</label>
+              <input type="text" id="photo-date" placeholder="2024.04.01" required />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="photo-description">설명</label>
+          <textarea id="photo-description" placeholder="이 사진에 대한 설명을 적어보세요"></textarea>
+        </div>
+        <button type="submit">>>> UPLOAD IMAGE <<<</button>
+      </form>
+      
+      <div id="photo-status" class="status-message"></div>
+      <div id="photo-list" class="item-list"></div>
+    </div>
+
+    <div id="chat-tab" class="tab-content">
+      <div class="section-header">🤖 CHATBOT.EXE - 채팅 로그 & 통계</div>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">총 메시지</div>
+          <div class="stat-value" id="total-messages">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">사용자 메시지</div>
+          <div class="stat-value" id="user-messages">-</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">봇 응답</div>
+          <div class="stat-value" id="bot-messages">-</div>
+        </div>
       </div>
+      
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="load-chat-logs">>>> LOAD CHAT LOGS <<<</button>
+        <button id="clear-chat-logs" class="btn-danger">>>> CLEAR ALL LOGS <<<</button>
+      </div>
+      
+      <div id="chat-status" class="status-message"></div>
+      <div id="chat-list" class="item-list"></div>
+    </div>
+
+    <div id="letters-tab" class="tab-content">
+      <div class="section-header">💌 MAILBOX.EXE - 편지함 관리</div>
+      
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="load-letters-to">>>> LOAD SENT LETTERS <<<</button>
+        <button id="load-letters-from">>>> LOAD RECEIVED LETTERS <<<</button>
+      </div>
+      
+      <div id="letters-status" class="status-message"></div>
+      <div id="letters-list" class="item-list"></div>
+    </div>
+
+    <div id="system-tab" class="tab-content">
+      <div class="section-header">⚙️ SYSTEM.EXE - 시스템 관리</div>
+      
       <div class="stats-grid">
         <div class="stat-item">
           <div class="stat-label">타임라인 이벤트</div>
@@ -581,6 +595,14 @@
           <div class="stat-value" id="system-health">ONLINE</div>
         </div>
       </div>
+      
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="backup-data">>>> BACKUP DATA <<<</button>
+        <button id="clear-cache">>>> CLEAR CACHE <<<</button>
+        <button id="system-logout" class="btn-danger">>>> LOGOUT <<<</button>
+      </div>
+      
+      <div id="system-status" class="status-message"></div>
     </div>
   </div>
 
@@ -619,6 +641,10 @@
     const storage = getStorage(app);
     const auth = getAuth(app);
 
+    const timelineRef = collection(db, "timeline");
+    const photosRef = collection(db, "photos");
+    const lettersToRef = collection(db, "lettersToNyangkun");
+    const lettersFromRef = collection(db, "lettersFromNyangkun");
     const chatsRef = collection(db, "chats");
 
     function playSystemSound(type = 'click') {
@@ -666,12 +692,24 @@
       }, 3000);
     }
 
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tabName = button.getAttribute('data-tab');
+        
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        button.classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+        
+        playSystemSound('click');
+      });
+    });
+
     async function updateStats() {
       try {
         const timelineSnap = await getDocs(timelineRef);
         const photosSnap = await getDocs(photosRef);
-        const lettersToSnap = await getDocs(lettersToRef);
-        const lettersFromSnap = await getDocs(lettersFromRef);
         const chatsSnap = await getDocs(chatsRef);
 
         document.getElementById('timeline-count').textContent = timelineSnap.size;
@@ -710,14 +748,42 @@
           const item = document.createElement('div');
           item.className = 'item';
           item.innerHTML = `
-            <div class="item-content">
-              <h4>${data.title}</h4>
-              <p>${data.content || '내용 없음'}</p>
-              <div class="item-meta">날짜: ${data.date} | 위치: ${data.position}</div>
+            <div class="item-header">
+              <div class="item-content">
+                <h4>${data.title}</h4>
+                <p>${data.content || '내용 없음'}</p>
+                <div class="item-meta">날짜: ${data.date} | 위치: ${data.position}</div>
+              </div>
+              <div class="item-actions">
+                <button class="btn-small" onclick="editTimelineItem('${docSnap.id}')">수정</button>
+                <button class="btn-small btn-danger" onclick="deleteTimeline('${docSnap.id}')">삭제</button>
+              </div>
             </div>
-            <div class="item-actions">
-              <button onclick="editTimeline('${docSnap.id}', '${data.title}', '${data.content || ''}', '${data.position}')">수정</button>
-              <button onclick="deleteTimeline('${docSnap.id}')" class="btn-danger">삭제</button>
+            <div id="edit-${docSnap.id}" class="edit-form">
+              <div class="form-group">
+                <label>제목</label>
+                <input type="text" id="edit-title-${docSnap.id}" value="${data.title}" />
+              </div>
+              <div class="form-group">
+                <label>내용</label>
+                <textarea id="edit-content-${docSnap.id}">${data.content || ''}</textarea>
+              </div>
+              <div class="form-group">
+                <div class="form-row">
+                  <div>
+                    <label>날짜</label>
+                    <input type="text" id="edit-date-${docSnap.id}" value="${data.date}" />
+                  </div>
+                  <div>
+                    <label>위치</label>
+                    <input type="text" id="edit-position-${docSnap.id}" value="${data.position}" />
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-small" onclick="saveTimelineEdit('${docSnap.id}')">저장</button>
+                <button class="btn-small btn-danger" onclick="cancelTimelineEdit('${docSnap.id}')">취소</button>
+              </div>
             </div>
           `;
           timelineList.appendChild(item);
@@ -731,6 +797,36 @@
         showStatus('timeline-status', 'TIMELINE LOAD FAILED', 'error');
       }
     }
+
+    window.editTimelineItem = (id) => {
+      const editForm = document.getElementById(`edit-${id}`);
+      editForm.classList.toggle('active');
+    };
+
+    window.cancelTimelineEdit = (id) => {
+      const editForm = document.getElementById(`edit-${id}`);
+      editForm.classList.remove('active');
+    };
+
+    window.saveTimelineEdit = async (id) => {
+      try {
+        const title = document.getElementById(`edit-title-${id}`).value;
+        const content = document.getElementById(`edit-content-${id}`).value;
+        const date = document.getElementById(`edit-date-${id}`).value;
+        const position = document.getElementById(`edit-position-${id}`).value;
+
+        await updateDoc(doc(db, "timeline", id), {
+          title, content, date, position
+        });
+
+        showStatus('timeline-status', 'TIMELINE UPDATED');
+        document.getElementById(`edit-${id}`).classList.remove('active');
+        loadTimeline();
+      } catch (error) {
+        console.error('Timeline update error:', error);
+        showStatus('timeline-status', 'UPDATE FAILED', 'error');
+      }
+    };
 
     timelineForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -769,27 +865,6 @@
       }
     };
 
-    window.editTimeline = async (id, currentTitle, currentContent, currentPosition) => {
-      const newTitle = prompt('>>> NEW TITLE <<<', currentTitle);
-      const newContent = prompt('>>> NEW CONTENT <<<', currentContent);
-      const newPosition = prompt('>>> NEW POSITION <<<', currentPosition);
-      
-      if (newTitle && newContent && newPosition) {
-        try {
-          await updateDoc(doc(db, "timeline", id), {
-            title: newTitle,
-            content: newContent,
-            position: newPosition
-          });
-          showStatus('timeline-status', 'TIMELINE EVENT UPDATED');
-          loadTimeline();
-        } catch (error) {
-          console.error('Timeline update error:', error);
-          showStatus('timeline-status', 'UPDATE FAILED', 'error');
-        }
-      }
-    };
-
     const photoForm = document.getElementById('photo-form');
     const photoList = document.getElementById('photo-list');
 
@@ -805,14 +880,35 @@
           const item = document.createElement('div');
           item.className = 'item';
           item.innerHTML = `
-            <img src="${data.url}" class="photo-preview" alt="${data.title}" />
-            <div class="item-content">
-              <h4>${data.title}</h4>
-              <p>${data.description || '설명 없음'}</p>
-              <div class="item-meta">날짜: ${data.date}</div>
+            <img src="${data.url}" class="photo-preview" alt="${data.title}" onclick="window.open('${data.url}', '_blank')" />
+            <div class="item-header">
+              <div class="item-content">
+                <h4>${data.title}</h4>
+                <p>${data.description || '설명 없음'}</p>
+                <div class="item-meta">날짜: ${data.date}</div>
+              </div>
+              <div class="item-actions">
+                <button class="btn-small" onclick="editPhotoItem('${docSnap.id}')">수정</button>
+                <button class="btn-small btn-danger" onclick="deletePhoto('${docSnap.id}', '${data.url}')">삭제</button>
+              </div>
             </div>
-            <div class="item-actions">
-              <button onclick="deletePhoto('${docSnap.id}', '${data.url}')" class="btn-danger">삭제</button>
+            <div id="edit-photo-${docSnap.id}" class="edit-form">
+              <div class="form-group">
+                <label>제목</label>
+                <input type="text" id="edit-photo-title-${docSnap.id}" value="${data.title}" />
+              </div>
+              <div class="form-group">
+                <label>설명</label>
+                <textarea id="edit-photo-description-${docSnap.id}">${data.description || ''}</textarea>
+              </div>
+              <div class="form-group">
+                <label>날짜</label>
+                <input type="text" id="edit-photo-date-${docSnap.id}" value="${data.date}" />
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-small" onclick="savePhotoEdit('${docSnap.id}')">저장</button>
+                <button class="btn-small btn-danger" onclick="cancelPhotoEdit('${docSnap.id}')">취소</button>
+              </div>
             </div>
           `;
           photoList.appendChild(item);
@@ -826,6 +922,35 @@
         showStatus('photo-status', 'PHOTO LOAD FAILED', 'error');
       }
     }
+
+    window.editPhotoItem = (id) => {
+      const editForm = document.getElementById(`edit-photo-${id}`);
+      editForm.classList.toggle('active');
+    };
+
+    window.cancelPhotoEdit = (id) => {
+      const editForm = document.getElementById(`edit-photo-${id}`);
+      editForm.classList.remove('active');
+    };
+
+    window.savePhotoEdit = async (id) => {
+      try {
+        const title = document.getElementById(`edit-photo-title-${id}`).value;
+        const description = document.getElementById(`edit-photo-description-${id}`).value;
+        const date = document.getElementById(`edit-photo-date-${id}`).value;
+
+        await updateDoc(doc(db, "photos", id), {
+          title, description, date
+        });
+
+        showStatus('photo-status', 'PHOTO UPDATED');
+        document.getElementById(`edit-photo-${id}`).classList.remove('active');
+        loadPhotos();
+      } catch (error) {
+        console.error('Photo update error:', error);
+        showStatus('photo-status', 'UPDATE FAILED', 'error');
+      }
+    };
 
     photoForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -864,8 +989,12 @@
         try {
           await deleteDoc(doc(db, "photos", id));
           
-          const storageRef = ref(storage, url);
-          await deleteObject(storageRef);
+          try {
+            const storageRef = ref(storage, url);
+            await deleteObject(storageRef);
+          } catch (storageError) {
+            console.log('Storage delete failed, but document deleted');
+          }
           
           showStatus('photo-status', 'PHOTO DELETED');
           loadPhotos();
@@ -905,13 +1034,15 @@
           const timeStr = data.timestamp.toLocaleString('ko-KR');
           
           item.innerHTML = `
-            <div class="item-content">
-              <h4>${isUser ? '👤 USER' : '🤖 BOT'}</h4>
-              <p>${data.message}</p>
-              <div class="item-meta">${timeStr}</div>
-            </div>
-            <div class="item-actions">
-              <button onclick="deleteChat('${data.id}')" class="btn-danger">삭제</button>
+            <div class="item-header">
+              <div class="item-content">
+                <h4>${isUser ? '👤 USER' : '🤖 BOT'}</h4>
+                <p>${data.message}</p>
+                <div class="item-meta">${timeStr}</div>
+              </div>
+              <div class="item-actions">
+                <button class="btn-small btn-danger" onclick="deleteChat('${data.id}')">삭제</button>
+              </div>
             </div>
           `;
           chatList.appendChild(item);
@@ -976,13 +1107,15 @@
           const item = document.createElement('div');
           item.className = 'item';
           item.innerHTML = `
-            <div class="item-content">
-              <h4>📤 ${data.title}</h4>
-              <p>${data.content}</p>
-              <div class="item-meta">보낸 편지</div>
-            </div>
-            <div class="item-actions">
-              <button onclick="deleteLetter('lettersToNyangkun', '${docSnap.id}')" class="btn-danger">삭제</button>
+            <div class="item-header">
+              <div class="item-content">
+                <h4>📤 ${data.title}</h4>
+                <p>${data.content}</p>
+                <div class="item-meta">보낸 편지</div>
+              </div>
+              <div class="item-actions">
+                <button class="btn-small btn-danger" onclick="deleteLetter('lettersToNyangkun', '${docSnap.id}')">삭제</button>
+              </div>
             </div>
           `;
           lettersList.appendChild(item);
@@ -1011,13 +1144,15 @@
           const item = document.createElement('div');
           item.className = 'item';
           item.innerHTML = `
-            <div class="item-content">
-              <h4>📥 ${data.name}</h4>
-              <p>${data.message}</p>
-              <div class="item-meta">받은 편지</div>
-            </div>
-            <div class="item-actions">
-              <button onclick="deleteLetter('lettersFromNyangkun', '${docSnap.id}')" class="btn-danger">삭제</button>
+            <div class="item-header">
+              <div class="item-content">
+                <h4>📥 ${data.name}</h4>
+                <p>${data.message}</p>
+                <div class="item-meta">받은 편지</div>
+              </div>
+              <div class="item-actions">
+                <button class="btn-small btn-danger" onclick="deleteLetter('lettersFromNyangkun', '${docSnap.id}')">삭제</button>
+              </div>
             </div>
           `;
           lettersList.appendChild(item);
