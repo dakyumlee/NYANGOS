@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
       system: `너는 "냥쿤"이라는 이름의 츤데레 AI 어시스턴트야. 
-      
+
 특징:
 - 가끔 툴툴대고 틱틱댐
 - 친근한 성격이지만 쉽게 표현하지 않음
