@@ -3,14 +3,650 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>냥쿤 사진첩</title>
-  <link rel="stylesheet" href="../style/base.css" />
-  <link rel="stylesheet" href="../style/photos.css" />
-  <script type="module" src="../script/photos.js"></script>
+  <title>추억보관함</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      color: #4ade80;
+      height: 100vh;
+      overflow: hidden;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(147, 51, 234, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 2px,
+          rgba(74, 222, 128, 0.01) 2px,
+          rgba(74, 222, 128, 0.01) 4px
+        );
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #4ade80;
+      box-shadow: 
+        inset 0 0 30px rgba(74, 222, 128, 0.05),
+        0 0 20px rgba(74, 222, 128, 0.1);
+    }
+
+    .viewer-header {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      padding: 12px 16px;
+      border-bottom: 2px solid #4ade80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    }
+
+    .viewer-title {
+      font-size: 10px;
+      color: #4ade80;
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .memory-counter {
+      font-size: 8px;
+      color: #86efac;
+      background: rgba(74, 222, 128, 0.1);
+      padding: 4px 8px;
+      border: 1px solid #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+      animation: counterPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes counterPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .view-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .view-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 6px 12px;
+      font-size: 7px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
+
+    .view-btn:hover {
+      background: rgba(74, 222, 128, 0.1);
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+    }
+
+    .view-btn.active {
+      background: #4ade80;
+      color: #000000;
+    }
+
+    .gallery-main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-gallery {
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      align-content: start;
+      background: rgba(5, 5, 5, 0.9);
+    }
+
+    .photo-gallery.slideshow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .photo-gallery::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .photo-gallery::-webkit-scrollbar-track {
+      background: rgba(74, 222, 128, 0.05);
+    }
+
+    .photo-gallery::-webkit-scrollbar-thumb {
+      background: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+    }
+
+    .memory-card {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 0 10px rgba(74, 222, 128, 0.2),
+        inset 0 0 10px rgba(74, 222, 128, 0.05);
+      animation: memoryFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes memoryFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .memory-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #4ade80, #9333ea, #f59e0b, #4ade80);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .memory-card:hover {
+      transform: scale(1.05) translateY(-5px);
+      border-color: #9333ea;
+      box-shadow: 
+        0 0 25px rgba(147, 51, 234, 0.4),
+        inset 0 0 25px rgba(147, 51, 234, 0.1);
+    }
+
+    .memory-card:hover::before {
+      opacity: 1;
+    }
+
+    .memory-card:hover .memory-img {
+      filter: contrast(1.2) saturate(1.3) brightness(1.1);
+      transform: scale(1.02);
+    }
+
+    .memory-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      margin-bottom: 12px;
+      filter: contrast(1.1) saturate(1.1);
+      transition: all 0.3s;
+    }
+
+    .memory-info {
+      text-align: center;
+    }
+
+    .memory-title {
+      font-size: 9px;
+      color: #86efac;
+      margin-bottom: 6px;
+      text-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
+      line-height: 1.3;
+    }
+
+    .memory-description {
+      font-size: 6px;
+      color: rgba(74, 222, 128, 0.7);
+      margin-bottom: 8px;
+      line-height: 1.4;
+      min-height: 24px;
+    }
+
+    .memory-date {
+      font-size: 5px;
+      color: rgba(147, 51, 234, 0.8);
+      background: rgba(147, 51, 234, 0.1);
+      padding: 3px 8px;
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      display: inline-block;
+      box-shadow: 0 0 5px rgba(147, 51, 234, 0.2);
+    }
+
+    .slideshow-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .slideshow-container.active {
+      display: flex;
+    }
+
+    .slide-img {
+      max-width: 90%;
+      max-height: 60%;
+      object-fit: contain;
+      border: 3px solid #4ade80;
+      box-shadow: 
+        0 0 30px rgba(74, 222, 128, 0.3),
+        inset 0 0 30px rgba(74, 222, 128, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .slide-info {
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .slide-title {
+      font-size: 12px;
+      color: #86efac;
+      margin-bottom: 12px;
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+    }
+
+    .slide-description {
+      font-size: 8px;
+      color: rgba(74, 222, 128, 0.8);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .slide-date {
+      font-size: 7px;
+      color: #9333ea;
+      background: rgba(147, 51, 234, 0.1);
+      padding: 4px 12px;
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      display: inline-block;
+    }
+
+    .slide-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+    }
+
+    .slide-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    }
+
+    .slide-btn:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+    }
+
+    .slide-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .slide-btn:disabled:hover {
+      background: rgba(0, 0, 0, 0.8);
+      color: #4ade80;
+      transform: none;
+    }
+
+    .empty-memories {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      color: rgba(74, 222, 128, 0.5);
+      font-size: 8px;
+      line-height: 1.8;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+      animation: floatSlow 3s ease-in-out infinite;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .loading-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 5, 5, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .loading-screen.hidden {
+      display: none;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(74, 222, 128, 0.3);
+      border-top: 3px solid #4ade80;
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 8px;
+      color: #4ade80;
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+      animation: textBlink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes textBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @media (max-width: 768px) {
+      .photo-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        padding: 12px;
+      }
+      
+      .memory-card {
+        padding: 8px;
+      }
+      
+      .memory-img {
+        height: 140px;
+      }
+      
+      .viewer-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+      
+      .view-controls {
+        justify-content: center;
+      }
+
+      .slide-img {
+        max-height: 50%;
+      }
+
+      .slide-controls {
+        bottom: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>📸 냥쿤 사진첩</h1>
-  <div id="photo-gallery">
+  <div class="viewer-container">
+    <div class="viewer-header">
+      <div class="viewer-title">
+        <span>🖼️ MEMORY_BOX.EXE - 추억 뷰어</span>
+        <div class="memory-counter" id="memory-counter">LOADING...</div>
+      </div>
+      <div class="view-controls">
+        <button class="view-btn active" id="gallery-btn" onclick="setGalleryView()">GALLERY</button>
+        <button class="view-btn" id="slide-btn" onclick="setSlideshowView()">SLIDESHOW</button>
+      </div>
+    </div>
+
+    <div class="gallery-main">
+      <div class="loading-screen" id="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">LOADING MEMORIES...</div>
+      </div>
+
+      <div class="photo-gallery" id="photo-gallery">
+        <div class="empty-memories" id="empty-memories" style="display: none;">
+          <div class="empty-icon">📷</div>
+          <div>아직 저장된 추억이 없습니다.<br>관리자 페이지에서 첫 번째 추억을 추가해보세요!</div>
+        </div>
+      </div>
+
+      <div class="slideshow-container" id="slideshow-container">
+        <img class="slide-img" id="slide-img" src="" alt="">
+        <div class="slide-info">
+          <div class="slide-title" id="slide-title"></div>
+          <div class="slide-description" id="slide-description"></div>
+          <div class="slide-date" id="slide-date"></div>
+        </div>
+        <div class="slide-controls">
+          <button class="slide-btn" id="prev-btn" onclick="prevSlide()">◀</button>
+          <button class="slide-btn" id="next-btn" onclick="nextSlide()">▶</button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script type="module">
+    // Firebase 연결은 여기서 처리 (추후 추가)
+    // import { db } from '../script/firebase.js';
+    // import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    let photos = [];
+    let currentSlide = 0;
+    let viewMode = 'gallery';
+
+    function playBeep() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 500;
+        oscillator.type = 'square';
+        
+        gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      } catch(e) {
+        console.log('Audio not available');
+      }
+    }
+
+    function renderGallery() {
+      const gallery = document.getElementById('photo-gallery');
+      const counter = document.getElementById('memory-counter');
+      const empty = document.getElementById('empty-memories');
+      
+      if (photos.length === 0) {
+        gallery.innerHTML = '';
+        gallery.appendChild(empty);
+        empty.style.display = 'block';
+        counter.textContent = 'NO MEMORIES';
+        return;
+      }
+      
+      empty.style.display = 'none';
+      counter.textContent = `${photos.length} MEMORIES`;
+      
+      gallery.innerHTML = photos.map((photo, index) => `
+        <div class="memory-card" onclick="openSlideshow(${index})">
+          <img class="memory-img" src="${photo.url}" alt="${photo.title}" loading="lazy">
+          <div class="memory-info">
+            <div class="memory-title">${photo.title}</div>
+            <div class="memory-description">${photo.description}</div>
+            <div class="memory-date">${photo.date}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSlideshow() {
+      if (photos.length === 0) return;
+      
+      const photo = photos[currentSlide];
+      document.getElementById('slide-img').src = photo.url;
+      document.getElementById('slide-title').textContent = photo.title;
+      document.getElementById('slide-description').textContent = photo.description;
+      document.getElementById('slide-date').textContent = photo.date;
+      
+      document.getElementById('prev-btn').disabled = currentSlide === 0;
+      document.getElementById('next-btn').disabled = currentSlide === photos.length - 1;
+    }
+
+    async function loadMemories() {
+      document.getElementById('loading-screen').classList.remove('hidden');
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      photos = [
+        {
+          url: 'https://picsum.photos/400/300?random=1',
+          title: '첫 만남의 기적',
+          description: '운명처럼 만난 그 순간, 모든 것이 변했다.',
+          date: '2024.03.11'
+        },
+      ];
+      
+      document.getElementById('loading-screen').classList.add('hidden');
+      
+      if (viewMode === 'gallery') {
+        renderGallery();
+      } else {
+        renderSlideshow();
+      }
+    }
+
+    window.setGalleryView = function() {
+      viewMode = 'gallery';
+      document.getElementById('gallery-btn').classList.add('active');
+      document.getElementById('slide-btn').classList.remove('active');
+      document.getElementById('photo-gallery').style.display = 'grid';
+      document.getElementById('slideshow-container').classList.remove('active');
+      renderGallery();
+      playBeep();
+    };
+
+    window.setSlideshowView = function() {
+      if (photos.length === 0) return;
+      
+      viewMode = 'slideshow';
+      document.getElementById('slide-btn').classList.add('active');
+      document.getElementById('gallery-btn').classList.remove('active');
+      document.getElementById('photo-gallery').style.display = 'none';
+      document.getElementById('slideshow-container').classList.add('active');
+      renderSlideshow();
+      playBeep();
+    };
+
+    window.openSlideshow = function(index) {
+      currentSlide = index;
+      setSlideshowView();
+    };
+
+    window.prevSlide = function() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        renderSlideshow();
+        playBeep();
+      }
+    };
+
+    window.nextSlide = function() {
+      if (currentSlide < photos.length - 1) {
+        currentSlide++;
+        renderSlideshow();
+        playBeep();
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '1') {
+        setGalleryView();
+      } else if (e.key === '2') {
+        setSlideshowView();
+      } else if (viewMode === 'slideshow') {
+        if (e.key === 'ArrowLeft') {
+          prevSlide();
+        } else if (e.key === 'ArrowRight') {
+          nextSlide();
+        } else if (e.key === 'Escape') {
+          setGalleryView();
+        }
+      }
+    });
+
+    let autoSlideInterval;
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(() => {
+        if (viewMode === 'slideshow' && photos.length > 1) {
+          if (currentSlide < photos.length - 1) {
+            nextSlide();
+          } else {
+            currentSlide = 0;
+            renderSlideshow();
+          }
+        }
+      }, 5000);
+    }
+
+    function stopAutoSlide() {
+      if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+      }
+    }
+
+    loadMemories();
+  </script>
 </body>
 </html>
