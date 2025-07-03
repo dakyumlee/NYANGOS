@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>냥쿤이 나에게 쓰는 편지</title>
+  <link rel="stylesheet" href="../style/base.css" />
+  <link rel="stylesheet" href="../style/letter.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📨 냥쿤이 나에게 쓰는 편지</h1>
+    <form id="letter-from-form">
+      <input type="text" id="name" placeholder="이름 또는 별명" required />
+      <textarea id="message" placeholder="하고 싶은 말" required></textarea>
+      <input type="password" id="password" placeholder="삭제/수정 비밀번호" required />
+      <button type="submit">전송</button>
+    </form>
+    <ul id="letter-from-list"></ul>
+  </div>
+
+  <script type="module">
+    import { db } from "../script/firebase.js";
+    import {
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const fromForm = document.getElementById("letter-from-form");
+    const fromList = document.getElementById("letter-from-list");
+    const fromRef = collection(db, "lettersFromNyangkun");
+
+    const renderFromList = async () => {
+      fromList.innerHTML = "";
+      const snap = await getDocs(fromRef);
+      snap.forEach(docu => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>\${docu.data().name}</strong>
+          <p>\${docu.data().message}</p>
+          <input type="password" placeholder="비밀번호 입력" data-id="\${docu.id}" />
+          <button class="delete-from" data-id="\${docu.id}">삭제</button>
+        `;
+        fromList.appendChild(li);
+      });
+    };
+
+    fromForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+      const password = document.getElementById("password").value;
+      await addDoc(fromRef, { name, message, password, timestamp: serverTimestamp() });
+      fromForm.reset();
+      renderFromList();
+    });
+
+    fromList.addEventListener("click", async e => {
+      if (e.target.classList.contains("delete-from")) {
+        const id = e.target.dataset.id;
+        const input = fromList.querySelector(`input[data-id="\${id}"]`);
+        const entered = input.value;
+        const snap = await getDocs(fromRef);
+        const docu = snap.docs.find(d => d.id === id);
+        if (docu && docu.data().password === entered) {
+          await deleteDoc(doc(db, "lettersFromNyangkun", id));
+          renderFromList();
+        } else {
+          alert("비밀번호가 일치하지 않아요.");
+        }
+      }
+    });
+
+    renderFromList();
+  </script>
+</body>
+</html>

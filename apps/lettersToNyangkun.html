@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>냥쿤에게 쓰는 편지 (관리자용)</title>
+  <link rel="stylesheet" href="../style/base.css" />
+  <link rel="stylesheet" href="../style/letter.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>💌 냥쿤에게 쓰는 편지 (관리자용)</h1>
+    <form id="letter-to-form">
+      <input type="text" id="title" placeholder="제목" required />
+      <textarea id="content" placeholder="냥쿤에게 전하고 싶은 말" required></textarea>
+      <button type="submit">작성</button>
+    </form>
+    <ul id="letter-to-list"></ul>
+  </div>
+
+  <script type="module">
+    import { db } from "../script/firebase.js";
+    import {
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const toForm = document.getElementById("letter-to-form");
+    const toList = document.getElementById("letter-to-list");
+    const toRef = collection(db, "lettersToNyangkun");
+
+    const renderToList = async () => {
+      toList.innerHTML = "";
+      const snap = await getDocs(toRef);
+      snap.forEach(docu => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>\${docu.data().title}</strong>
+          <p>\${docu.data().content}</p>
+          <button data-id="\${docu.id}" class="delete-to">삭제</button>
+        `;
+        toList.appendChild(li);
+      });
+    };
+
+    toForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+      await addDoc(toRef, { title, content, timestamp: serverTimestamp() });
+      toForm.reset();
+      renderToList();
+    });
+
+    toList.addEventListener("click", async e => {
+      if (e.target.classList.contains("delete-to")) {
+        await deleteDoc(doc(db, "lettersToNyangkun", e.target.dataset.id));
+        renderToList();
+      }
+    });
+
+    renderToList();
+  </script>
+</body>
+</html>
