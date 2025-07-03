@@ -699,10 +699,17 @@
     }
 
     function openApp(appName) {
+      console.log('Opening app:', appName);
       playClickSound();
-      const window = document.getElementById(`${appName}-window`);
+      
+      const windowId = `${appName}-window`;
+      const window = document.getElementById(windowId);
+      
+      console.log('Looking for window:', windowId, window);
+      
       if (!window) {
-        console.error(`Window not found: ${appName}-window`);
+        console.error(`Window not found: ${windowId}`);
+        alert(`윈도우를 찾을 수 없습니다: ${windowId}`);
         return;
       }
 
@@ -710,19 +717,26 @@
       window.style.zIndex = ++zIndex;
 
       if (!window.dataset.positioned) {
-        const maxX = window.innerWidth - 400;
-        const maxY = window.innerHeight - 360;
-        const x = Math.random() * Math.max(0, maxX) + 50;
-        const y = Math.random() * Math.max(0, maxY) + 50;
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const windowWidth = 600;
+        const windowHeight = 400;
         
-        window.style.left = `${x}px`;
-        window.style.top = `${y}px`;
-        window.style.width = '600px';
-        window.style.height = '400px';
+        const maxX = Math.max(0, screenWidth - windowWidth);
+        const maxY = Math.max(0, screenHeight - windowHeight - 48);
+        
+        const x = Math.random() * maxX + 50;
+        const y = Math.random() * maxY + 50;
+        
+        window.style.left = `${Math.min(x, maxX)}px`;
+        window.style.top = `${Math.min(y, maxY)}px`;
+        window.style.width = `${windowWidth}px`;
+        window.style.height = `${windowHeight}px`;
         window.dataset.positioned = 'true';
       }
 
       focusWindow(window);
+      console.log('App opened successfully:', appName);
     }
 
     function closeWindow(appName) {
@@ -805,6 +819,15 @@
     document.querySelectorAll('.icon').forEach(icon => {
       icon.addEventListener('click', function() {
         const appName = this.getAttribute('data-app');
+        console.log('Clicked icon:', appName);
+        if (appName) {
+          openApp(appName);
+        }
+      });
+      
+      icon.addEventListener('dblclick', function() {
+        const appName = this.getAttribute('data-app');
+        console.log('Double-clicked icon:', appName);
         if (appName) {
           openApp(appName);
         }
@@ -862,6 +885,16 @@
     setTimeout(() => {
       console.log('🎮 냥쿤OS 로드 완료!');
       document.getElementById('status').textContent = 'READY';
+      
+      console.log('Available windows:');
+      document.querySelectorAll('.window').forEach(w => {
+        console.log('- Window ID:', w.id);
+      });
+      
+      console.log('Available icons:');
+      document.querySelectorAll('.icon').forEach(icon => {
+        console.log('- Icon data-app:', icon.getAttribute('data-app'));
+      });
     }, 7000);
   </script>
 </body>
