@@ -1,10 +1,10 @@
 body {
   margin: 0;
   font-family: 'Press Start 2P', monospace;
-  background: url('../assets/image01.png') no-repeat center center fixed;
-  background-size: cover;
+  background: #2b2b2b;
   overflow: hidden;
   user-select: none;
+  color: #f5f5f5;
 }
 
 #desktop {
@@ -17,63 +17,87 @@ body {
   padding: 32px;
   align-content: flex-start;
   justify-content: flex-start;
+  background: repeating-linear-gradient(
+    45deg,
+    #2b2b2b,
+    #2b2b2b 10px,
+    #303030 10px,
+    #303030 20px
+  );
 }
 
 .icon {
   width: 80px;
   text-align: center;
   cursor: pointer;
-  color: white;
-  text-shadow: 1px 1px 3px black;
-  transition: transform 0.2s ease;
+  color: #eee;
+  text-shadow: 1px 1px 2px #000;
+  transition: transform 0.15s ease;
 }
 
 .icon:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .icon img {
   width: 64px;
   height: 64px;
   margin-bottom: 6px;
+  filter: drop-shadow(0 0 2px #000);
 }
 
 .window {
-  width: 600px;
-  height: 400px;
-  background: #f0f0f0;
+  width: 640px;
+  height: 460px;
+  background: #dcdcdc;
   border: 3px solid #000;
   position: absolute;
   top: 100px;
   left: 100px;
-  display: none;
+  display: flex;
   flex-direction: column;
-  box-shadow: 6px 6px 0 #222;
+  box-shadow: 6px 6px 0 #000;
   z-index: 10;
+  overflow: hidden;
+  animation: popup 0.2s ease-out;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .titlebar {
-  background: linear-gradient(to right, #444, #222);
+  background: linear-gradient(to right, #1e90ff, #4682b4);
   color: white;
-  padding: 8px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: move;
   font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .titlebar button.close {
-  background: #ff4d4d;
-  border: none;
-  color: white;
-  width: 24px;
-  height: 24px;
-  font-weight: bold;
+  background: #c00;
+  border: 1px solid #000;
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
   cursor: pointer;
+  box-shadow: inset -1px -1px 0 #800, inset 1px 1px 0 #f99;
 }
 
 iframe {
   flex: 1;
   border: none;
+  background: white;
 }
