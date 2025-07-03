@@ -58,15 +58,31 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ message: userText })
       });
 
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const data = await res.json();
       const reply = data?.content?.[0]?.text || '응답을 받을 수 없어요';
+      
       removeTyping();
       appendMessage(reply, 'bot');
       saveMessage('bot', reply);
+      
     } catch (err) {
       removeTyping();
-      appendMessage('냥쿤이 잠시 자리를 비웠어요', 'bot');
       console.error('채팅 에러:', err);
+      
+      const errorReplies = [
+        '어... 뭔가 이상한데? 다시 말해봐.',
+        '지금 좀 컨디션이 안 좋아... 나중에 해줄게.',
+        '아 진짜, 시스템이 이상해. 잠깐만!',
+        '뭔가 꼬였네... 다시 시도해봐.',
+        '아직 준비가 안 된 것 같아. 기다려줄래?'
+      ];
+      
+      const randomError = errorReplies[Math.floor(Math.random() * errorReplies.length)];
+      appendMessage(randomError, 'bot');
     }
   };
 
@@ -76,7 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (input) {
     input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') sendMessage();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
     });
   }
 
@@ -91,5 +110,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTimeout(() => {
     appendMessage('안녕! 나는 냥쿤이야. 뭔가 궁금한 거 있어?', 'bot');
-  }, 500);
+  }, 1000);
 });
