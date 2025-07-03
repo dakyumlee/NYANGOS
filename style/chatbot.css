@@ -45,6 +45,8 @@ body {
     padding: 12px;
     border-top: 2px solid #888;
     background: #333;
+    align-items: center;
+    gap: 8px;
   }
   
   .chat-input input {
@@ -57,13 +59,31 @@ body {
   }
   
   .chat-input button {
-    padding: 8px 16px;
-    margin-left: 8px;
+    padding: 8px 12px;
     background: #5df;
     border: none;
     font-weight: bold;
     cursor: pointer;
     color: black;
+  }
+  
+  .emoji-bar {
+    display: flex;
+    gap: 6px;
+    margin-left: 4px;
+  }
+  
+  .emoji-bar button {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    filter: grayscale(0.2);
+    transition: transform 0.1s ease;
+  }
+  
+  .emoji-bar button:hover {
+    transform: scale(1.2);
   }
   
   .message.user {
