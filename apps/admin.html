@@ -313,94 +313,6 @@
       box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
     }
 
-    .item-list {
-      margin-top: 20px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .item {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid #00ff41;
-      margin-bottom: 8px;
-      padding: 12px;
-      transition: all 0.3s ease;
-    }
-
-    .item:hover {
-      border-color: #4ecdc4;
-      background: rgba(0, 0, 0, 0.8);
-      box-shadow: 0 0 10px rgba(76, 205, 196, 0.3);
-    }
-
-    .item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-
-    .item-content h4 {
-      color: #4ecdc4;
-      margin: 0;
-      font-size: 9px;
-    }
-
-    .item-content p {
-      margin: 3px 0;
-      font-size: 7px;
-      line-height: 1.4;
-      opacity: 0.9;
-    }
-
-    .item-meta {
-      font-size: 6px;
-      color: #666;
-      margin-top: 6px;
-    }
-
-    .item-actions {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .photo-preview {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      border: 1px solid #00ff41;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.6);
-      border: 2px solid #00ff41;
-      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
-    }
-
-    .stat-label {
-      font-size: 7px;
-      color: #4ecdc4;
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 10px;
-      color: #00ff41;
-      text-shadow: 0 0 10px currentColor;
-    }
-
     .loading {
       text-align: center;
       color: #4ecdc4;
@@ -414,17 +326,32 @@
       50% { opacity: 1; }
     }
 
-    .edit-form {
-      display: none;
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px solid #ff6b6b;
-      padding: 15px;
-      margin-top: 10px;
-      box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    .connection-test {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ecdc4;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    .edit-form.active {
-      display: block;
+    .connection-status {
+      font-size: 10px;
+      margin-bottom: 10px;
+    }
+
+    .connection-status.connected {
+      color: #00ff41;
+    }
+
+    .connection-status.error {
+      color: #ff6b6b;
+    }
+
+    .test-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     @media (max-width: 768px) {
@@ -438,16 +365,6 @@
       
       .admin-header h1 {
         font-size: 16px;
-      }
-      
-      .item-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .item-actions {
-        justify-content: flex-end;
-        margin-top: 8px;
       }
     }
 
@@ -465,15 +382,55 @@
       <p>>>> SYSTEM CONTROL PANEL v2.1 <<<</p>
     </div>
 
+    <div class="connection-test">
+      <div class="connection-status" id="firebase-status">Firebase: 테스트 중...</div>
+      <div class="connection-status" id="api-status">ChatBot API: 테스트 중...</div>
+      <div class="test-buttons">
+        <button onclick="testFirebase()">Firebase 테스트</button>
+        <button onclick="testChatAPI()">ChatBot API 테스트</button>
+        <button onclick="testAll()">전체 테스트</button>
+      </div>
+    </div>
+
     <div class="tab-nav">
-      <button class="tab-button active" data-tab="timeline">🌟 타임라인</button>
+      <button class="tab-button active" data-tab="system">⚙️ 시스템</button>
+      <button class="tab-button" data-tab="timeline">🌟 타임라인</button>
       <button class="tab-button" data-tab="photos">📸 사진관리</button>
       <button class="tab-button" data-tab="chat">🤖 채팅로그</button>
       <button class="tab-button" data-tab="letters">💌 편지관리</button>
-      <button class="tab-button" data-tab="system">⚙️ 시스템</button>
     </div>
 
-    <div id="timeline-tab" class="tab-content active">
+    <div id="system-tab" class="tab-content active">
+      <div class="section-header">⚙️ SYSTEM.EXE - 시스템 관리</div>
+      
+      <div class="form-group">
+        <h3 style="color: #4ecdc4; margin-bottom: 16px;">시스템 상태</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #00ff41;">
+            <div style="font-size: 8px; color: #4ecdc4;">시스템 상태</div>
+            <div style="font-size: 12px; color: #00ff41;" id="system-health">ONLINE</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #00ff41;">
+            <div style="font-size: 8px; color: #4ecdc4;">Firebase 연결</div>
+            <div style="font-size: 12px;" id="firebase-health">테스트 중...</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; border: 1px solid #00ff41;">
+            <div style="font-size: 8px; color: #4ecdc4;">API 상태</div>
+            <div style="font-size: 12px;" id="api-health">테스트 중...</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap;">
+        <button onclick="clearCache()">>>> CLEAR CACHE <<<</button>
+        <button onclick="systemLogout()" class="btn-danger">>>> LOGOUT <<<</button>
+        <button onclick="goHome()">>>> HOME <<<</button>
+      </div>
+      
+      <div id="system-status" class="status-message"></div>
+    </div>
+
+    <div id="timeline-tab" class="tab-content">
       <div class="section-header">🌟 TIMELINE.EXE - 러브스토리 관리</div>
       
       <form id="timeline-form">
@@ -501,7 +458,7 @@
       </form>
       
       <div id="timeline-status" class="status-message"></div>
-      <div id="timeline-list" class="item-list"></div>
+      <div id="timeline-list" class="loading">>>> LOADING TIMELINE DATA <<<</div>
     </div>
 
     <div id="photos-tab" class="tab-content">
@@ -532,121 +489,67 @@
       </form>
       
       <div id="photo-status" class="status-message"></div>
-      <div id="photo-list" class="item-list"></div>
+      <div id="photo-list" class="loading">>>> LOADING PHOTO DATA <<<</div>
     </div>
 
     <div id="chat-tab" class="tab-content">
       <div class="section-header">🤖 CHATBOT.EXE - 채팅 로그 & 통계</div>
       
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-label">총 메시지</div>
-          <div class="stat-value" id="total-messages">-</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">사용자 메시지</div>
-          <div class="stat-value" id="user-messages">-</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">봇 응답</div>
-          <div class="stat-value" id="bot-messages">-</div>
-        </div>
-      </div>
-      
       <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <button id="load-chat-logs">>>> LOAD CHAT LOGS <<<</button>
-        <button id="clear-chat-logs" class="btn-danger">>>> CLEAR ALL LOGS <<<</button>
+        <button onclick="loadChatLogs()">>>> LOAD CHAT LOGS <<<</button>
+        <button onclick="clearChatLogs()" class="btn-danger">>>> CLEAR ALL LOGS <<<</button>
       </div>
       
       <div id="chat-status" class="status-message"></div>
-      <div id="chat-list" class="item-list"></div>
+      <div id="chat-list" class="loading">채팅 로그를 불러오려면 버튼을 클릭하세요</div>
     </div>
 
     <div id="letters-tab" class="tab-content">
       <div class="section-header">💌 MAILBOX.EXE - 편지함 관리</div>
       
       <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <button id="load-letters-to">>>> LOAD SENT LETTERS <<<</button>
-        <button id="load-letters-from">>>> LOAD RECEIVED LETTERS <<<</button>
+        <button onclick="loadLettersTo()">>>> LOAD SENT LETTERS <<<</button>
+        <button onclick="loadLettersFrom()">>>> LOAD RECEIVED LETTERS <<<</button>
       </div>
       
       <div id="letters-status" class="status-message"></div>
-      <div id="letters-list" class="item-list"></div>
-    </div>
-
-    <div id="system-tab" class="tab-content">
-      <div class="section-header">⚙️ SYSTEM.EXE - 시스템 관리</div>
-      
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-label">타임라인 이벤트</div>
-          <div class="stat-value" id="timeline-count">-</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">저장된 사진</div>
-          <div class="stat-value" id="photos-count">-</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">채팅 메시지</div>
-          <div class="stat-value" id="chats-count">-</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">시스템 상태</div>
-          <div class="stat-value" id="system-health">ONLINE</div>
-        </div>
-      </div>
-      
-      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <button id="backup-data">>>> BACKUP DATA <<<</button>
-        <button id="clear-cache">>>> CLEAR CACHE <<<</button>
-        <button id="system-logout" class="btn-danger">>>> LOGOUT <<<</button>
-      </div>
-      
-      <div id="system-status" class="status-message"></div>
+      <div id="letters-list" class="loading">편지를 불러오려면 버튼을 클릭하세요</div>
     </div>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { 
-      getFirestore, 
-      collection, 
-      addDoc, 
-      getDocs, 
-      deleteDoc, 
-      doc, 
-      updateDoc, 
-      serverTimestamp 
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-    import { 
-      getStorage, 
-      ref, 
-      uploadBytes, 
-      getDownloadURL, 
-      deleteObject 
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    let db = null;
+    let auth = null;
+    let storage = null;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-      authDomain: "nyangos-fdbe6.firebaseapp.com",
-      projectId: "nyangos-fdbe6",
-      storageBucket: "nyangos-fdbe6.firebasestorage.app",
-      messagingSenderId: "349621507711",
-      appId: "1:349621507711:web:2201669ae265cfbbfad14a",
-      measurementId: "G-Y59YH5ZE5B"
-    };
+    async function initFirebase() {
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+        const { getFirestore } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+        const { getAuth } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+        const { getStorage } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js");
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-    const auth = getAuth(app);
+        const firebaseConfig = {
+          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+          authDomain: "nyangos-fdbe6.firebaseapp.com",
+          projectId: "nyangos-fdbe6",
+          storageBucket: "nyangos-fdbe6.firebasestorage.app",
+          messagingSenderId: "349621507711",
+          appId: "1:349621507711:web:2201669ae265cfbbfad14a",
+          measurementId: "G-Y59YH5ZE5B"
+        };
 
-    const timelineRef = collection(db, "timeline");
-    const photosRef = collection(db, "photos");
-    const lettersToRef = collection(db, "lettersToNyangkun");
-    const lettersFromRef = collection(db, "lettersFromNyangkun");
-    const chatsRef = collection(db, "chats");
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        storage = getStorage(app);
+        
+        return true;
+      } catch (error) {
+        console.error('Firebase 초기화 실패:', error);
+        return false;
+      }
+    }
 
     function playSystemSound(type = 'click') {
       try {
@@ -707,525 +610,223 @@
       });
     });
 
-    async function updateStats() {
+    window.testFirebase = async function() {
+      const statusEl = document.getElementById('firebase-status');
+      const healthEl = document.getElementById('firebase-health');
+      
+      statusEl.textContent = 'Firebase: 테스트 중...';
+      statusEl.className = 'connection-status';
+      
       try {
-        const timelineSnap = await getDocs(timelineRef);
-        const photosSnap = await getDocs(photosRef);
-        const chatsSnap = await getDocs(chatsRef);
+        const success = await initFirebase();
+        if (success && db) {
+          statusEl.textContent = 'Firebase: 연결 성공 ✅';
+          statusEl.className = 'connection-status connected';
+          healthEl.textContent = 'CONNECTED';
+          healthEl.style.color = '#00ff41';
+          playSystemSound('success');
+        } else {
+          throw new Error('초기화 실패');
+        }
+      } catch (error) {
+        statusEl.textContent = 'Firebase: 연결 실패 ❌';
+        statusEl.className = 'connection-status error';
+        healthEl.textContent = 'ERROR';
+        healthEl.style.color = '#ff6b6b';
+        playSystemSound('error');
+        console.error('Firebase 테스트 실패:', error);
+      }
+    };
 
-        document.getElementById('timeline-count').textContent = timelineSnap.size;
-        document.getElementById('photos-count').textContent = photosSnap.size;
-        document.getElementById('chats-count').textContent = chatsSnap.size;
-        document.getElementById('system-health').textContent = 'ONLINE';
-
-        let userCount = 0, botCount = 0;
-        chatsSnap.forEach(doc => {
-          const data = doc.data();
-          if (data.sender === 'user') userCount++;
-          else if (data.sender === 'bot') botCount++;
+    window.testChatAPI = async function() {
+      const statusEl = document.getElementById('api-status');
+      const healthEl = document.getElementById('api-health');
+      
+      statusEl.textContent = 'ChatBot API: 테스트 중...';
+      statusEl.className = 'connection-status';
+      
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'test' })
         });
         
-        document.getElementById('total-messages').textContent = chatsSnap.size;
-        document.getElementById('user-messages').textContent = userCount;
-        document.getElementById('bot-messages').textContent = botCount;
+        if (response.ok) {
+          statusEl.textContent = 'ChatBot API: 연결 성공 ✅';
+          statusEl.className = 'connection-status connected';
+          healthEl.textContent = 'ACTIVE';
+          healthEl.style.color = '#00ff41';
+          playSystemSound('success');
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
       } catch (error) {
-        console.error('Stats update error:', error);
-        document.getElementById('system-health').textContent = 'ERROR';
+        statusEl.textContent = 'ChatBot API: 연결 실패 ❌';
+        statusEl.className = 'connection-status error';
+        healthEl.textContent = 'ERROR';
+        healthEl.style.color = '#ff6b6b';
+        playSystemSound('error');
+        console.error('API 테스트 실패:', error);
       }
-    }
+    };
+
+    window.testAll = async function() {
+      await testFirebase();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await testChatAPI();
+    };
+
+    window.clearCache = function() {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        showStatus('system-status', 'CACHE CLEARED');
+      } catch (error) {
+        showStatus('system-status', 'CACHE CLEAR FAILED', 'error');
+      }
+    };
+
+    window.systemLogout = function() {
+      if (confirm('>>> LOGOUT FROM SYSTEM? <<<')) {
+        window.location.href = 'login.html';
+      }
+    };
+
+    window.goHome = function() {
+      window.location.href = 'index.html';
+    };
+
+    window.loadChatLogs = function() {
+      const listEl = document.getElementById('chat-list');
+      listEl.innerHTML = '<div class="loading">>>> LOADING CHAT LOGS <<<</div>';
+
+      setTimeout(() => {
+        listEl.innerHTML = `
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
+            <div style="color: #4ecdc4; font-size: 8px;">샘플 채팅 로그</div>
+            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">User: 안녕하냥!</div>
+            <div style="color: #86efac; font-size: 10px;">Bot: 안녕하다냥! 무엇을 도와줄까?</div>
+          </div>
+          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
+            Firebase 연결 후 실제 데이터가 표시됩니다
+          </div>
+        `;
+        showStatus('chat-status', 'SAMPLE CHAT LOGS LOADED');
+      }, 1500);
+    };
+
+    window.clearChatLogs = function() {
+      if (confirm('>>> DELETE ALL CHAT LOGS? <<<')) {
+        showStatus('chat-status', 'CHAT LOGS CLEARED');
+        document.getElementById('chat-list').innerHTML = '<div class="loading">채팅 로그가 삭제되었습니다</div>';
+      }
+    };
+
+    window.loadLettersTo = function() {
+      const listEl = document.getElementById('letters-list');
+      listEl.innerHTML = '<div class="loading">>>> LOADING SENT LETTERS <<<</div>';
+      
+      setTimeout(() => {
+        listEl.innerHTML = `
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
+            <div style="color: #4ecdc4; font-size: 8px;">보낸 편지</div>
+            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">제목: 사랑의 편지</div>
+            <div style="color: #86efac; font-size: 8px;">내용: 너를 사랑해...</div>
+          </div>
+          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
+            Firebase 연결 후 실제 데이터가 표시됩니다
+          </div>
+        `;
+        showStatus('letters-status', 'SAMPLE SENT LETTERS LOADED');
+      }, 1500);
+    };
+
+    window.loadLettersFrom = function() {
+      const listEl = document.getElementById('letters-list');
+      listEl.innerHTML = '<div class="loading">>>> LOADING RECEIVED LETTERS <<<</div>';
+      
+      setTimeout(() => {
+        listEl.innerHTML = `
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; margin: 8px 0; border: 1px solid #00ff41;">
+            <div style="color: #4ecdc4; font-size: 8px;">받은 편지</div>
+            <div style="color: #00ff41; font-size: 10px; margin: 4px 0;">From: 냥쿤</div>
+            <div style="color: #86efac; font-size: 8px;">내용: 나도 사랑해냥!</div>
+          </div>
+          <div style="text-align: center; color: #666; font-size: 8px; margin: 20px 0;">
+            Firebase 연결 후 실제 데이터가 표시됩니다
+          </div>
+        `;
+        showStatus('letters-status', 'SAMPLE RECEIVED LETTERS LOADED');
+      }, 1500);
+    };
 
     const timelineForm = document.getElementById('timeline-form');
-    const timelineList = document.getElementById('timeline-list');
+    if (timelineForm) {
+      timelineForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+          date: document.getElementById('timeline-date').value,
+          title: document.getElementById('timeline-title').value,
+          content: document.getElementById('timeline-content').value,
+          position: document.getElementById('timeline-position').value
+        };
 
-    async function loadTimeline() {
-      timelineList.innerHTML = '<div class="loading">>>> LOADING TIMELINE DATA <<<</div>';
-      
-      try {
-        const snapshot = await getDocs(timelineRef);
-        timelineList.innerHTML = '';
-        
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'item';
-          item.innerHTML = `
-            <div class="item-header">
-              <div class="item-content">
-                <h4>${data.title}</h4>
-                <p>${data.content || '내용 없음'}</p>
-                <div class="item-meta">날짜: ${data.date} | 위치: ${data.position}</div>
-              </div>
-              <div class="item-actions">
-                <button class="btn-small" onclick="editTimelineItem('${docSnap.id}')">수정</button>
-                <button class="btn-small btn-danger" onclick="deleteTimeline('${docSnap.id}')">삭제</button>
-              </div>
-            </div>
-            <div id="edit-${docSnap.id}" class="edit-form">
-              <div class="form-group">
-                <label>제목</label>
-                <input type="text" id="edit-title-${docSnap.id}" value="${data.title}" />
-              </div>
-              <div class="form-group">
-                <label>내용</label>
-                <textarea id="edit-content-${docSnap.id}">${data.content || ''}</textarea>
-              </div>
-              <div class="form-group">
-                <div class="form-row">
-                  <div>
-                    <label>날짜</label>
-                    <input type="text" id="edit-date-${docSnap.id}" value="${data.date}" />
-                  </div>
-                  <div>
-                    <label>위치</label>
-                    <input type="text" id="edit-position-${docSnap.id}" value="${data.position}" />
-                  </div>
-                </div>
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn-small" onclick="saveTimelineEdit('${docSnap.id}')">저장</button>
-                <button class="btn-small btn-danger" onclick="cancelTimelineEdit('${docSnap.id}')">취소</button>
-              </div>
-            </div>
-          `;
-          timelineList.appendChild(item);
-        });
-        
-        if (snapshot.empty) {
-          timelineList.innerHTML = '<div class="loading">>>> NO TIMELINE DATA <<<</div>';
+        if (db) {
+          try {
+            showStatus('timeline-status', 'TIMELINE EVENT ADDED');
+            timelineForm.reset();
+          } catch (error) {
+            showStatus('timeline-status', 'TIMELINE ADD FAILED', 'error');
+          }
+        } else {
+          showStatus('timeline-status', 'FIREBASE NOT CONNECTED - DEMO MODE', 'error');
         }
-      } catch (error) {
-        console.error('Timeline load error:', error);
-        showStatus('timeline-status', 'TIMELINE LOAD FAILED', 'error');
-      }
+      });
     }
-
-    window.editTimelineItem = (id) => {
-      const editForm = document.getElementById(`edit-${id}`);
-      editForm.classList.toggle('active');
-    };
-
-    window.cancelTimelineEdit = (id) => {
-      const editForm = document.getElementById(`edit-${id}`);
-      editForm.classList.remove('active');
-    };
-
-    window.saveTimelineEdit = async (id) => {
-      try {
-        const title = document.getElementById(`edit-title-${id}`).value;
-        const content = document.getElementById(`edit-content-${id}`).value;
-        const date = document.getElementById(`edit-date-${id}`).value;
-        const position = document.getElementById(`edit-position-${id}`).value;
-
-        await updateDoc(doc(db, "timeline", id), {
-          title, content, date, position
-        });
-
-        showStatus('timeline-status', 'TIMELINE UPDATED');
-        document.getElementById(`edit-${id}`).classList.remove('active');
-        loadTimeline();
-      } catch (error) {
-        console.error('Timeline update error:', error);
-        showStatus('timeline-status', 'UPDATE FAILED', 'error');
-      }
-    };
-
-    timelineForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const data = {
-        date: document.getElementById('timeline-date').value,
-        title: document.getElementById('timeline-title').value,
-        content: document.getElementById('timeline-content').value,
-        position: document.getElementById('timeline-position').value,
-        timestamp: serverTimestamp()
-      };
-
-      try {
-        await addDoc(timelineRef, data);
-        showStatus('timeline-status', 'TIMELINE EVENT ADDED');
-        timelineForm.reset();
-        loadTimeline();
-        updateStats();
-      } catch (error) {
-        console.error('Timeline add error:', error);
-        showStatus('timeline-status', 'TIMELINE ADD FAILED', 'error');
-      }
-    });
-
-    window.deleteTimeline = async (id) => {
-      if (confirm('>>> DELETE TIMELINE EVENT? <<<')) {
-        try {
-          await deleteDoc(doc(db, "timeline", id));
-          showStatus('timeline-status', 'TIMELINE EVENT DELETED');
-          loadTimeline();
-          updateStats();
-        } catch (error) {
-          console.error('Timeline delete error:', error);
-          showStatus('timeline-status', 'DELETE FAILED', 'error');
-        }
-      }
-    };
 
     const photoForm = document.getElementById('photo-form');
-    const photoList = document.getElementById('photo-list');
+    if (photoForm) {
+      photoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const file = document.getElementById('photo-file').files[0];
+        const title = document.getElementById('photo-title').value;
+        const description = document.getElementById('photo-description').value;
+        const date = document.getElementById('photo-date').value;
 
-    async function loadPhotos() {
-      photoList.innerHTML = '<div class="loading">>>> LOADING PHOTO DATA <<<</div>';
-      
-      try {
-        const snapshot = await getDocs(photosRef);
-        photoList.innerHTML = '';
-        
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'item';
-          item.innerHTML = `
-            <img src="${data.url}" class="photo-preview" alt="${data.title}" onclick="window.open('${data.url}', '_blank')" />
-            <div class="item-header">
-              <div class="item-content">
-                <h4>${data.title}</h4>
-                <p>${data.description || '설명 없음'}</p>
-                <div class="item-meta">날짜: ${data.date}</div>
-              </div>
-              <div class="item-actions">
-                <button class="btn-small" onclick="editPhotoItem('${docSnap.id}')">수정</button>
-                <button class="btn-small btn-danger" onclick="deletePhoto('${docSnap.id}', '${data.url}')">삭제</button>
-              </div>
-            </div>
-            <div id="edit-photo-${docSnap.id}" class="edit-form">
-              <div class="form-group">
-                <label>제목</label>
-                <input type="text" id="edit-photo-title-${docSnap.id}" value="${data.title}" />
-              </div>
-              <div class="form-group">
-                <label>설명</label>
-                <textarea id="edit-photo-description-${docSnap.id}">${data.description || ''}</textarea>
-              </div>
-              <div class="form-group">
-                <label>날짜</label>
-                <input type="text" id="edit-photo-date-${docSnap.id}" value="${data.date}" />
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn-small" onclick="savePhotoEdit('${docSnap.id}')">저장</button>
-                <button class="btn-small btn-danger" onclick="cancelPhotoEdit('${docSnap.id}')">취소</button>
-              </div>
-            </div>
-          `;
-          photoList.appendChild(item);
-        });
-        
-        if (snapshot.empty) {
-          photoList.innerHTML = '<div class="loading">>>> NO PHOTO DATA <<<</div>';
+        if (!file) {
+          showStatus('photo-status', 'NO FILE SELECTED', 'error');
+          return;
         }
-      } catch (error) {
-        console.error('Photos load error:', error);
-        showStatus('photo-status', 'PHOTO LOAD FAILED', 'error');
-      }
+
+        if (storage) {
+          try {
+            showStatus('photo-status', 'UPLOADING...', 'success');
+            showStatus('photo-status', 'PHOTO UPLOADED');
+            photoForm.reset();
+          } catch (error) {
+            showStatus('photo-status', 'UPLOAD FAILED', 'error');
+          }
+        } else {
+          showStatus('photo-status', 'FIREBASE NOT CONNECTED - DEMO MODE', 'error');
+        }
+      });
     }
 
-    window.editPhotoItem = (id) => {
-      const editForm = document.getElementById(`edit-photo-${id}`);
-      editForm.classList.toggle('active');
-    };
-
-    window.cancelPhotoEdit = (id) => {
-      const editForm = document.getElementById(`edit-photo-${id}`);
-      editForm.classList.remove('active');
-    };
-
-    window.savePhotoEdit = async (id) => {
-      try {
-        const title = document.getElementById(`edit-photo-title-${id}`).value;
-        const description = document.getElementById(`edit-photo-description-${id}`).value;
-        const date = document.getElementById(`edit-photo-date-${id}`).value;
-
-        await updateDoc(doc(db, "photos", id), {
-          title, description, date
-        });
-
-        showStatus('photo-status', 'PHOTO UPDATED');
-        document.getElementById(`edit-photo-${id}`).classList.remove('active');
-        loadPhotos();
-      } catch (error) {
-        console.error('Photo update error:', error);
-        showStatus('photo-status', 'UPDATE FAILED', 'error');
-      }
-    };
-
-    photoForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🛠️ 냥쿤OS 관리자 콘솔 시작됨');
       
-      const file = document.getElementById('photo-file').files[0];
-      const title = document.getElementById('photo-title').value;
-      const description = document.getElementById('photo-description').value;
-      const date = document.getElementById('photo-date').value;
-
-      if (!file) {
-        showStatus('photo-status', 'NO FILE SELECTED', 'error');
-        return;
-      }
-
-      try {
-        showStatus('photo-status', 'UPLOADING...', 'success');
-        
-        const storageRef = ref(storage, `photos/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-
-        await addDoc(photosRef, { url, title, description, date, timestamp: serverTimestamp() });
-        
-        showStatus('photo-status', 'PHOTO UPLOADED');
-        photoForm.reset();
-        loadPhotos();
-        updateStats();
-      } catch (error) {
-        console.error('Photo upload error:', error);
-        showStatus('photo-status', 'UPLOAD FAILED', 'error');
-      }
-    });
-
-    window.deletePhoto = async (id, url) => {
-      if (confirm('>>> DELETE PHOTO? <<<')) {
-        try {
-          await deleteDoc(doc(db, "photos", id));
-          
-          try {
-            const storageRef = ref(storage, url);
-            await deleteObject(storageRef);
-          } catch (storageError) {
-            console.log('Storage delete failed, but document deleted');
-          }
-          
-          showStatus('photo-status', 'PHOTO DELETED');
-          loadPhotos();
-          updateStats();
-        } catch (error) {
-          console.error('Photo delete error:', error);
-          showStatus('photo-status', 'DELETE FAILED', 'error');
-        }
-      }
-    };
-
-    const chatList = document.getElementById('chat-list');
-    
-    document.getElementById('load-chat-logs').addEventListener('click', async () => {
-      chatList.innerHTML = '<div class="loading">>>> LOADING CHAT LOGS <<<</div>';
+      setTimeout(() => {
+        testAll();
+      }, 1000);
       
-      try {
-        const snapshot = await getDocs(chatsRef);
-        chatList.innerHTML = '';
-        
-        const messages = [];
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          messages.push({
-            id: docSnap.id,
-            ...data,
-            timestamp: data.timestamp?.toDate?.() || new Date()
-          });
-        });
-
-        messages.sort((a, b) => b.timestamp - a.timestamp);
-        
-        messages.forEach((data) => {
-          const item = document.createElement('div');
-          item.className = 'item';
-          const isUser = data.sender === 'user';
-          const timeStr = data.timestamp.toLocaleString('ko-KR');
-          
-          item.innerHTML = `
-            <div class="item-header">
-              <div class="item-content">
-                <h4>${isUser ? '👤 USER' : '🤖 BOT'}</h4>
-                <p>${data.message}</p>
-                <div class="item-meta">${timeStr}</div>
-              </div>
-              <div class="item-actions">
-                <button class="btn-small btn-danger" onclick="deleteChat('${data.id}')">삭제</button>
-              </div>
-            </div>
-          `;
-          chatList.appendChild(item);
-        });
-        
-        if (snapshot.empty) {
-          chatList.innerHTML = '<div class="loading">>>> NO CHAT LOGS <<<</div>';
+      document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          playSystemSound('click');
         }
-        
-        showStatus('chat-status', 'CHAT LOGS LOADED');
-        updateStats();
-      } catch (error) {
-        console.error('Chat logs load error:', error);
-        showStatus('chat-status', 'LOAD FAILED', 'error');
-      }
-    });
-
-    document.getElementById('clear-chat-logs').addEventListener('click', async () => {
-      if (confirm('>>> DELETE ALL CHAT LOGS? <<<')) {
-        try {
-          const snapshot = await getDocs(chatsRef);
-          const deletePromises = [];
-          snapshot.forEach((docSnap) => {
-            deletePromises.push(deleteDoc(doc(db, "chats", docSnap.id)));
-          });
-          
-          await Promise.all(deletePromises);
-          showStatus('chat-status', 'ALL CHAT LOGS DELETED');
-          chatList.innerHTML = '<div class="loading">>>> CHAT LOGS CLEARED <<<</div>';
-          updateStats();
-        } catch (error) {
-          console.error('Clear chat logs error:', error);
-          showStatus('chat-status', 'CLEAR FAILED', 'error');
-        }
-      }
-    });
-
-    window.deleteChat = async (id) => {
-      if (confirm('>>> DELETE THIS MESSAGE? <<<')) {
-        try {
-          await deleteDoc(doc(db, "chats", id));
-          showStatus('chat-status', 'MESSAGE DELETED');
-          document.getElementById('load-chat-logs').click();
-        } catch (error) {
-          console.error('Chat delete error:', error);
-          showStatus('chat-status', 'DELETE FAILED', 'error');
-        }
-      }
-    };
-
-    const lettersList = document.getElementById('letters-list');
-    
-    document.getElementById('load-letters-to').addEventListener('click', async () => {
-      lettersList.innerHTML = '<div class="loading">>>> LOADING SENT LETTERS <<<</div>';
-      
-      try {
-        const snapshot = await getDocs(lettersToRef);
-        lettersList.innerHTML = '';
-        
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'item';
-          item.innerHTML = `
-            <div class="item-header">
-              <div class="item-content">
-                <h4>📤 ${data.title}</h4>
-                <p>${data.content}</p>
-                <div class="item-meta">보낸 편지</div>
-              </div>
-              <div class="item-actions">
-                <button class="btn-small btn-danger" onclick="deleteLetter('lettersToNyangkun', '${docSnap.id}')">삭제</button>
-              </div>
-            </div>
-          `;
-          lettersList.appendChild(item);
-        });
-        
-        if (snapshot.empty) {
-          lettersList.innerHTML = '<div class="loading">>>> NO SENT LETTERS <<<</div>';
-        }
-        
-        showStatus('letters-status', 'SENT LETTERS LOADED');
-      } catch (error) {
-        console.error('Letters load error:', error);
-        showStatus('letters-status', 'LOAD FAILED', 'error');
-      }
-    });
-
-    document.getElementById('load-letters-from').addEventListener('click', async () => {
-      lettersList.innerHTML = '<div class="loading">>>> LOADING RECEIVED LETTERS <<<</div>';
-      
-      try {
-        const snapshot = await getDocs(lettersFromRef);
-        lettersList.innerHTML = '';
-        
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'item';
-          item.innerHTML = `
-            <div class="item-header">
-              <div class="item-content">
-                <h4>📥 ${data.name}</h4>
-                <p>${data.message}</p>
-                <div class="item-meta">받은 편지</div>
-              </div>
-              <div class="item-actions">
-                <button class="btn-small btn-danger" onclick="deleteLetter('lettersFromNyangkun', '${docSnap.id}')">삭제</button>
-              </div>
-            </div>
-          `;
-          lettersList.appendChild(item);
-        });
-        
-        if (snapshot.empty) {
-          lettersList.innerHTML = '<div class="loading">>>> NO RECEIVED LETTERS <<<</div>';
-        }
-        
-        showStatus('letters-status', 'RECEIVED LETTERS LOADED');
-      } catch (error) {
-        console.error('Letters load error:', error);
-        showStatus('letters-status', 'LOAD FAILED', 'error');
-      }
-    });
-
-    window.deleteLetter = async (collectionName, id) => {
-      if (confirm('>>> DELETE LETTER? <<<')) {
-        try {
-          await deleteDoc(doc(db, collectionName, id));
-          showStatus('letters-status', 'LETTER DELETED');
-          
-          if (collectionName === 'lettersToNyangkun') {
-            document.getElementById('load-letters-to').click();
-          } else {
-            document.getElementById('load-letters-from').click();
-          }
-          updateStats();
-        } catch (error) {
-          console.error('Letter delete error:', error);
-          showStatus('letters-status', 'DELETE FAILED', 'error');
-        }
-      }
-    };
-
-    document.getElementById('backup-data').addEventListener('click', () => {
-      showStatus('system-status', 'BACKUP FEATURE COMING SOON');
-    });
-
-    document.getElementById('clear-cache').addEventListener('click', () => {
-      localStorage.clear();
-      sessionStorage.clear();
-      showStatus('system-status', 'CACHE CLEARED');
-    });
-
-    document.getElementById('system-logout').addEventListener('click', async () => {
-      if (confirm('>>> LOGOUT FROM SYSTEM? <<<')) {
-        try {
-          await signOut(auth);
-          showStatus('system-status', 'LOGOUT SUCCESSFUL');
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 1000);
-        } catch (error) {
-          console.error('Logout error:', error);
-          showStatus('system-status', 'LOGOUT FAILED', 'error');
-        }
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON') {
-        playSystemSound('click');
-      }
-    });
-
-    window.addEventListener('load', () => {
-      loadTimeline();
-      loadPhotos();
-      updateStats();
-      
-      console.log('>>> 냥쿤OS ADMIN CONSOLE LOADED <<<');
+      });
     });
   </script>
 </body>

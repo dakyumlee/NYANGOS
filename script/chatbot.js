@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const showTyping = () => {
     const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot';
-    typingDiv.textContent = '냥쿤이 입력중...';
+    typingDiv.className = 'message bot typing-indicator';
+    typingDiv.innerHTML = '냥쿤이 생각중... <span class="dots">...</span>';
     typingDiv.id = 'typing';
     chatLog.appendChild(typingDiv);
     chatLog.scrollTop = chatLog.scrollHeight;
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showTyping();
 
     try {
+      console.log('메시지 전송 중:', userText);
+      
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 
@@ -45,31 +47,31 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ message: userText })
       });
 
+      console.log('응답 상태:', res.status);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
       let data;
+      const responseText = await res.text();
+      console.log('원본 응답:', responseText);
+      
       try {
-        const text = await res.text();
-        if (text) {
-          data = JSON.parse(text);
-        } else {
-          throw new Error('빈 응답');
-        }
+        data = JSON.parse(responseText);
       } catch (parseError) {
-        console.log('JSON 파싱 에러:', parseError);
+        console.error('JSON 파싱 에러:', parseError);
         throw new Error('서버 응답을 처리할 수 없어요');
       }
 
-      if (!res.ok) {
-        throw new Error(data?.error || `서버 에러: ${res.status}`);
-      }
-
-      const reply = data?.content?.[0]?.text || '응답을 받을 수 없어요';
+      const reply = data?.content?.[0]?.text || '응답을 받을 수 없어요...';
       
       removeTyping();
       appendMessage(reply, 'bot');
       
     } catch (err) {
       removeTyping();
-      console.log('채팅 에러:', err);
+      console.error('채팅 에러:', err);
       
       let errorMessage = '어... 뭔가 이상한데? 다시 말해봐.';
       
@@ -77,9 +79,25 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage = '아직 시스템 준비 중이야... 좀 기다려줄래?';
       } else if (err.message.includes('fetch')) {
         errorMessage = '네트워크가 이상해. 잠시 후에 다시 해볼까?';
+      } else if (err.message.includes('500')) {
+        errorMessage = '서버가 아픈 것 같아... 관리자한테 말해봐!';
       }
       
       appendMessage(errorMessage, 'bot');
+    }
+  };
+
+  const saveMessage = async (role, message) => {
+    try {
+      if (typeof firebase !== 'undefined' && firebase.firestore) {
+        await firebase.firestore().collection('chats').add({
+          sender: role,
+          message: message,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    } catch (e) {
+      console.log('메시지 저장 실패 (Firebase 미연결):', e);
     }
   };
 
@@ -94,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sendMessage();
       }
     });
+    
+    input.focus();
   }
 
   emojiButtons.forEach(btn => {
@@ -106,6 +126,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setTimeout(() => {
-    appendMessage('안녕! 나는 냥쿤이야. 지금은 시스템 점검 중이라 간단한 대화만 할 수 있어.', 'bot');
+    appendMessage('안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱', 'bot');
   }, 1000);
+
+  const testConnection = async () => {
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'test' })
+      });
+      
+      if (res.ok) {
+        console.log('✅ API 연결 성공');
+      } else {
+        console.log('❌ API 연결 실패:', res.status);
+      }
+    } catch (e) {
+      console.log('❌ API 연결 테스트 실패:', e);
+    }
+  };
+
+  testConnection();
 });

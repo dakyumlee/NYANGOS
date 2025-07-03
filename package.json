@@ -1,5 +1,25 @@
 {
     "name": "nyangkun-os",
-    "version": "1.0.0",
-    "type": "module"
+    "version": "2.1.0",
+    "description": "냥쿤OS - 디지털 펫 시스템",
+    "type": "module",
+    "scripts": {
+      "dev": "vercel dev",
+      "build": "echo 'Static site - no build needed'",
+      "start": "echo 'Static site - use vercel dev for local development'"
+    },
+    "dependencies": {},
+    "devDependencies": {},
+    "engines": {
+      "node": ">=18.0.0"
+    },
+    "keywords": [
+      "chatbot",
+      "firebase",
+      "vercel",
+      "claude-ai",
+      "digital-pet"
+    ],
+    "author": "냥쿤OS Team",
+    "license": "MIT"
   }
