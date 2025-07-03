@@ -456,37 +456,37 @@
   </div>
   
   <div id="desktop">
-    <div class="icon" data-app="chatbot">
+    <div class="icon" onclick="openWindow('chatbot')">
       <div class="icon-emoji">🤖</div>
       <div class="icon-text">냥GPT<br>AI_CHAT.EXE</div>
     </div>
     
-    <div class="icon" data-app="photos">
+    <div class="icon" onclick="openWindow('photos')">
       <div class="icon-emoji">🖼️</div>
       <div class="icon-text">추억보관함<br>MEMORY_BOX.EXE</div>
     </div>
     
-    <div class="icon" data-app="quotes">
+    <div class="icon" onclick="openWindow('quotes')">
       <div class="icon-emoji">✨</div>
       <div class="icon-text">마음챙김<br>WISDOM.EXE</div>
     </div>
     
-    <div class="icon" data-app="timeline">
+    <div class="icon" onclick="openWindow('timeline')">
       <div class="icon-emoji">🌟</div>
       <div class="icon-text">러브스토리<br>TIMELINE.EXE</div>
     </div>
 
-    <div class="icon" data-app="letter-to">
+    <div class="icon" onclick="openWindow('letter-to')">
       <div class="icon-emoji">💝</div>
       <div class="icon-text">편지쓰기<br>LOVE_LETTER.EXE</div>
     </div>
 
-    <div class="icon" data-app="letter-from">
+    <div class="icon" onclick="openWindow('letter-from')">
       <div class="icon-emoji">💌</div>
       <div class="icon-text">받은편지함<br>MAILBOX.EXE</div>
     </div>
 
-    <div class="icon" data-app="admin">
+    <div class="icon" onclick="openWindow('admin')">
       <div class="icon-emoji">🔧</div>
       <div class="icon-text">시스템설정<br>CONFIG.EXE</div>
     </div>
@@ -613,6 +613,10 @@
   </div>
 
   <script>
+    let zIndex = 100;
+    let draggedWindow = null;
+    let dragOffset = { x: 0, y: 0 };
+
     setTimeout(() => {
       document.getElementById('loading-screen').style.opacity = '0';
       document.getElementById('loading-screen').style.transition = 'opacity 1s';
@@ -625,7 +629,6 @@
     function playGameStartSound() {
       try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
         const notes = [440, 554.37, 659.25, 880];
         let time = audioContext.currentTime;
         
@@ -696,26 +699,11 @@
       });
       document.getElementById('game-time').textContent = timeString;
       document.getElementById('menu-clock').textContent = timeString;
-      
       document.getElementById('love-level').textContent = calculateDday();
     }
 
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    let zIndex = 100;
-    let draggedWindow = null;
-    let dragOffset = { x: 0, y: 0 };
-
-    document.querySelectorAll('.icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        const appName = icon.dataset.app;
-        openWindow(appName);
-        playClickSound();
-      });
-    });
-
     function openWindow(appName) {
+      playClickSound();
       const window = document.getElementById(`${appName}-window`);
       if (!window) return;
 
@@ -775,10 +763,6 @@
       window.style.boxShadow = '0 0 40px rgba(255, 107, 107, 0.8), inset 0 0 40px rgba(255, 107, 107, 0.2)';
     }
 
-    document.querySelectorAll('.titlebar').forEach(titlebar => {
-      titlebar.addEventListener('mousedown', startDrag);
-    });
-
     function startDrag(e) {
       const window = e.target.closest('.window');
       if (!window || window.classList.contains('maximized')) return;
@@ -814,16 +798,23 @@
       document.removeEventListener('mouseup', stopDrag);
     }
 
+    function showGameInfo() {
+      playClickSound();
+      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n• 윈도우 타이틀바 → 드래그 이동\n• 윈도우 버튼 → 최소화/최대화/닫기\n• Ctrl+1~7 → 단축키\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    document.querySelectorAll('.titlebar').forEach(titlebar => {
+      titlebar.addEventListener('mousedown', startDrag);
+    });
+
     document.querySelectorAll('.window').forEach(window => {
       window.addEventListener('mousedown', () => {
         focusWindow(window);
       });
     });
-
-    function showGameInfo() {
-      playClickSound();
-      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n장르: 로맨스 시뮬레이션\n개발: 냥쿤 스튜디오\n엔진: Pure Love™\n\n"디지털로 엮어가는 사랑 이야기"\n\n❤️ 사랑의 힘으로 구동됩니다 ❤️');
-    }
 
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey || e.metaKey) {
@@ -861,15 +852,9 @@
     });
 
     setTimeout(() => {
-      console.log('🎮 냥쿤OS - 8BIT LOVE SIMULATOR 로드 완료!');
-      console.log('Game Ready! Press Ctrl+1~7 for shortcuts');
-      
+      console.log('🎮 냥쿤OS 로드 완료!');
       document.getElementById('status').textContent = 'READY';
     }, 7000);
-
-    document.querySelectorAll('button, .icon').forEach(element => {
-      element.addEventListener('click', playClickSound);
-    });
   </script>
 </body>
 </html>
