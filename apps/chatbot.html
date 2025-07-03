@@ -19,8 +19,6 @@
       height: 100vh;
       overflow: hidden;
       image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
     }
 
     .terminal-container {
@@ -28,19 +26,11 @@
       height: 100vh;
       background: 
         radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.02) 0%, transparent 50%),
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 2px,
-          rgba(74, 222, 128, 0.01) 2px,
-          rgba(74, 222, 128, 0.01) 4px
-        );
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 222, 128, 0.01) 2px, rgba(74, 222, 128, 0.01) 4px);
       display: flex;
       flex-direction: column;
       border: 2px solid #4ade80;
-      box-shadow: 
-        inset 0 0 30px rgba(74, 222, 128, 0.05),
-        0 0 20px rgba(74, 222, 128, 0.1);
+      box-shadow: inset 0 0 30px rgba(74, 222, 128, 0.05), 0 0 20px rgba(74, 222, 128, 0.1);
     }
 
     .terminal-header {
@@ -73,6 +63,12 @@
       background: #4ade80;
       box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
       animation: pulse 2s ease-in-out infinite;
+    }
+
+    .status-dot.error {
+      background: #ef4444;
+      border-color: #ef4444;
+      box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
     }
 
     @keyframes pulse {
@@ -144,9 +140,7 @@
       border-color: #f87171;
       color: #fca5a5;
       text-shadow: 0 0 3px rgba(248, 113, 113, 0.3);
-      box-shadow: 
-        0 0 10px rgba(248, 113, 113, 0.2),
-        inset 0 0 10px rgba(248, 113, 113, 0.05);
+      box-shadow: 0 0 10px rgba(248, 113, 113, 0.2), inset 0 0 10px rgba(248, 113, 113, 0.05);
     }
 
     .message.bot .message-bubble {
@@ -154,9 +148,7 @@
       border-color: #4ade80;
       color: #86efac;
       text-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
-      box-shadow: 
-        0 0 10px rgba(74, 222, 128, 0.2),
-        inset 0 0 10px rgba(74, 222, 128, 0.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
     }
 
     .message-prefix {
@@ -232,17 +224,13 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 8px;
       outline: none;
-      box-shadow: 
-        0 0 10px rgba(74, 222, 128, 0.2),
-        inset 0 0 10px rgba(74, 222, 128, 0.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
       transition: all 0.2s;
     }
 
     #user-input:focus {
       border-color: #f87171;
-      box-shadow: 
-        0 0 15px rgba(248, 113, 113, 0.3),
-        inset 0 0 15px rgba(248, 113, 113, 0.05);
+      box-shadow: 0 0 15px rgba(248, 113, 113, 0.3), inset 0 0 15px rgba(248, 113, 113, 0.05);
       color: #fca5a5;
     }
 
@@ -350,14 +338,14 @@
 </head>
 <body>
   <div class="terminal-container">
-    <div class="connection-status" id="connection-status">CONNECTING...</div>
+    <div class="connection-status" id="connection-status">READY</div>
     
     <div class="terminal-header">
-      <div class="terminal-title">🤖 NYANG-GPT TERMINAL v2.0 - AI CHAT INTERFACE</div>
+      <div class="terminal-title">🤖 NYANG-GPT TERMINAL v2.1 - AI CHAT INTERFACE</div>
       <div class="status-indicators">
-        <div class="status-dot"></div>
-        <div class="status-dot" style="animation-delay: 0.5s;"></div>
-        <div class="status-dot" style="animation-delay: 1s;"></div>
+        <div class="status-dot" id="status-dot-1"></div>
+        <div class="status-dot" id="status-dot-2" style="animation-delay: 0.5s;"></div>
+        <div class="status-dot" id="status-dot-3" style="animation-delay: 1s;"></div>
       </div>
     </div>
 
@@ -401,8 +389,27 @@
     const sendButton = document.getElementById('send-button');
     const typingIndicator = document.getElementById('typing-indicator');
     const connectionStatus = document.getElementById('connection-status');
+    const statusDots = [
+      document.getElementById('status-dot-1'),
+      document.getElementById('status-dot-2'),
+      document.getElementById('status-dot-3')
+    ];
 
     let isConnected = false;
+    let messageCount = 0;
+
+    function updateConnectionStatus(text, color, isError = false) {
+      connectionStatus.textContent = text;
+      connectionStatus.style.color = color;
+      
+      statusDots.forEach(dot => {
+        if (isError) {
+          dot.classList.add('error');
+        } else {
+          dot.classList.remove('error');
+        }
+      });
+    }
 
     function playBeep() {
       try {
@@ -422,7 +429,6 @@
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.1);
       } catch(e) {
-        console.log('Audio not available');
       }
     }
 
@@ -445,6 +451,8 @@
       chatDisplay.appendChild(messageDiv);
       chatDisplay.scrollTop = chatDisplay.scrollHeight;
       playBeep();
+      
+      messageCount++;
     }
 
     function showTyping() {
@@ -464,9 +472,10 @@
       messageInput.value = '';
       sendButton.disabled = true;
       showTyping();
+      updateConnectionStatus('PROCESSING...', '#f59e0b');
 
       try {
-        console.log('🚀 메시지 전송:', message);
+        const startTime = Date.now();
         
         const response = await fetch('/api/chat', {
           method: 'POST',
@@ -477,14 +486,13 @@
           body: JSON.stringify({ message: message })
         });
 
-        console.log('📡 응답 상태:', response.status);
-
+        const responseTime = Date.now() - startTime;
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const responseText = await response.text();
-        console.log('📝 원본 응답:', responseText);
         
         let data;
         try {
@@ -498,14 +506,13 @@
         
         hideTyping();
         addMessage(reply, false);
-
+        
         isConnected = true;
-        connectionStatus.textContent = 'CONNECTED';
-        connectionStatus.style.color = '#4ade80';
+        updateConnectionStatus(`ONLINE (${responseTime}ms)`, '#00ff41');
         
       } catch (error) {
         hideTyping();
-        console.error('💥 챗봇 에러:', error);
+        console.error('💥 채팅 에러:', error);
         
         let errorMessage = '어... 뭔가 이상한데? 다시 말해봐냥.';
         
@@ -518,10 +525,9 @@
         }
         
         addMessage(errorMessage, false);
-      
+        
         isConnected = false;
-        connectionStatus.textContent = 'CONNECTION ERROR';
-        connectionStatus.style.color = '#ff6b6b';
+        updateConnectionStatus('ERROR', '#ff6b6b', true);
         
       } finally {
         sendButton.disabled = false;
@@ -537,7 +543,7 @@
     sendButton.addEventListener('click', sendMessage);
     
     messageInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
       }
@@ -549,39 +555,47 @@
 
     async function testConnection() {
       try {
-        console.log('🔍 API 연결 테스트 중...');
+        updateConnectionStatus('TESTING...', '#f59e0b');
         
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: 'test' })
+          body: JSON.stringify({ message: 'connection test' })
         });
         
         if (response.ok) {
           console.log('✅ API 연결 성공');
           isConnected = true;
-          connectionStatus.textContent = 'READY';
-          connectionStatus.style.color = '#4ade80';
+          updateConnectionStatus('READY', '#00ff41');
         } else {
           console.log('❌ API 연결 실패:', response.status);
           isConnected = false;
-          connectionStatus.textContent = 'API ERROR';
-          connectionStatus.style.color = '#ff6b6b';
+          updateConnectionStatus('API ERROR', '#ff6b6b', true);
         }
       } catch (error) {
         console.log('❌ API 연결 테스트 실패:', error);
         isConnected = false;
-        connectionStatus.textContent = 'OFFLINE';
-        connectionStatus.style.color = '#666';
+        updateConnectionStatus('OFFLINE', '#666', true);
       }
     }
 
-    setTimeout(() => {
-      addMessage('안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱', false);
-      messageInput.focus();
-    }, 1000);
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🤖 냥GPT 시스템 초기화');
+      
+      setTimeout(() => {
+        addMessage('안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱', false);
+        messageInput.focus();
+        
+        testConnection();
+      }, 1000);
+    });
 
-    testConnection();
+    window.debugInfo = () => {
+      console.log('=== 냥GPT 디버그 정보 ===');
+      console.log('연결 상태:', isConnected);
+      console.log('메시지 수:', messageCount);
+      console.log('현재 상태:', connectionStatus.textContent);
+    };
   </script>
 </body>
 </html>
