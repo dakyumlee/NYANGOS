@@ -1,5 +1,10 @@
+const input = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-button');
+const chatLog = document.getElementById('chat-log');
+const emojiButtons = document.querySelectorAll('.emoji-bar button');
+
 import { db } from './firebase.js';
-import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const saveMessage = async (role, message) => {
   try {
@@ -13,24 +18,19 @@ const saveMessage = async (role, message) => {
   }
 };
 
-
-const input = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-button');
-const chatLog = document.getElementById('chat-log');
-const emojiButtons = document.querySelectorAll('.emoji-bar button');
-
 const appendMessage = (text, role) => {
   const div = document.createElement('div');
   div.className = `message ${role}`;
-  div.innerHTML = role === 'bot' ? `💬 ${text}` : `😺 ${text}`;
+  div.textContent = text;
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
+  return div;
 };
 
 const showTyping = () => {
   const typingDiv = document.createElement('div');
   typingDiv.className = 'message bot';
-  typingDiv.textContent = '냥쿤이 생각 중...';
+  typingDiv.textContent = '...';
   typingDiv.id = 'typing';
   chatLog.appendChild(typingDiv);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -41,7 +41,7 @@ const removeTyping = () => {
   if (typingDiv) typingDiv.remove();
 };
 
-const sendMessage = async () => {const sendMessage = async () => {
+const sendMessage = async () => {
   const userText = input.value.trim();
   if (!userText) return;
 
@@ -62,29 +62,6 @@ const sendMessage = async () => {const sendMessage = async () => {
     removeTyping();
     appendMessage(reply, 'bot');
     saveMessage('bot', reply);
-  } catch (err) {
-    removeTyping();
-    appendMessage('(에러 발생)', 'bot');
-    console.error(err);
-  }
-};
-
-
-  try {
-    const res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userText })
-    });
-
-    const data = await res.json();
-    removeTyping();
-
-    if (data.reply) {
-      appendMessage(data.reply, 'bot');
-    } else {
-      appendMessage('(응답 없음)', 'bot');
-    }
   } catch (err) {
     removeTyping();
     appendMessage('(에러 발생)', 'bot');

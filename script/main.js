@@ -1,44 +1,44 @@
+const desktop = document.getElementById('desktop');
 const icons = document.querySelectorAll('.icon');
 const windows = document.querySelectorAll('.window');
 
-let zCounter = 100;
+let zIndex = 10;
 
 icons.forEach(icon => {
   icon.addEventListener('dblclick', () => {
-    const targetId = icon.dataset.app;
+    const targetId = icon.getAttribute('data-target');
     const win = document.getElementById(targetId);
     if (win) {
       win.style.display = 'flex';
-      win.style.zIndex = ++zCounter;
+      win.style.zIndex = ++zIndex;
     }
   });
 });
 
 windows.forEach(win => {
+  const titlebar = win.querySelector('.titlebar');
   const closeBtn = win.querySelector('.close');
+
   closeBtn.addEventListener('click', () => {
     win.style.display = 'none';
   });
 
-  const titleBar = win.querySelector('.titlebar');
-  let isDragging = false;
-  let offsetX, offsetY;
+  titlebar.addEventListener('mousedown', e => {
+    win.style.zIndex = ++zIndex;
+    let offsetX = e.clientX - win.getBoundingClientRect().left;
+    let offsetY = e.clientY - win.getBoundingClientRect().top;
 
-  titleBar.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    offsetX = e.clientX - win.offsetLeft;
-    offsetY = e.clientY - win.offsetTop;
-    win.style.zIndex = ++zCounter;
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
+    function moveHandler(e) {
       win.style.left = `${e.clientX - offsetX}px`;
       win.style.top = `${e.clientY - offsetY}px`;
     }
-  });
 
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
+    function upHandler() {
+      document.removeEventListener('mousemove', moveHandler);
+      document.removeEventListener('mouseup', upHandler);
+    }
+
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', upHandler);
   });
 });
