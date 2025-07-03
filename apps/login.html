@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>냥쿤OS 로그인</title>
+  <link rel="stylesheet" href="../style/base.css">
+  <style>
+    body {
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .login-box {
+      background: #222;
+      padding: 2rem;
+      border: 2px solid #666;
+      box-shadow: 6px 6px 0 #000;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 320px;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      background: #000;
+      color: white;
+      border: 1px solid #555;
+    }
+    button {
+      padding: 0.5rem;
+      font-weight: bold;
+      background: #5df;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+      authDomain: "nyangos-fdbe6.firebaseapp.com",
+      projectId: "nyangos-fdbe6",
+      storageBucket: "nyangos-fdbe6.appspot.com",
+      messagingSenderId: "349621507711",
+      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    const statusText = document.getElementById('login-status');
+
+    loginButton.addEventListener('click', async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        statusText.textContent = "✅ 로그인 성공!";
+        window.location.href = "admin.html";
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "❌ 로그인 실패. 다시 확인하세요.";
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="login-box">
+    <h2>🔐 관리자 로그인</h2>
+    <input type="email" id="email" placeholder="이메일" />
+    <input type="password" id="password" placeholder="비밀번호" />
+    <button id="login-button">로그인</button>
+    <p id="login-status"></p>
+  </div>
+</body>
+</html>
