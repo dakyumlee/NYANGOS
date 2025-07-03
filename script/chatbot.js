@@ -6,7 +6,7 @@ const emojiButtons = document.querySelectorAll('.emoji-bar button');
 const appendMessage = (text, role) => {
   const div = document.createElement('div');
   div.className = `message ${role}`;
-  div.textContent = text;
+  div.innerHTML = role === 'bot' ? `💬 ${text}` : `😺 ${text}`;
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
 };
@@ -14,7 +14,7 @@ const appendMessage = (text, role) => {
 const showTyping = () => {
   const typingDiv = document.createElement('div');
   typingDiv.className = 'message bot';
-  typingDiv.textContent = '...';
+  typingDiv.textContent = '냥쿤이 생각 중...';
   typingDiv.id = 'typing';
   chatLog.appendChild(typingDiv);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -41,9 +41,13 @@ const sendMessage = async () => {
     });
 
     const data = await res.json();
-    const reply = data?.text || '(응답 없음)';
     removeTyping();
-    appendMessage(reply, 'bot');
+
+    if (data.reply) {
+      appendMessage(data.reply, 'bot');
+    } else {
+      appendMessage('(응답 없음)', 'bot');
+    }
   } catch (err) {
     removeTyping();
     appendMessage('(에러 발생)', 'bot');
