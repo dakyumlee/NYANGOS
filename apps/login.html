@@ -343,15 +343,15 @@
 
       <form id="loginForm">
         <div class="form-group">
-          <label for="email">📧 USER_ID</label>
+          <label for="username">📧 USER_ID</label>
           <div class="input-wrapper">
             <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              placeholder="admin@nyangkun.system"
+              type="text" 
+              id="username" 
+              name="username" 
+              placeholder="아이디를 입력하세요"
               required
-              autocomplete="email"
+              autocomplete="username"
             />
           </div>
         </div>
@@ -363,7 +363,6 @@
               type="password" 
               id="password" 
               name="password" 
-              placeholder="••••••••••••"
               required
               autocomplete="current-password"
             />
@@ -389,32 +388,44 @@
     <div>STATUS: STANDBY</div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword,
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-      authDomain: "nyangos-fdbe6.firebaseapp.com",
-      projectId: "nyangos-fdbe6",
-      storageBucket: "nyangos-fdbe6.appspot.com",
-      messagingSenderId: "349621507711",
-      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+  <script>
+    const VALID_CREDENTIALS = {
+      username: 'oicrcutie',
+      password: 'aa667788'
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
     const loginForm = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const loginBtn = document.getElementById('loginBtn');
     const statusMessage = document.getElementById('statusMessage');
     const loadingIndicator = document.getElementById('loadingIndicator');
+
+    window.addEventListener('load', () => {
+      if (isAuthenticated()) {
+        window.location.href = 'admin.html';
+        return;
+      }
+      usernameInput.focus();
+    });
+
+    function isAuthenticated() {
+      const auth = localStorage.getItem('nyangkun_auth');
+      const authTime = localStorage.getItem('nyangkun_auth_time');
+
+      if (!auth || !authTime) return false;
+
+      const timeDiff = Date.now() - parseInt(authTime);
+      const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+      if (hoursDiff > 24) {
+        localStorage.removeItem('nyangkun_auth');
+        localStorage.removeItem('nyangkun_auth_time');
+        return false;
+      }
+
+      return auth === 'authenticated';
+    }
 
     function playSystemSound(type = 'click') {
       try {
@@ -480,61 +491,36 @@
       }
     }
 
-    async function handleLogin(event) {
+    function handleLogin(event) {
       event.preventDefault();
       playSystemSound('click');
       
-      const email = emailInput.value.trim();
+      const username = usernameInput.value.trim();
       const password = passwordInput.value;
 
-      if (!email || !password) {
+      if (!username || !password) {
         showStatus('>>> MISSING CREDENTIALS <<<', 'error');
         return;
       }
 
       setLoading(true);
 
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        showStatus('>>> ACCESS GRANTED - REDIRECTING <<<', 'success');
-        
-        setTimeout(() => {
-          window.location.href = 'admin.html';
-        }, 1500);
-        
-      } catch (error) {
-        console.error('Authentication error:', error);
-        
-        let errorMessage = '>>> ACCESS DENIED <<<';
-        
-        switch (error.code) {
-          case 'auth/user-not-found':
-          case 'auth/invalid-email':
-            errorMessage = '>>> USER NOT FOUND <<<';
-            break;
-          case 'auth/wrong-password':
-          case 'auth/invalid-credential':
-            errorMessage = '>>> INVALID AUTH_KEY <<<';
-            break;
-          case 'auth/too-many-requests':
-            errorMessage = '>>> SECURITY LOCKOUT - RETRY LATER <<<';
-            break;
-          case 'auth/network-request-failed':
-            errorMessage = '>>> NETWORK ERROR <<<';
-            break;
+      setTimeout(() => {
+        if (username === VALID_CREDENTIALS.username && password === VALID_CREDENTIALS.password) {
+          localStorage.setItem('nyangkun_auth', 'authenticated');
+          localStorage.setItem('nyangkun_auth_time', Date.now().toString());
+          
+          showStatus('>>> ACCESS GRANTED - REDIRECTING <<<', 'success');
+          
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 1500);
+        } else {
+          showStatus('>>> INVALID CREDENTIALS <<<', 'error');
+          setLoading(false);
         }
-        
-        showStatus(errorMessage, 'error');
-      } finally {
-        setLoading(false);
-      }
+      }, 500);
     }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log('Already authenticated:', user.email);
-      }
-    });
 
     loginForm.addEventListener('submit', handleLogin);
 
@@ -544,16 +530,12 @@
       }
     });
 
-    emailInput.addEventListener('input', () => {
+    usernameInput.addEventListener('input', () => {
       playSystemSound('click');
     });
 
     passwordInput.addEventListener('input', () => {
       playSystemSound('click');
-    });
-
-    window.addEventListener('load', () => {
-      emailInput.focus();
     });
   </script>
 </body>
