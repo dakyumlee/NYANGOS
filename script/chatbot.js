@@ -3,9 +3,10 @@ const sendBtn = document.getElementById('send-button');
 const chatLog = document.getElementById('chat-log');
 const emojiButtons = document.querySelectorAll('.emoji-bar button');
 
-const saveChatLog = (sender, message) => {
+let chatLogs = [];
+
+const saveChatToBlob = async (sender, message) => {
   try {
-    const existingLogs = JSON.parse(localStorage.getItem('nyangkun_chat_logs') || '[]');
     const newLog = {
       id: Date.now().toString(36) + Math.random().toString(36).substr(2),
       sender: sender,
@@ -13,16 +14,33 @@ const saveChatLog = (sender, message) => {
       timestamp: new Date().toLocaleString('ko-KR')
     };
     
-    existingLogs.push(newLog);
+    chatLogs.push(newLog);
     
-    if (existingLogs.length > 1000) {
-      existingLogs.splice(0, existingLogs.length - 1000);
+    if (chatLogs.length > 1000) {
+      chatLogs = chatLogs.slice(-1000);
     }
     
-    localStorage.setItem('nyangkun_chat_logs', JSON.stringify(existingLogs));
-    console.log('로그 저장됨:', newLog);
+    const response = await fetch('/api/data/load');
+    let existingData = {};
+    
+    if (response.ok) {
+      existingData = await response.json();
+    }
+    
+    existingData.chatLogs = chatLogs;
+    
+    const filename = `nyangkun-data-${Date.now()}.json`;
+    await fetch(`/api/data/upload?filename=${filename}`, {
+      method: 'POST',
+      body: JSON.stringify(existingData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log('채팅 로그 blob 저장 완료:', newLog);
   } catch (error) {
-    console.error('로그 저장 실패:', error);
+    console.error('블롭 저장 실패:', error);
   }
 };
 
@@ -33,7 +51,7 @@ const appendMessage = (text, role) => {
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
   
-  saveChatLog(role, text);
+  saveChatToBlob(role, text);
   
   return div;
 };
@@ -124,26 +142,33 @@ if (emojiButtons.length > 0) {
   });
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
   try {
-    const savedLogs = JSON.parse(localStorage.getItem('nyangkun_chat_logs') || '[]');
-    console.log('저장된 로그 개수:', savedLogs.length);
-    
-    const recentLogs = savedLogs.slice(-10);
-    
-    recentLogs.forEach(log => {
-      const div = document.createElement('div');
-      div.className = `message ${log.sender}`;
-      div.textContent = log.message;
-      chatLog.appendChild(div);
-    });
-    
-    if (recentLogs.length > 0) {
-      chatLog.scrollTop = chatLog.scrollHeight;
+    const response = await fetch('/api/data/load');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.chatLogs && Array.isArray(data.chatLogs)) {
+        chatLogs = data.chatLogs;
+        const recentLogs = chatLogs.slice(-10);
+        
+        recentLogs.forEach(log => {
+          const div = document.createElement('div');
+          div.className = `message ${log.sender}`;
+          div.textContent = log.message;
+          chatLog.appendChild(div);
+        });
+        
+        if (recentLogs.length > 0) {
+          chatLog.scrollTop = chatLog.scrollHeight;
+        }
+        
+        console.log('저장된 채팅 로그 복원:', recentLogs.length + '개');
+      }
     }
     
     input.focus();
   } catch (error) {
     console.error('로그 복원 실패:', error);
+    chatLogs = [];
   }
 });
