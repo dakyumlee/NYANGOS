@@ -473,17 +473,9 @@
         <div class="items-list" id="letter-from-list"></div>
       </div>
 
-      <div class="admin-section">
-        <div class="section-header">
-          <div class="section-title">🎮 앱 관리</div>
-        </div>
-        <div class="app-grid">
-          <button class="app-btn" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
-          <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
-          <button class="app-btn" onclick="manageApp('quotes')">🧘 어록 초기화</button>
-          <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
+💌 편지 초기화</button>
           <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
-          <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
+          <button class="app-btn" onclick="loadLocalData()">📥 데이터 불러오기</button>
         </div>
         <div class="form-group">
           <label class="form-label">데이터 가져오기</label>
@@ -503,21 +495,50 @@
     };
 
     function loadLocalData() {
-      try {
-        const saved = localStorage.getItem('nyangkun-data');
-        if (saved) {
-          localData = { ...localData, ...JSON.parse(saved) };
-        }
-      } catch (error) {
-        console.error('데이터 로딩 실패:', error);
-        showStatus('데이터 로딩 실패', 'error');
-      }
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.json';
+      fileInput.style.display = 'none';
+      
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          try {
+            localData = JSON.parse(event.target.result);
+            renderAll();
+            showStatus('데이터 로딩 완료', 'success');
+          } catch (error) {
+            console.error('데이터 로딩 실패:', error);
+            showStatus('데이터 로딩 실패', 'error');
+          }
+        };
+        reader.readAsText(file);
+      });
+      
+      document.body.appendChild(fileInput);
+      fileInput.click();
+      document.body.removeChild(fileInput);
     }
 
     function saveLocalData() {
       try {
-        localStorage.setItem('nyangkun-data', JSON.stringify(localData));
-        showStatus('데이터 저장 완료', 'success');
+        const dataStr = JSON.stringify(localData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'nyangkun-data.json';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showStatus('데이터 파일 다운로드 완료', 'success');
       } catch (error) {
         console.error('데이터 저장 실패:', error);
         showStatus('데이터 저장 실패', 'error');
@@ -851,7 +872,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      loadLocalData();
       renderAll();
       showStatus('시스템 준비완료', 'success');
     });

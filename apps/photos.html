@@ -94,18 +94,12 @@
     .back-btn {
       border-color: #f59e0b;
       color: #f59e0b;
-      display: none;
+      display: block;
     }
 
     .back-btn:hover {
       background: rgba(245, 158, 11, 0.1);
       box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-    }
-
-    @media (max-width: 768px) {
-      .back-btn {
-        display: block;
-      }
     }
 
     .gallery-main {
@@ -522,8 +516,7 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        // 로컬스토리지에서 데이터 불러오기
-        const savedData = localStorage.getItem('nyangkun-admin-data');
+        const savedData = localStorage.getItem('nyangkun-data');
         if (savedData) {
           const data = JSON.parse(savedData);
           photos = data.photos || [];
@@ -599,15 +592,7 @@
     };
 
     window.goBack = function() {
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'closeWindow' }, '*');
-        } else {
-          history.back();
-        }
-      } catch(e) {
-        history.back();
-      }
+      window.history.back();
       playBeep();
     };
 
@@ -633,7 +618,7 @@
     });
 
     window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-admin-data') {
+      if (e.key === 'nyangkun-data') {
         loadMemories();
       }
     });
