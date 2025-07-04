@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -12,456 +13,462 @@
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Press Start 2P', monospace;
-      background: #0a0a0a;
-      color: #4ade80;
-      height: 100vh;
-      overflow: hidden;
-      image-rendering: pixelated;
-    }
+```
+body {
+  font-family: 'Press Start 2P', monospace;
+  background: #0a0a0a;
+  color: #4ade80;
+  height: 100vh;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
 
-    .world-map {
-      width: 100%;
-      height: 100vh;
-      background: 
-        radial-gradient(circle at 20% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.02) 0%, transparent 50%),
-        repeating-linear-gradient(30deg, transparent, transparent 4px, rgba(74, 222, 128, 0.005) 4px, rgba(74, 222, 128, 0.005) 8px);
-      display: flex;
-      flex-direction: column;
-      border: 2px solid #4ade80;
-      box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
-      position: relative;
-    }
+.world-map {
+  width: 100%;
+  height: 100vh;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.02) 0%, transparent 50%),
+    repeating-linear-gradient(30deg, transparent, transparent 4px, rgba(74, 222, 128, 0.005) 4px, rgba(74, 222, 128, 0.005) 8px);
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #4ade80;
+  box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
+  position: relative;
+}
 
-    .map-header {
-      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-      padding: 12px 16px;
-      border-bottom: 2px solid #4ade80;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-      z-index: 100;
-    }
+.map-header {
+  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+  padding: 12px 16px;
+  border-bottom: 2px solid #4ade80;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+  z-index: 100;
+}
 
-    .map-title {
-      font-size: 10px;
-      color: #4ade80;
-      text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.map-title {
+  font-size: 10px;
+  color: #4ade80;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .journey-counter {
-      font-size: 8px;
-      color: #f59e0b;
-      background: rgba(245, 158, 11, 0.1);
-      padding: 4px 8px;
-      border: 1px solid #f59e0b;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-    }
+.journey-counter {
+  font-size: 8px;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 4px 8px;
+  border: 1px solid #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
 
-    .map-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+.map-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
 
-    .control-btn {
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid #4ade80;
-      color: #4ade80;
-      padding: 6px 12px;
-      font-size: 7px;
-      cursor: pointer;
-      font-family: 'Press Start 2P', monospace;
-      transition: all 0.2s;
-      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-    }
+.control-btn {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #4ade80;
+  color: #4ade80;
+  padding: 6px 12px;
+  font-size: 7px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  transition: all 0.2s;
+  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+}
 
-    .control-btn:hover {
-      background: rgba(74, 222, 128, 0.1);
-      transform: scale(1.02);
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-    }
+.control-btn:hover {
+  background: rgba(74, 222, 128, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
 
-    .control-btn.active {
-      background: #4ade80;
-      color: #000000;
-    }
+.control-btn.active {
+  background: #4ade80;
+  color: #000000;
+}
 
-    .journey-world {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(5, 5, 5, 0.9) 0%, rgba(10, 10, 10, 0.8) 50%, rgba(5, 5, 5, 0.9) 100%);
-    }
+.journey-world {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0.9) 0%, rgba(10, 10, 10, 0.8) 50%, rgba(5, 5, 5, 0.9) 100%);
+}
 
-    .world-grid {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(74, 222, 128, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74, 222, 128, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: gridMove 20s linear infinite;
-    }
+.world-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(74, 222, 128, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 222, 128, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
 
-    @keyframes gridMove {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(50px, 50px); }
-    }
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
 
-    .journey-path {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, 
-        rgba(74, 222, 128, 0.3) 0%,
-        rgba(245, 158, 11, 0.5) 50%,
-        rgba(236, 72, 153, 0.3) 100%
-      );
-      transform: translateY(-50%);
-      box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-      animation: pathGlow 4s ease-in-out infinite;
-    }
+.journey-path {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    rgba(74, 222, 128, 0.3) 0%,
+    rgba(245, 158, 11, 0.5) 50%,
+    rgba(236, 72, 153, 0.3) 100%
+  );
+  transform: translateY(-50%);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+  animation: pathGlow 4s ease-in-out infinite;
+}
 
-    @keyframes pathGlow {
-      0%, 100% { 
-        box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-        opacity: 0.8;
-      }
-      50% { 
-        box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
-        opacity: 1;
-      }
-    }
+@keyframes pathGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    opacity: 0.8;
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
+    opacity: 1;
+  }
+}
 
-    .memory-waypoint {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 50;
-    }
+.memory-waypoint {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+}
 
-    .waypoint-marker {
-      width: 60px;
-      height: 60px;
-      background: rgba(0, 0, 0, 0.9);
-      border: 3px solid #4ade80;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
-      animation: waypointPulse 3s ease-in-out infinite;
-    }
+.waypoint-marker {
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 3px solid #4ade80;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
+  animation: waypointPulse 3s ease-in-out infinite;
+}
 
-    @keyframes waypointPulse {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
-      }
-      50% { 
-        transform: scale(1.05);
-        box-shadow: 0 0 30px rgba(74, 222, 128, 0.6), inset 0 0 30px rgba(74, 222, 128, 0.2);
-      }
-    }
+@keyframes waypointPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), inset 0 0 20px rgba(74, 222, 128, 0.1);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(74, 222, 128, 0.6), inset 0 0 30px rgba(74, 222, 128, 0.2);
+  }
+}
 
-    .memory-waypoint:hover .waypoint-marker {
-      transform: scale(1.15);
-      border-color: #f59e0b;
-      box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), inset 0 0 40px rgba(245, 158, 11, 0.2);
-      animation: none;
-    }
+.memory-waypoint:hover .waypoint-marker {
+  transform: scale(1.15);
+  border-color: #f59e0b;
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), inset 0 0 40px rgba(245, 158, 11, 0.2);
+  animation: none;
+}
 
-    .waypoint-icon {
-      font-size: 24px;
-      filter: drop-shadow(0 0 8px currentColor);
-    }
+.waypoint-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px currentColor);
+}
 
-    .waypoint-label {
-      position: absolute;
-      top: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
-      border: 1px solid #4ade80;
-      padding: 4px 8px;
-      font-size: 6px;
-      white-space: nowrap;
-      color: #86efac;
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-      opacity: 0;
-      transition: all 0.3s;
-      pointer-events: none;
-    }
+.waypoint-label {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid #4ade80;
+  padding: 4px 8px;
+  font-size: 6px;
+  white-space: nowrap;
+  color: #86efac;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+}
 
-    .memory-waypoint:hover .waypoint-label {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-5px);
-    }
+.memory-waypoint:hover .waypoint-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
 
-    .waypoint-date {
-      position: absolute;
-      bottom: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 5px;
-      color: rgba(147, 51, 234, 0.8);
-      background: rgba(147, 51, 234, 0.1);
-      padding: 2px 6px;
-      border: 1px solid rgba(147, 51, 234, 0.3);
-      opacity: 0;
-      transition: all 0.3s;
-      pointer-events: none;
-    }
+.waypoint-date {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5px;
+  color: rgba(147, 51, 234, 0.8);
+  background: rgba(147, 51, 234, 0.1);
+  padding: 2px 6px;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+}
 
-    .memory-waypoint:hover .waypoint-date {
-      opacity: 1;
-      transform: translateX(-50%) translateY(5px);
-    }
+.memory-waypoint:hover .waypoint-date {
+  opacity: 1;
+  transform: translateX(-50%) translateY(5px);
+}
 
-    .memory-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: modalFadeIn 0.3s ease-out;
-    }
+.memory-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.3s ease-out;
+}
 
-    @keyframes modalFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-    .modal-content {
-      background: rgba(10, 10, 10, 0.95);
-      border: 3px solid #4ade80;
-      padding: 24px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 0 50px rgba(74, 222, 128, 0.4), inset 0 0 50px rgba(74, 222, 128, 0.1);
-      animation: modalSlideIn 0.3s ease-out;
-      position: relative;
-    }
+.modal-content {
+  background: rgba(10, 10, 10, 0.95);
+  border: 3px solid #4ade80;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 50px rgba(74, 222, 128, 0.4), inset 0 0 50px rgba(74, 222, 128, 0.1);
+  animation: modalSlideIn 0.3s ease-out;
+  position: relative;
+}
 
-    @keyframes modalSlideIn {
-      from { 
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to { 
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(74, 222, 128, 0.3);
-    }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+}
 
-    .modal-title {
-      font-size: 12px;
-      color: #86efac;
-      text-shadow: 0 0 8px rgba(134, 239, 172, 0.5);
-    }
+.modal-title {
+  font-size: 12px;
+  color: #86efac;
+  text-shadow: 0 0 8px rgba(134, 239, 172, 0.5);
+}
 
-    .modal-close {
-      background: rgba(239, 68, 68, 0.2);
-      border: 2px solid #ef4444;
-      color: #fca5a5;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
+.modal-close {
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid #ef4444;
+  color: #fca5a5;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
 
-    .modal-close:hover {
-      background: #ef4444;
-      color: #000000;
-      transform: scale(1.1);
-    }
+.modal-close:hover {
+  background: #ef4444;
+  color: #000000;
+  transform: scale(1.1);
+}
 
-    .modal-body {
-      text-align: center;
-    }
+.modal-body {
+  text-align: center;
+}
 
-    .modal-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-      filter: drop-shadow(0 0 15px currentColor);
-    }
+.modal-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 15px currentColor);
+}
 
-    .modal-content-text {
-      font-size: 9px;
-      color: rgba(74, 222, 128, 0.9);
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
+.modal-content-text {
+  font-size: 9px;
+  color: rgba(74, 222, 128, 0.9);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
 
-    .modal-date {
-      font-size: 7px;
-      color: #9333ea;
-      background: rgba(147, 51, 234, 0.1);
-      padding: 6px 12px;
-      border: 1px solid rgba(147, 51, 234, 0.3);
-      display: inline-block;
-      box-shadow: 0 0 10px rgba(147, 51, 234, 0.2);
-    }
+.modal-date {
+  font-size: 7px;
+  color: #9333ea;
+  background: rgba(147, 51, 234, 0.1);
+  padding: 6px 12px;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  display: inline-block;
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.2);
+}
 
-    .empty-journey {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      color: rgba(74, 222, 128, 0.5);
-      font-size: 10px;
-      line-height: 1.8;
-    }
+.empty-journey {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: rgba(74, 222, 128, 0.5);
+  font-size: 10px;
+  line-height: 1.8;
+}
 
-    .empty-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      opacity: 0.3;
-      animation: floatSlow 4s ease-in-out infinite;
-    }
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.3;
+  animation: floatSlow 4s ease-in-out infinite;
+}
 
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-    }
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
 
-    .loading-world {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      z-index: 100;
-    }
+.loading-world {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+}
 
-    .loading-world.hidden {
-      display: none;
-    }
+.loading-world.hidden {
+  display: none;
+}
 
-    .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(74, 222, 128, 0.3);
-      border-top: 4px solid #4ade80;
-      border-radius: 50%;
-      animation: spin 1.5s linear infinite;
-    }
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(74, 222, 128, 0.3);
+  border-top: 4px solid #4ade80;
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+}
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-    .loading-text {
-      font-size: 8px;
-      color: #4ade80;
-      text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-    }
+.loading-text {
+  font-size: 8px;
+  color: #4ade80;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
 
-    .connection-status {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(0, 0, 0, 0.9);
-      border: 1px solid #4ade80;
-      padding: 4px 8px;
-      font-size: 6px;
-      color: #4ade80;
-      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-      z-index: 200;
-    }
+.connection-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid #4ade80;
+  padding: 4px 8px;
+  font-size: 6px;
+  color: #4ade80;
+  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+  z-index: 200;
+}
 
-    @media (max-width: 768px) {
-      .waypoint-marker {
-        width: 50px;
-        height: 50px;
-      }
-      
-      .waypoint-icon {
-        font-size: 20px;
-      }
-      
-      .modal-content {
-        padding: 20px;
-        margin: 10px;
-      }
-      
-      .modal-icon {
-        font-size: 40px;
-      }
-    }
+@media (max-width: 768px) {
+  .waypoint-marker {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .waypoint-icon {
+    font-size: 20px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .modal-icon {
+    font-size: 40px;
+  }
+}
+```
+
   </style>
 </head>
 <body>
   <div class="world-map">
     <div class="connection-status" id="connection-status">CONNECTING...</div>
-    
-    <div class="map-header">
-      <div class="map-title">
-        <span>🌟 TIMELINE.EXE - 러브스토리 월드맵</span>
-        <div class="journey-counter" id="journey-counter">-</div>
-      </div>
-      <div class="map-controls">
-        <button class="control-btn active" onclick="refreshTimeline()">REFRESH</button>
-        <button class="control-btn" onclick="sortByDate()">SORT</button>
-      </div>
-    </div>
 
-    <div class="journey-world">
-      <div class="world-grid"></div>
-      <div class="journey-path"></div>
-      
-      <div class="loading-world" id="loading-world">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">타임라인 로딩중...</div>
-      </div>
+```
+<div class="map-header">
+  <div class="map-title">
+    <span>🌟 TIMELINE.EXE - 러브스토리 월드맵</span>
+    <div class="journey-counter" id="journey-counter">-</div>
+  </div>
+  <div class="map-controls">
+    <button class="control-btn active" onclick="refreshTimeline()">REFRESH</button>
+    <button class="control-btn" onclick="sortByDate()">SORT</button>
+  </div>
+</div>
 
-      <div class="empty-journey" id="empty-journey" style="display: none;">
-        <div class="empty-icon">🗺️</div>
-        <div>아직 기록된 여정이 없습니다.<br>관리자 페이지에서 첫 번째 추억을 추가해보세요!</div>
-      </div>
-      
-      <div id="waypoints-container"></div>
-    </div>
+<div class="journey-world">
+  <div class="world-grid"></div>
+  <div class="journey-path"></div>
+  
+  <div class="loading-world" id="loading-world">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">타임라인 로딩중...</div>
+  </div>
+
+  <div class="empty-journey" id="empty-journey" style="display: none;">
+    <div class="empty-icon">🗺️</div>
+    <div>아직 기록된 여정이 없습니다.<br>관리자 페이지에서 첫 번째 추억을 추가해보세요!</div>
+  </div>
+  
+  <div id="waypoints-container"></div>
+</div>
+```
+
   </div>
 
   <div class="memory-modal" id="memory-modal" onclick="closeModal(event)">
@@ -503,10 +510,10 @@
         await getDocs(collection(db, 'timeline'));
         isConnected = true;
         updateConnectionStatus('CONNECTED', '#00ff41');
-        console.log('✅ Firebase 연결 성공');
+        console.log('Firebase 연결 성공');
         return true;
       } catch (error) {
-        console.error('❌ Firebase 연결 실패:', error);
+        console.error('Firebase 연결 실패:', error);
         isConnected = false;
         updateConnectionStatus('OFFLINE', '#ff6b6b');
         return false;
@@ -605,10 +612,10 @@
           
           memories.sort((a, b) => new Date(a.date) - new Date(b.date));
           
-          console.log(`✅ ${memories.length}개의 타임라인 이벤트를 불러왔습니다`);
+          console.log(`${memories.length}개의 타임라인 이벤트를 불러왔습니다`);
           updateConnectionStatus('LOADED', '#00ff41');
         } catch (error) {
-          console.error('❌ 타임라인 로딩 실패:', error);
+          console.error('타임라인 로딩 실패:', error);
           updateConnectionStatus('ERROR', '#ff6b6b');
           memories = [];
         }
@@ -664,9 +671,10 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('🌟 타임라인 시스템 시작');
+      console.log('타임라인 시스템 시작');
       loadMemories();
     });
   </script>
+
 </body>
 </html>
