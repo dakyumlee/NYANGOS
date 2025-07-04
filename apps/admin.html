@@ -3,9 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>냥쿤OS 관리자</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -255,6 +252,7 @@ font-size: 6px;
 color: rgba(74, 222, 128, 0.8);
 line-height: 1.3;
 margin-bottom: 6px;
+word-break: break-all;
 }
 
 .item-meta {
@@ -296,22 +294,6 @@ text-align: center;
 color: rgba(74, 222, 128, 0.6);
 font-size: 7px;
 padding: 20px;
-}
-
-.loading-spinner {
-display: inline-block;
-width: 20px;
-height: 20px;
-border: 2px solid rgba(74, 222, 128, 0.3);
-border-top: 2px solid #4ade80;
-border-radius: 50%;
-animation: spin 1s linear infinite;
-margin-bottom: 8px;
-}
-
-@keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
 }
 
 .photo-preview {
@@ -365,39 +347,36 @@ box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
   padding: 16px;
 }
 }
-
-.loading-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0, 0, 0, 0.9);
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-z-index: 9999;
-}
-
-.loading-overlay.hidden {
-display: none;
-}
-
-.loading-text {
-color: #4ade80;
-font-size: 10px;
-margin-top: 20px;
-text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-}
 </style>
 </head>
 <body>
-<div class="loading-overlay" id="loading-overlay">
-<div class="loading-spinner"></div>
-<div class="loading-text">인증 확인 중...</div>
-</div>
+<script>
+function checkAuth() {
+  const auth = localStorage.getItem('nyangkun_auth');
+  const authTime = localStorage.getItem('nyangkun_auth_time');
 
+  if (!auth || !authTime) {
+    window.location.href = './login.html';
+    return false;
+  }
+
+  const timeDiff = Date.now() - parseInt(authTime);
+  const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+  if (hoursDiff > 24) {
+    localStorage.removeItem('nyangkun_auth');
+    localStorage.removeItem('nyangkun_auth_time');
+    window.location.href = './login.html';
+    return false;
+  }
+
+  return auth === 'authenticated';
+}
+
+if (!checkAuth()) {
+  document.body.innerHTML = '<div style="color: white; text-align: center; padding: 50px;">인증 중...</div>';
+} else {
+  document.write(`
 <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
 
 <div class="admin-container">
@@ -412,6 +391,18 @@ text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 </div>
 
 <div class="admin-grid">
+<div class="admin-section">
+  <div class="section-header">
+    <div class="section-title">💬 챗봇 대화 로그</div>
+  </div>
+  <div class="form-group">
+    <button class="form-btn" onclick="loadChatLogs()">🔄 로그 새로고침</button>
+    <button class="form-btn danger" onclick="clearChatLogs()">🗑️ 로그 삭제</button>
+    <button class="form-btn" onclick="exportChatLogs()">📤 로그 내보내기</button>
+  </div>
+  <div class="items-list" id="chat-logs-list"></div>
+</div>
+
 <div class="admin-section">
   <div class="section-header">
     <div class="section-title">📅 연애 타임라인 관리</div>
@@ -502,18 +493,6 @@ text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 
 <div class="admin-section">
   <div class="section-header">
-    <div class="section-title">💬 챗봇 대화 로그</div>
-  </div>
-  <div class="form-group">
-    <button class="form-btn" onclick="loadChatLogs()">🔄 로그 새로고침</button>
-    <button class="form-btn danger" onclick="clearChatLogs()">🗑️ 로그 삭제</button>
-    <button class="form-btn" onclick="exportChatLogs()">📤 로그 내보내기</button>
-  </div>
-  <div class="items-list" id="chat-logs-list"></div>
-</div>
-
-<div class="admin-section">
-  <div class="section-header">
     <div class="section-title">⚙️ 시스템 관리</div>
   </div>
   <div class="app-grid">
@@ -521,7 +500,6 @@ text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
     <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
     <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
     <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
-    <button class="app-btn" onclick="loadLocalData()">☁️ 클라우드에서 불러오기</button>
     <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
   </div>
   <div class="form-group">
@@ -531,33 +509,11 @@ text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 </div>
 </div>
 </div>
+  `);
+}
+</script>
 
 <script>
-function isAuthenticated() {
-  const auth = localStorage.getItem('nyangkun_auth');
-  const authTime = localStorage.getItem('nyangkun_auth_time');
-
-  if (!auth || !authTime) return false;
-
-  const timeDiff = Date.now() - parseInt(authTime);
-  const hoursDiff = timeDiff / (1000 * 60 * 60);
-
-  if (hoursDiff > 24) {
-    localStorage.removeItem('nyangkun_auth');
-    localStorage.removeItem('nyangkun_auth_time');
-    return false;
-  }
-
-  return auth === 'authenticated';
-}
-//이게 문제였군
-if (!isAuthenticated()) {
-  window.location.href = './login.html';
-} else {
-  document.getElementById('loading-overlay').classList.add('hidden');
-  initializeAdmin();
-}
-
 let localData = {
   timeline: [],
   photos: [],
@@ -574,74 +530,17 @@ function logout() {
   }
 }
 
-async function uploadToVercelBlob(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  const response = await fetch('/api/upload', {
-    method: 'POST',
-    body: formData
-  });
-  
-  if (!response.ok) {
-    throw new Error('파일 업로드 실패');
-  }
-  
-  const result = await response.json();
-  return result.url;
-}
-
-async function saveToBlob() {
-  try {
-    const filename = `nyangkun-data-${Date.now()}.json`;
-    
-    const response = await fetch(`/api/data/upload?filename=${filename}`, {
-      method: 'POST',
-      body: JSON.stringify(localData),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    const result = await response.json();
-    console.log('Data saved to blob:', result);
-    return true;
-  } catch (error) {
-    console.error('Save failed:', error);
-    return false;
-  }
-}
-
-function loadLocalData() {
-  showStatus('클라우드에서 로딩중...', 'info');
-  
-  fetch('/api/data/load')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('No data found');
-      }
-      return response.json();
-    })
-    .then(data => {
-      localData = { ...localData, ...data };
-      renderAll();
-      showStatus('클라우드에서 로딩 완료', 'success');
-    })
-    .catch(error => {
-      console.error('Load failed:', error);
-      showStatus('클라우드 로딩 실패', 'error');
-    });
-}
-
 function showStatus(message, type = 'info') {
   const indicator = document.getElementById('status-indicator');
-  indicator.textContent = message;
-  indicator.className = `status-indicator ${type}`;
-  
-  setTimeout(() => {
-    indicator.className = 'status-indicator';
-    indicator.textContent = '시스템 준비완료';
-  }, 3000);
+  if (indicator) {
+    indicator.textContent = message;
+    indicator.className = `status-indicator ${type}`;
+    
+    setTimeout(() => {
+      indicator.className = 'status-indicator';
+      indicator.textContent = '시스템 준비완료';
+    }, 3000);
+  }
 }
 
 function generateId() {
@@ -652,168 +551,13 @@ function getCurrentTimestamp() {
   return new Date().toLocaleString('ko-KR');
 }
 
-function renderTimeline() {
-  const list = document.getElementById('timeline-list');
-  if (localData.timeline.length === 0) {
-    list.innerHTML = '<div class="loading">등록된 타임라인이 없습니다.</div>';
-    return;
-  }
-  
-  list.innerHTML = localData.timeline.map(item => `
-    <div class="list-item">
-      <div class="item-title">${item.date} - ${item.title}</div>
-      <div class="item-content">${item.content}</div>
-      <div class="item-meta">위치: ${item.position}</div>
-      <div class="item-actions">
-        <button class="form-btn danger" onclick="deleteTimeline('${item.id}')">삭제</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderPhotos() {
-  const list = document.getElementById('photo-list');
-  if (localData.photos.length === 0) {
-    list.innerHTML = '<div class="loading">등록된 사진이 없습니다.</div>';
-    return;
-  }
-  
-  list.innerHTML = localData.photos.map(item => `
-    <div class="list-item">
-      <img src="${item.url}" class="photo-preview" alt="${item.title}">
-      <div style="display: inline-block; vertical-align: top;">
-        <div class="item-title">${item.title}</div>
-        <div class="item-content">${item.description}</div>
-        <div class="item-meta">${item.date}</div>
-        <div class="item-actions">
-          <button class="form-btn danger" onclick="deletePhoto('${item.id}')">삭제</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderLettersTo() {
-  const list = document.getElementById('letter-to-list');
-  if (localData.lettersTo.length === 0) {
-    list.innerHTML = '<div class="loading">작성된 편지가 없습니다.</div>';
-    return;
-  }
-  
-  list.innerHTML = localData.lettersTo.map(item => `
-    <div class="list-item">
-      <div class="item-title">${item.title}</div>
-      <div class="item-content">${item.content.substring(0, 100)}...</div>
-      <div class="item-meta">${item.timestamp}</div>
-      <div class="item-actions">
-        <button class="form-btn danger" onclick="deleteLetterTo('${item.id}')">삭제</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderLettersFrom() {
-  const list = document.getElementById('letter-from-list');
-  if (localData.lettersFrom.length === 0) {
-    list.innerHTML = '<div class="loading">받은 편지가 없습니다.</div>';
-    return;
-  }
-  
-  list.innerHTML = localData.lettersFrom.map(item => `
-    <div class="list-item">
-      <div class="item-title">${item.name}로부터</div>
-      <div class="item-content">${item.message.substring(0, 100)}...</div>
-      <div class="item-meta">${item.timestamp}</div>
-      <div class="item-actions">
-        <button class="form-btn danger" onclick="deleteLetterFrom('${item.id}')">삭제</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderChatLogs() {
-  const list = document.getElementById('chat-logs-list');
-  if (localData.chatLogs.length === 0) {
-    list.innerHTML = '<div class="loading">대화 로그가 없습니다.</div>';
-    return;
-  }
-  
-  list.innerHTML = localData.chatLogs.map(item => `
-    <div class="list-item">
-      <div class="item-title">${item.sender === 'user' ? '👤 사용자' : '🤖 냥GPT'}</div>
-      <div class="item-content">${item.message.substring(0, 150)}...</div>
-      <div class="item-meta">${item.timestamp}</div>
-      <div class="item-actions">
-        <button class="form-btn warning" onclick="viewFullMessage('${item.id}')">전체보기</button>
-        <button class="form-btn danger" onclick="deleteChatLog('${item.id}')">삭제</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderAll() {
-  renderTimeline();
-  renderPhotos();
-  renderLettersTo();
-  renderLettersFrom();
-  renderChatLogs();
-}
-
-function deleteTimeline(id) {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
-  localData.timeline = localData.timeline.filter(item => item.id !== id);
-  saveToBlob();
-  renderTimeline();
-  showStatus('타임라인이 삭제되었습니다', 'success');
-}
-
-async function deletePhoto(id) {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
-  
-  try {
-    const photoItem = localData.photos.find(item => item.id === id);
-    
-    if (photoItem) {
-      await fetch('/api/delete', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ url: photoItem.url })
-      });
-    }
-    
-    localData.photos = localData.photos.filter(item => item.id !== id);
-    await saveToBlob();
-    renderPhotos();
-    showStatus('사진이 삭제되었습니다', 'success');
-  } catch (error) {
-    console.error('사진 삭제 에러:', error);
-    showStatus('사진 삭제에 실패했습니다', 'error');
-  }
-}
-
-function deleteLetterTo(id) {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
-  localData.lettersTo = localData.lettersTo.filter(item => item.id !== id);
-  saveToBlob();
-  renderLettersTo();
-  showStatus('편지가 삭제되었습니다', 'success');
-}
-
-function deleteLetterFrom(id) {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
-  localData.lettersFrom = localData.lettersFrom.filter(item => item.id !== id);
-  saveToBlob();
-  renderLettersFrom();
-  showStatus('편지가 삭제되었습니다', 'success');
-}
-
 function loadChatLogs() {
   showStatus('챗봇 로그 로딩중...', 'info');
   
   try {
     const savedLogs = localStorage.getItem('nyangkun_chat_logs');
+    console.log('저장된 로그:', savedLogs);
+    
     if (savedLogs) {
       const logs = JSON.parse(savedLogs);
       localData.chatLogs = logs.map(log => ({
@@ -822,13 +566,38 @@ function loadChatLogs() {
         message: log.message,
         timestamp: log.timestamp || getCurrentTimestamp()
       }));
+    } else {
+      localData.chatLogs = [];
     }
+    
     renderChatLogs();
-    showStatus('챗봇 로그 로딩 완료', 'success');
+    showStatus(`챗봇 로그 ${localData.chatLogs.length}개 로딩 완료`, 'success');
   } catch (error) {
     console.error('Chat logs loading failed:', error);
     showStatus('챗봇 로그 로딩 실패', 'error');
   }
+}
+
+function renderChatLogs() {
+  const list = document.getElementById('chat-logs-list');
+  if (!list) return;
+  
+  if (localData.chatLogs.length === 0) {
+    list.innerHTML = '<div class="loading">대화 로그가 없습니다.</div>';
+    return;
+  }
+  
+  list.innerHTML = localData.chatLogs.map(item => `
+    <div class="list-item">
+      <div class="item-title">${item.sender === 'user' ? '👤 사용자' : '🤖 냥GPT'}</div>
+      <div class="item-content">${item.message.substring(0, 200)}${item.message.length > 200 ? '...' : ''}</div>
+      <div class="item-meta">${item.timestamp}</div>
+      <div class="item-actions">
+        <button class="form-btn warning" onclick="viewFullMessage('${item.id}')">전체보기</button>
+        <button class="form-btn danger" onclick="deleteChatLog('${item.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 function clearChatLogs() {
@@ -877,6 +646,129 @@ function deleteChatLog(id) {
   showStatus('대화 로그가 삭제되었습니다', 'success');
 }
 
+function renderTimeline() {
+  const list = document.getElementById('timeline-list');
+  if (!list) return;
+  
+  if (localData.timeline.length === 0) {
+    list.innerHTML = '<div class="loading">등록된 타임라인이 없습니다.</div>';
+    return;
+  }
+  
+  list.innerHTML = localData.timeline.map(item => `
+    <div class="list-item">
+      <div class="item-title">${item.date} - ${item.title}</div>
+      <div class="item-content">${item.content}</div>
+      <div class="item-meta">위치: ${item.position}</div>
+      <div class="item-actions">
+        <button class="form-btn danger" onclick="deleteTimeline('${item.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPhotos() {
+  const list = document.getElementById('photo-list');
+  if (!list) return;
+  
+  if (localData.photos.length === 0) {
+    list.innerHTML = '<div class="loading">등록된 사진이 없습니다.</div>';
+    return;
+  }
+  
+  list.innerHTML = localData.photos.map(item => `
+    <div class="list-item">
+      <img src="${item.url}" class="photo-preview" alt="${item.title}">
+      <div style="display: inline-block; vertical-align: top;">
+        <div class="item-title">${item.title}</div>
+        <div class="item-content">${item.description}</div>
+        <div class="item-meta">${item.date}</div>
+        <div class="item-actions">
+          <button class="form-btn danger" onclick="deletePhoto('${item.id}')">삭제</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLettersTo() {
+  const list = document.getElementById('letter-to-list');
+  if (!list) return;
+  
+  if (localData.lettersTo.length === 0) {
+    list.innerHTML = '<div class="loading">작성된 편지가 없습니다.</div>';
+    return;
+  }
+  
+  list.innerHTML = localData.lettersTo.map(item => `
+    <div class="list-item">
+      <div class="item-title">${item.title}</div>
+      <div class="item-content">${item.content.substring(0, 100)}...</div>
+      <div class="item-meta">${item.timestamp}</div>
+      <div class="item-actions">
+        <button class="form-btn danger" onclick="deleteLetterTo('${item.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLettersFrom() {
+  const list = document.getElementById('letter-from-list');
+  if (!list) return;
+  
+  if (localData.lettersFrom.length === 0) {
+    list.innerHTML = '<div class="loading">받은 편지가 없습니다.</div>';
+    return;
+  }
+  
+  list.innerHTML = localData.lettersFrom.map(item => `
+    <div class="list-item">
+      <div class="item-title">${item.name}로부터</div>
+      <div class="item-content">${item.message.substring(0, 100)}...</div>
+      <div class="item-meta">${item.timestamp}</div>
+      <div class="item-actions">
+        <button class="form-btn danger" onclick="deleteLetterFrom('${item.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAll() {
+  renderTimeline();
+  renderPhotos();
+  renderLettersTo();
+  renderLettersFrom();
+  renderChatLogs();
+}
+
+function deleteTimeline(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  localData.timeline = localData.timeline.filter(item => item.id !== id);
+  renderTimeline();
+  showStatus('타임라인이 삭제되었습니다', 'success');
+}
+
+function deletePhoto(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  localData.photos = localData.photos.filter(item => item.id !== id);
+  renderPhotos();
+  showStatus('사진이 삭제되었습니다', 'success');
+}
+
+function deleteLetterTo(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  localData.lettersTo = localData.lettersTo.filter(item => item.id !== id);
+  renderLettersTo();
+  showStatus('편지가 삭제되었습니다', 'success');
+}
+
+function deleteLetterFrom(id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  localData.lettersFrom = localData.lettersFrom.filter(item => item.id !== id);
+  renderLettersFrom();
+  showStatus('편지가 삭제되었습니다', 'success');
+}
+
 function manageApp(appType) {
   if (!confirm(`${appType} 데이터를 모두 삭제하시겠습니까?`)) return;
   
@@ -897,7 +789,6 @@ function manageApp(appType) {
       break;
   }
   
-  saveToBlob();
   showStatus(`${appType} 데이터가 초기화되었습니다`, 'success');
 }
 
@@ -919,6 +810,8 @@ function exportData() {
 
 function importData() {
   const fileInput = document.getElementById('import-file');
+  if (!fileInput) return;
+  
   const file = fileInput.files[0];
   
   if (!file) {
@@ -932,7 +825,6 @@ function importData() {
       const importedData = JSON.parse(event.target.result);
       if (confirm('기존 데이터를 모두 덮어쓰시겠습니까?')) {
         localData = { ...localData, ...importedData };
-        saveToBlob();
         renderAll();
         showStatus('데이터가 가져오기되었습니다', 'success');
       }
@@ -943,93 +835,74 @@ function importData() {
   reader.readAsText(file);
 }
 
-function initializeAdmin() {
-  document.getElementById('timeline-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newItem = {
-      id: generateId(),
-      date: document.getElementById('timeline-date').value,
-      title: document.getElementById('timeline-title').value,
-      content: document.getElementById('timeline-content').value,
-      position: document.getElementById('timeline-position').value
-    };
-    
-    localData.timeline.push(newItem);
-    saveToBlob();
-    document.getElementById('timeline-form').reset();
-    renderTimeline();
-    showStatus('타임라인이 추가되었습니다', 'success');
-  });
-
-  document.getElementById('photo-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const file = document.getElementById('photo-file').files[0];
-    if (!file) {
-      showStatus('사진을 선택해주세요', 'error');
-      return;
-    }
-
-    try {
-      showStatus('사진 업로드 중...', 'info');
-      
-      const url = await uploadToVercelBlob(file);
-      
+window.addEventListener('load', () => {
+  const timelineForm = document.getElementById('timeline-form');
+  if (timelineForm) {
+    timelineForm.addEventListener('submit', (e) => {
+      e.preventDefault();
       const newItem = {
         id: generateId(),
-        url: url,
-        title: document.getElementById('photo-title').value,
-        description: document.getElementById('photo-description').value,
-        date: document.getElementById('photo-date').value
+        date: document.getElementById('timeline-date').value,
+        title: document.getElementById('timeline-title').value,
+        content: document.getElementById('timeline-content').value,
+        position: document.getElementById('timeline-position').value
       };
       
-      localData.photos.push(newItem);
-      await saveToBlob();
-      document.getElementById('photo-form').reset();
-      renderPhotos();
-      showStatus('사진이 추가되었습니다', 'success');
-    } catch (error) {
-      console.error('사진 업로드 에러:', error);
-      showStatus('사진 업로드에 실패했습니다', 'error');
-    }
-  });
+      localData.timeline.push(newItem);
+      timelineForm.reset();
+      renderTimeline();
+      showStatus('타임라인이 추가되었습니다', 'success');
+    });
+  }
 
-  document.getElementById('letter-to-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newItem = {
-      id: generateId(),
-      title: document.getElementById('letter-to-title').value,
-      content: document.getElementById('letter-to-content').value,
-      timestamp: getCurrentTimestamp()
-    };
-    
-    localData.lettersTo.push(newItem);
-    saveToBlob();
-    document.getElementById('letter-to-form').reset();
-    renderLettersTo();
-    showStatus('편지가 작성되었습니다', 'success');
-  });
+  const photoForm = document.getElementById('photo-form');
+  if (photoForm) {
+    photoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showStatus('사진 업로드는 서버 API가 필요합니다', 'error');
+    });
+  }
 
-  document.getElementById('letter-from-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newItem = {
-      id: generateId(),
-      name: document.getElementById('letter-from-name').value,
-      message: document.getElementById('letter-from-content').value,
-      timestamp: getCurrentTimestamp()
-    };
-    
-    localData.lettersFrom.push(newItem);
-    saveToBlob();
-    document.getElementById('letter-from-form').reset();
-    renderLettersFrom();
-    showStatus('편지가 추가되었습니다', 'success');
-  });
+  const letterToForm = document.getElementById('letter-to-form');
+  if (letterToForm) {
+    letterToForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: generateId(),
+        title: document.getElementById('letter-to-title').value,
+        content: document.getElementById('letter-to-content').value,
+        timestamp: getCurrentTimestamp()
+      };
+      
+      localData.lettersTo.push(newItem);
+      letterToForm.reset();
+      renderLettersTo();
+      showStatus('편지가 작성되었습니다', 'success');
+    });
+  }
+
+  const letterFromForm = document.getElementById('letter-from-form');
+  if (letterFromForm) {
+    letterFromForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: generateId(),
+        name: document.getElementById('letter-from-name').value,
+        message: document.getElementById('letter-from-content').value,
+        timestamp: getCurrentTimestamp()
+      };
+      
+      localData.lettersFrom.push(newItem);
+      letterFromForm.reset();
+      renderLettersFrom();
+      showStatus('편지가 추가되었습니다', 'success');
+    });
+  }
 
   renderAll();
-  loadLocalData();
   loadChatLogs();
-  showStatus('시스템 준비완료', 'success');
-}
+  showStatus('시스템 초기화 완료', 'success');
+});
 </script>
 </body>
 </html>
