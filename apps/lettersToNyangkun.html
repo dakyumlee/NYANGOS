@@ -400,26 +400,6 @@
       status.style.color = color;
     }
 
-    function playSound() {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 523;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.3);
-      } catch(e) {}
-    }
-
     function renderLettersList() {
       const listContainer = document.getElementById('letters-list');
       const counter = document.getElementById('letter-counter');
@@ -466,27 +446,28 @@
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
-      try {
-        const savedData = localStorage.getItem('nyangkun-data');
-        if (savedData) {
-          const data = JSON.parse(savedData);
+      fetch('/api/data/load')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('No data found');
+          }
+          return response.json();
+        })
+        .then(data => {
           letters = data.lettersTo || [];
-        } else {
+          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          
+          updateConnectionStatus('LOADED', '#00ff41');
+          loadingEl.classList.add('hidden');
+          renderLettersList();
+        })
+        .catch(error => {
+          console.error('편지 로딩 실패:', error);
+          updateConnectionStatus('ERROR', '#ff6b6b');
           letters = [];
-        }
-        
-        letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
-        console.log(`${letters.length}개의 편지를 불러왔습니다`);
-        updateConnectionStatus('LOADED', '#00ff41');
-      } catch (error) {
-        console.error('편지 로딩 실패:', error);
-        updateConnectionStatus('ERROR', '#ff6b6b');
-        letters = [];
-      }
-      
-      loadingEl.classList.add('hidden');
-      renderLettersList();
+          loadingEl.classList.add('hidden');
+          renderLettersList();
+        });
     }
 
     window.selectLetter = function(index) {
@@ -498,11 +479,9 @@
       if (selectedLetter) {
         displayLetter(selectedLetter);
       }
-      playSound();
     };
 
     window.refreshLetters = function() {
-      playSound();
       loadLetters();
     };
 
@@ -510,24 +489,15 @@
       if (letters.length > 0) {
         letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         renderLettersList();
-        playSound();
       }
     };
 
     window.goBack = function() {
       window.history.back();
-      playSound();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('편지쓰기 시스템 시작');
       loadLetters();
-    });
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-data') {
-        loadLetters();
-      }
     });
   </script>
 </body>

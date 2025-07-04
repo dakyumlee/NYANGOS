@@ -425,20 +425,6 @@
 
       <div class="admin-section">
         <div class="section-header">
-          <div class="section-title">🧘 오늘의 묵상 관리</div>
-        </div>
-        <form id="quote-form">
-          <div class="form-group">
-            <label class="form-label">묵상 내용</label>
-            <textarea class="form-input form-textarea" id="quote-input" placeholder="마음에 와닿는 말씀을 입력하세요..." required></textarea>
-          </div>
-          <button type="submit" class="form-btn">어록 추가</button>
-        </form>
-        <div class="items-list" id="quote-list"></div>
-      </div>
-
-      <div class="admin-section">
-        <div class="section-header">
           <div class="section-title">💌 냥쿤에게 쓰는 편지</div>
         </div>
         <form id="letter-to-form">
@@ -473,9 +459,17 @@
         <div class="items-list" id="letter-from-list"></div>
       </div>
 
-💌 편지 초기화</button>
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">⚙️ 시스템 관리</div>
+        </div>
+        <div class="app-grid">
+          <button class="app-btn" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
+          <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
+          <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
           <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
-          <button class="app-btn" onclick="loadLocalData()">📥 데이터 불러오기</button>
+          <button class="app-btn" onclick="loadLocalData()">☁️ 클라우드에서 불러오기</button>
+          <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
         </div>
         <div class="form-group">
           <label class="form-label">데이터 가져오기</label>
@@ -489,56 +483,69 @@
     let localData = {
       timeline: [],
       photos: [],
-      quotes: [],
       lettersTo: [],
       lettersFrom: []
     };
 
     function loadLocalData() {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = '.json';
-      fileInput.style.display = 'none';
+      showStatus('클라우드에서 로딩중...', 'info');
       
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          try {
-            localData = JSON.parse(event.target.result);
-            renderAll();
-            showStatus('데이터 로딩 완료', 'success');
-          } catch (error) {
-            console.error('데이터 로딩 실패:', error);
-            showStatus('데이터 로딩 실패', 'error');
+      fetch('/api/data/load')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('No data found');
           }
-        };
-        reader.readAsText(file);
+          return response.json();
+        })
+        .then(data => {
+          localData = { ...localData, ...data };
+          renderAll();
+          showStatus('클라우드에서 로딩 완료', 'success');
+        })
+        .catch(error => {
+          console.error('Load failed:', error);
+          showStatus('클라우드 로딩 실패', 'error');
+        });
+    }
+
+    async function uploadToVercelBlob(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
       });
       
-      document.body.appendChild(fileInput);
-      fileInput.click();
-      document.body.removeChild(fileInput);
+      if (!response.ok) {
+        throw new Error('파일 업로드 실패');
+      }
+      
+      const result = await response.json();
+      return result.url;
     }
 
     function saveLocalData() {
       try {
         const dataStr = JSON.stringify(localData, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        const filename = `nyangkun-data-${Date.now()}.json`;
         
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'nyangkun-data.json';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showStatus('데이터 파일 다운로드 완료', 'success');
+        fetch(`/api/data/upload?filename=${filename}`, {
+          method: 'POST',
+          body: dataStr,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(blob => {
+          console.log('Data uploaded:', blob);
+          showStatus('클라우드에 저장 완료', 'success');
+        })
+        .catch(error => {
+          console.error('Upload failed:', error);
+          showStatus('클라우드 저장 실패', 'error');
+        });
       } catch (error) {
         console.error('데이터 저장 실패:', error);
         showStatus('데이터 저장 실패', 'error');
@@ -605,23 +612,6 @@
       `).join('');
     }
 
-    function renderQuotes() {
-      const list = document.getElementById('quote-list');
-      if (localData.quotes.length === 0) {
-        list.innerHTML = '<div class="loading">등록된 어록이 없습니다.</div>';
-        return;
-      }
-      
-      list.innerHTML = localData.quotes.map(item => `
-        <div class="list-item">
-          <div class="item-content">"${item.text}"</div>
-          <div class="item-actions">
-            <button class="form-btn danger" onclick="deleteQuote('${item.id}')">삭제</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
     function renderLettersTo() {
       const list = document.getElementById('letter-to-list');
       if (localData.lettersTo.length === 0) {
@@ -677,7 +667,7 @@
       showStatus('타임라인이 추가되었습니다', 'success');
     });
 
-    document.getElementById('photo-form').addEventListener('submit', (e) => {
+    document.getElementById('photo-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const file = document.getElementById('photo-file').files[0];
       if (!file) {
@@ -685,11 +675,15 @@
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(event) {
+      try {
+        showStatus('사진 업로드 중...', 'info');
+        
+        // Vercel Blob에 파일 업로드
+        const url = await uploadToVercelBlob(file);
+        
         const newItem = {
           id: generateId(),
-          url: event.target.result,
+          url: url,
           title: document.getElementById('photo-title').value,
           description: document.getElementById('photo-description').value,
           date: document.getElementById('photo-date').value
@@ -700,25 +694,10 @@
         document.getElementById('photo-form').reset();
         renderPhotos();
         showStatus('사진이 추가되었습니다', 'success');
-      };
-      reader.readAsDataURL(file);
-    });
-
-    document.getElementById('quote-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = document.getElementById('quote-input').value;
-      if (!text) return;
-      
-      const newItem = {
-        id: generateId(),
-        text: text
-      };
-      
-      localData.quotes.push(newItem);
-      saveLocalData();
-      document.getElementById('quote-form').reset();
-      renderQuotes();
-      showStatus('어록이 추가되었습니다', 'success');
+      } catch (error) {
+        console.error('사진 업로드 에러:', error);
+        showStatus('사진 업로드에 실패했습니다', 'error');
+      }
     });
 
     document.getElementById('letter-to-form').addEventListener('submit', (e) => {
@@ -761,20 +740,30 @@
       showStatus('타임라인이 삭제되었습니다', 'success');
     };
 
-    window.deletePhoto = function(id) {
+    window.deletePhoto = async function(id) {
       if (!confirm('정말 삭제하시겠습니까?')) return;
-      localData.photos = localData.photos.filter(item => item.id !== id);
-      saveLocalData();
-      renderPhotos();
-      showStatus('사진이 삭제되었습니다', 'success');
-    };
-
-    window.deleteQuote = function(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      localData.quotes = localData.quotes.filter(item => item.id !== id);
-      saveLocalData();
-      renderQuotes();
-      showStatus('어록이 삭제되었습니다', 'success');
+      
+      try {
+        const photoItem = localData.photos.find(item => item.id === id);
+        
+        if (photoItem) {
+          await fetch('/api/delete', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: photoItem.url })
+          });
+        }
+        
+        localData.photos = localData.photos.filter(item => item.id !== id);
+        saveLocalData();
+        renderPhotos();
+        showStatus('사진이 삭제되었습니다', 'success');
+      } catch (error) {
+        console.error('사진 삭제 에러:', error);
+        showStatus('사진 삭제에 실패했습니다', 'error');
+      }
     };
 
     window.deleteLetterTo = function(id) {
@@ -804,10 +793,6 @@
         case 'photos':
           localData.photos = [];
           renderPhotos();
-          break;
-        case 'quotes':
-          localData.quotes = [];
-          renderQuotes();
           break;
         case 'letters':
           localData.lettersTo = [];
@@ -866,13 +851,12 @@
     function renderAll() {
       renderTimeline();
       renderPhotos();
-      renderQuotes();
       renderLettersTo();
       renderLettersFrom();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderAll();
+      loadLocalData();
       showStatus('시스템 준비완료', 'success');
     });
   </script>

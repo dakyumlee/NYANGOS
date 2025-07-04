@@ -553,52 +553,26 @@
       status.style.color = color;
     }
 
-    function playSound(type = 'default') {
+    async function saveToBlob() {
       try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        const dataToSave = { lettersFrom: letters };
+        const filename = `nyangkun-data-${Date.now()}.json`;
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        const response = await fetch(`/api/data/upload?filename=${filename}`, {
+          method: 'POST',
+          body: JSON.stringify(dataToSave),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         
-        const frequencies = {
-          default: 523,
-          write: 659,
-          send: [440, 523, 659, 784]
-        };
-        
-        if (type === 'send') {
-          const notes = frequencies.send;
-          let time = audioContext.currentTime;
-          
-          notes.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            
-            gain.gain.setValueAtTime(0.1, time + i * 0.15);
-            gain.gain.exponentialRampToValueAtTime(0.01, time + i * 0.15 + 0.3);
-            
-            osc.start(time + i * 0.15);
-            osc.stop(time + i * 0.15 + 0.3);
-          });
-        } else {
-          oscillator.frequency.value = frequencies[type] || frequencies.default;
-          oscillator.type = 'sine';
-          
-          gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-          
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.3);
-        }
-      } catch(e) {}
+        const result = await response.json();
+        console.log('Data saved to blob:', result);
+        return true;
+      } catch (error) {
+        console.error('Save failed:', error);
+        return false;
+      }
     }
 
     function renderLettersList() {
@@ -648,27 +622,28 @@
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
-      try {
-        const savedData = localStorage.getItem('nyangkun-data');
-        if (savedData) {
-          const data = JSON.parse(savedData);
+      fetch('/api/data/load')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('No data found');
+          }
+          return response.json();
+        })
+        .then(data => {
           letters = data.lettersFrom || [];
-        } else {
+          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          
+          updateConnectionStatus('LOADED', '#00ff41');
+          loadingEl.classList.add('hidden');
+          renderLettersList();
+        })
+        .catch(error => {
+          console.error('편지 로딩 실패:', error);
+          updateConnectionStatus('ERROR', '#ff6b6b');
           letters = [];
-        }
-        
-        letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
-        console.log(`${letters.length}개의 편지를 불러왔습니다`);
-        updateConnectionStatus('LOADED', '#00ff41');
-      } catch (error) {
-        console.error('편지 로딩 실패:', error);
-        updateConnectionStatus('ERROR', '#ff6b6b');
-        letters = [];
-      }
-      
-      loadingEl.classList.add('hidden');
-      renderLettersList();
+          loadingEl.classList.add('hidden');
+          renderLettersList();
+        });
     }
 
     window.setReadMode = function() {
@@ -688,8 +663,6 @@
           </div>
         `;
       }
-      
-      playSound();
     };
 
     window.setWriteMode = function() {
@@ -707,7 +680,7 @@
           
           <div class="form-group">
             <label class="form-label">닉네임/별명</label>
-            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
+            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" required>
           </div>
           
           <div class="form-group">
@@ -721,8 +694,6 @@
           </div>
         </div>
       `;
-      
-      playSound('write');
     };
 
     window.selectLetter = function(index) {
@@ -734,10 +705,9 @@
       if (selectedLetter) {
         displayLetter(selectedLetter);
       }
-      playSound();
     };
 
-    window.sendLetter = function() {
+    window.sendLetter = async function() {
       const name = document.getElementById('sender-name').value.trim();
       const content = document.getElementById('letter-content').value.trim();
       
@@ -746,59 +716,40 @@
         return;
       }
       
-      try {
-        const savedData = localStorage.getItem('nyangkun-data');
-        let data = savedData ? JSON.parse(savedData) : {};
-        
-        if (!data.lettersFrom) {
-          data.lettersFrom = [];
-        }
-        
-        const newLetter = {
-          id: Date.now().toString(),
-          name: name,
-          message: content,
-          timestamp: new Date().toLocaleString('ko-KR')
-        };
-        
-        data.lettersFrom.push(newLetter);
-        localStorage.setItem('nyangkun-data', JSON.stringify(data));
-        
-        playSound('send');
+      const newLetter = {
+        id: Date.now().toString(),
+        name: name,
+        message: content,
+        timestamp: new Date().toLocaleString('ko-KR')
+      };
+      
+      letters.unshift(newLetter);
+      
+      const saved = await saveToBlob();
+      if (saved) {
         alert('편지가 성공적으로 전송되었습니다! 💌');
-        
         setReadMode();
-        loadLetters();
-      } catch (error) {
-        console.error('편지 전송 실패:', error);
+        renderLettersList();
+      } else {
         alert('편지 전송에 실패했습니다.');
+        letters.shift();
       }
     };
 
     window.cancelWrite = function() {
       setReadMode();
-      playSound();
     };
 
     window.refreshLetters = function() {
-      playSound();
       loadLetters();
     };
 
     window.goBack = function() {
       window.history.back();
-      playSound();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('받은편지함 시스템 시작');
       loadLetters();
-    });
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-data') {
-        loadLetters();
-      }
     });
   </script>
 </body>
