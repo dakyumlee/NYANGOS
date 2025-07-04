@@ -438,22 +438,7 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-      authDomain: "nyangos-fdbe6.firebaseapp.com",
-      projectId: "nyangos-fdbe6",
-      storageBucket: "nyangos-fdbe6.appspot.com",
-      messagingSenderId: "349621507711",
-      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  <script>
     let photos = [];
     let currentSlide = 0;
     let viewMode = 'gallery';
@@ -531,21 +516,14 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const photoRef = collection(db, "photos");
-        const snapshot = await getDocs(photoRef);
+        const response = await fetch('/api/photos');
         
-        photos = [];
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          if (data.url) {
-            photos.push({
-              url: data.url,
-              title: data.title || '제목 없음',
-              description: data.description || '',
-              date: data.date || ''
-            });
-          }
-        });
+        if (!response.ok) {
+          throw new Error('Failed to load photos');
+        }
+        
+        const data = await response.json();
+        photos = data.photos || [];
         
         console.log(`${photos.length}개의 사진을 불러왔습니다`);
         updateConnectionStatus('LOADED', '#00ff41');
