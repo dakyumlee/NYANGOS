@@ -563,20 +563,19 @@
       }).join('');
     }
 
-    function loadMemories() {
+    async function loadMemories() {
       const loadingEl = document.getElementById('loading-world');
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const savedData = localStorage.getItem('nyangkun-admin-data');
-        if (savedData) {
-          const data = JSON.parse(savedData);
-          memories = data.timeline || [];
-        } else {
-          memories = [];
+        const response = await fetch('/api/data/load');
+        if (!response.ok) {
+          throw new Error('No data found');
         }
         
+        const data = await response.json();
+        memories = data.timeline || [];
         memories.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         console.log(`${memories.length}개의 타임라인 이벤트를 불러왔습니다`);
@@ -649,12 +648,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       console.log('타임라인 시스템 시작');
       loadMemories();
-    });
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-admin-data') {
-        loadMemories();
-      }
     });
   </script>
 </body>

@@ -509,7 +509,7 @@
       try {
         const startTime = Date.now();
         
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/claude', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -534,7 +534,7 @@
           throw new Error('서버 응답을 처리할 수 없어요');
         }
 
-        const reply = data?.content?.[0]?.text || '응답을 받을 수 없어요냥...';
+        const reply = data?.reply || '응답을 받을 수 없어요냥...';
         
         hideTyping();
         addMessage(reply, false);
@@ -589,7 +589,7 @@
       try {
         updateConnectionStatus('TESTING...', '#f59e0b');
         
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/claude', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'connection test' })
