@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>냥쿤OS 관리자</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -290,6 +293,33 @@ body {
   display: inline-block;
 }
 
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.app-btn {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #4ade80;
+  color: #4ade80;
+  padding: 12px 8px;
+  font-size: 6px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  transition: all 0.2s;
+  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+  text-align: center;
+}
+
+.app-btn:hover {
+  background: #4ade80;
+  color: #000000;
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+}
+
 @media (max-width: 768px) {
   .admin-grid {
     grid-template-columns: 1fr;
@@ -310,12 +340,12 @@ body {
 </head>
 <body>
   <div class="admin-container">
-    <div class="status-indicator" id="status-indicator">시스템 준비중...</div>
+    <div class="status-indicator" id="status-indicator">시스템 준비완료</div>
 
 ```
 <div class="admin-header">
-  <div class="admin-title">📂 냥쿤OS 관리자 페이지</div>
-  <div class="admin-subtitle">시스템 관리 및 콘텐츠 편집</div>
+  <div class="admin-title">📂 냥쿤OS 관리자 페이지 (Blob 버전)</div>
+  <div class="admin-subtitle">로컬 데이터 관리 시스템</div>
 </div>
 
 <div class="admin-grid">
@@ -342,12 +372,7 @@ body {
       </div>
       <button type="submit" class="form-btn">추가</button>
     </form>
-    <div class="items-list" id="timeline-list">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        타임라인 로딩중...
-      </div>
-    </div>
+    <div class="items-list" id="timeline-list"></div>
   </div>
 
   <div class="admin-section">
@@ -371,14 +396,9 @@ body {
         <label class="form-label">날짜</label>
         <input type="text" class="form-input" id="photo-date" placeholder="2024.04.01" required />
       </div>
-      <button type="submit" class="form-btn">사진 업로드</button>
+      <button type="submit" class="form-btn">사진 추가</button>
     </form>
-    <div class="items-list" id="photo-list">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        사진 로딩중...
-      </div>
-    </div>
+    <div class="items-list" id="photo-list"></div>
   </div>
 
   <div class="admin-section">
@@ -392,12 +412,7 @@ body {
       </div>
       <button type="submit" class="form-btn">어록 추가</button>
     </form>
-    <div class="items-list" id="quote-list">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        어록 로딩중...
-      </div>
-    </div>
+    <div class="items-list" id="quote-list"></div>
   </div>
 
   <div class="admin-section">
@@ -415,37 +430,42 @@ body {
       </div>
       <button type="submit" class="form-btn">편지 작성</button>
     </form>
-    <div class="items-list" id="letter-to-list">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        편지 로딩중...
-      </div>
-    </div>
+    <div class="items-list" id="letter-to-list"></div>
   </div>
 
   <div class="admin-section">
     <div class="section-header">
       <div class="section-title">📨 냥쿤이 나에게 쓴 편지</div>
     </div>
-    <div class="iframe-container">
-      <iframe id="letters-from-iframe" src=""></iframe>
-    </div>
+    <form id="letter-from-form">
+      <div class="form-group">
+        <label class="form-label">작성자</label>
+        <input type="text" class="form-input" id="letter-from-name" placeholder="냥쿤" value="냥쿤" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">편지 내용</label>
+        <textarea class="form-input form-textarea" id="letter-from-content" placeholder="냥쿤이 보내는 편지 내용..." required></textarea>
+      </div>
+      <button type="submit" class="form-btn">편지 추가</button>
+    </form>
+    <div class="items-list" id="letter-from-list"></div>
   </div>
 
   <div class="admin-section">
     <div class="section-header">
-      <div class="section-title">🎮 앱 미리보기</div>
+      <div class="section-title">🎮 앱 관리</div>
     </div>
-    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-      <button class="form-btn" onclick="previewApp('chatbot')">냥GPT</button>
-      <button class="form-btn" onclick="previewApp('photos')">사진첩</button>
-      <button class="form-btn" onclick="previewApp('quotes')">냥쿤키우기</button>
-      <button class="form-btn" onclick="previewApp('timeline')">타임라인</button>
-      <button class="form-btn" onclick="previewApp('letters-from')">받은편지함</button>
-      <button class="form-btn" onclick="previewApp('letters-to')">편지쓰기</button>
+    <div class="app-grid">
+      <button class="app-btn" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
+      <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
+      <button class="app-btn" onclick="manageApp('quotes')">🧘 어록 초기화</button>
+      <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
+      <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
+      <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
     </div>
-    <div class="iframe-container">
-      <iframe id="app-preview-iframe" src=""></iframe>
+    <div class="form-group">
+      <label class="form-label">데이터 가져오기</label>
+      <input type="file" class="form-input" id="import-file" accept=".json" />
     </div>
   </div>
 </div>
@@ -453,49 +473,34 @@ body {
 
   </div>
 
-  <script type="module">
-    let db = null;
-    let storage = null;
-    let isConnected = false;
-
-    const apps = {
-      'chatbot': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 chatbot HTML */)}`,
-      'photos': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 photos HTML */)}`,
-      'quotes': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 quotes HTML */)}`,
-      'timeline': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 timeline HTML */)}`,
-      'letters-from': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 letters-from HTML */)}`,
-      'letters-to': `data:text/html;charset=utf-8,${encodeURIComponent(/* 여기에 letters-to HTML */)}`,
+  <script>
+    let localData = {
+      timeline: [],
+      photos: [],
+      quotes: [],
+      lettersTo: [],
+      lettersFrom: []
     };
 
-    async function initFirebase() {
+    function loadLocalData() {
       try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
-        const { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js");
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-          authDomain: "nyangos-fdbe6.firebaseapp.com",
-          projectId: "nyangos-fdbe6",
-          storageBucket: "nyangos-fdbe6.appspot.com",
-          messagingSenderId: "349621507711",
-          appId: "1:349621507711:web:2201669ae265cfbbfad14a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        storage = getStorage(app);
-        
-        await getDocs(collection(db, 'timeline'));
-        isConnected = true;
-        showStatus('Firebase 연결 성공', 'success');
-        console.log('Firebase 연결 성공');
-        return true;
+        const saved = localStorage.getItem('nyangkun-admin-data');
+        if (saved) {
+          localData = { ...localData, ...JSON.parse(saved) };
+        }
       } catch (error) {
-        console.error('Firebase 연결 실패:', error);
-        isConnected = false;
-        showStatus('Firebase 연결 실패', 'error');
-        return false;
+        console.error('데이터 로딩 실패:', error);
+        showStatus('데이터 로딩 실패', 'error');
+      }
+    }
+
+    function saveLocalData() {
+      try {
+        localStorage.setItem('nyangkun-admin-data', JSON.stringify(localData));
+        showStatus('데이터 저장 완료', 'success');
+      } catch (error) {
+        console.error('데이터 저장 실패:', error);
+        showStatus('데이터 저장 실패', 'error');
       }
     }
 
@@ -510,334 +515,326 @@ body {
       }, 3000);
     }
 
-    async function loadTimeline() {
-      if (!isConnected || !db) return;
-      
-      try {
-        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const snapshot = await getDocs(collection(db, 'timeline'));
-        const list = document.getElementById('timeline-list');
-        
-        if (snapshot.empty) {
-          list.innerHTML = '<div class="loading">등록된 타임라인이 없습니다.</div>';
-          return;
-        }
-        
-        list.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'list-item';
-          item.innerHTML = `
-            <div class="item-title">${data.date} - ${data.title}</div>
-            <div class="item-content">${data.content}</div>
-            <div class="item-meta">위치: ${data.position}</div>
-            <div class="item-actions">
-              <button class="form-btn warning" onclick="editTimeline('${docSnap.id}')">수정</button>
-              <button class="form-btn danger" onclick="deleteTimeline('${docSnap.id}')">삭제</button>
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      } catch (error) {
-        console.error('타임라인 로딩 실패:', error);
-        showStatus('타임라인 로딩 실패', 'error');
-      }
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 
-    async function loadPhotos() {
-      if (!isConnected || !db) return;
-      
-      try {
-        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const snapshot = await getDocs(collection(db, 'photos'));
-        const list = document.getElementById('photo-list');
-        
-        if (snapshot.empty) {
-          list.innerHTML = '<div class="loading">등록된 사진이 없습니다.</div>';
-          return;
-        }
-        
-        list.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'list-item';
-          item.innerHTML = `
-            <img src="${data.url}" class="photo-preview" alt="${data.title}">
-            <div style="display: inline-block; vertical-align: top;">
-              <div class="item-title">${data.title}</div>
-              <div class="item-content">${data.description}</div>
-              <div class="item-meta">${data.date}</div>
-              <div class="item-actions">
-                <button class="form-btn danger" onclick="deletePhoto('${docSnap.id}')">삭제</button>
-              </div>
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      } catch (error) {
-        console.error('사진 로딩 실패:', error);
-        showStatus('사진 로딩 실패', 'error');
-      }
+    function getCurrentTimestamp() {
+      return new Date().toLocaleString('ko-KR');
     }
 
-    async function loadQuotes() {
-      if (!isConnected || !db) return;
-      
-      try {
-        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const snapshot = await getDocs(collection(db, 'quotes'));
-        const list = document.getElementById('quote-list');
-        
-        if (snapshot.empty) {
-          list.innerHTML = '<div class="loading">등록된 어록이 없습니다.</div>';
-          return;
-        }
-        
-        list.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'list-item';
-          item.innerHTML = `
-            <div class="item-content">"${data.text}"</div>
-            <div class="item-actions">
-              <button class="form-btn danger" onclick="deleteQuote('${docSnap.id}')">삭제</button>
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      } catch (error) {
-        console.error('어록 로딩 실패:', error);
-        showStatus('어록 로딩 실패', 'error');
-      }
-    }
-
-    async function loadLettersTo() {
-      if (!isConnected || !db) return;
-      
-      try {
-        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const snapshot = await getDocs(collection(db, 'lettersToNyangkun'));
-        const list = document.getElementById('letter-to-list');
-        
-        if (snapshot.empty) {
-          list.innerHTML = '<div class="loading">작성된 편지가 없습니다.</div>';
-          return;
-        }
-        
-        list.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'list-item';
-          item.innerHTML = `
-            <div class="item-title">${data.title}</div>
-            <div class="item-content">${data.content.substring(0, 100)}...</div>
-            <div class="item-meta">${data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'}</div>
-            <div class="item-actions">
-              <button class="form-btn danger" onclick="deleteLetterTo('${docSnap.id}')">삭제</button>
-            </div>
-          `;
-          list.appendChild(item);
-        });
-      } catch (error) {
-        console.error('편지 로딩 실패:', error);
-        showStatus('편지 로딩 실패', 'error');
-      }
-    }
-
-    document.getElementById('timeline-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!isConnected || !db) {
-        showStatus('Firebase 연결이 필요합니다', 'error');
+    function renderTimeline() {
+      const list = document.getElementById('timeline-list');
+      if (localData.timeline.length === 0) {
+        list.innerHTML = '<div class="loading">등록된 타임라인이 없습니다.</div>';
         return;
       }
       
-      try {
-        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const data = {
-          date: document.getElementById('timeline-date').value,
-          title: document.getElementById('timeline-title').value,
-          content: document.getElementById('timeline-content').value,
-          position: document.getElementById('timeline-position').value
+      list.innerHTML = localData.timeline.map(item => `
+        <div class="list-item">
+          <div class="item-title">${item.date} - ${item.title}</div>
+          <div class="item-content">${item.content}</div>
+          <div class="item-meta">위치: ${item.position}</div>
+          <div class="item-actions">
+            <button class="form-btn danger" onclick="deleteTimeline('${item.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderPhotos() {
+      const list = document.getElementById('photo-list');
+      if (localData.photos.length === 0) {
+        list.innerHTML = '<div class="loading">등록된 사진이 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.photos.map(item => `
+        <div class="list-item">
+          <img src="${item.url}" class="photo-preview" alt="${item.title}">
+          <div style="display: inline-block; vertical-align: top;">
+            <div class="item-title">${item.title}</div>
+            <div class="item-content">${item.description}</div>
+            <div class="item-meta">${item.date}</div>
+            <div class="item-actions">
+              <button class="form-btn danger" onclick="deletePhoto('${item.id}')">삭제</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderQuotes() {
+      const list = document.getElementById('quote-list');
+      if (localData.quotes.length === 0) {
+        list.innerHTML = '<div class="loading">등록된 어록이 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.quotes.map(item => `
+        <div class="list-item">
+          <div class="item-content">"${item.text}"</div>
+          <div class="item-actions">
+            <button class="form-btn danger" onclick="deleteQuote('${item.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderLettersTo() {
+      const list = document.getElementById('letter-to-list');
+      if (localData.lettersTo.length === 0) {
+        list.innerHTML = '<div class="loading">작성된 편지가 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.lettersTo.map(item => `
+        <div class="list-item">
+          <div class="item-title">${item.title}</div>
+          <div class="item-content">${item.content.substring(0, 100)}...</div>
+          <div class="item-meta">${item.timestamp}</div>
+          <div class="item-actions">
+            <button class="form-btn danger" onclick="deleteLetterTo('${item.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderLettersFrom() {
+      const list = document.getElementById('letter-from-list');
+      if (localData.lettersFrom.length === 0) {
+        list.innerHTML = '<div class="loading">받은 편지가 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.lettersFrom.map(item => `
+        <div class="list-item">
+          <div class="item-title">${item.name}로부터</div>
+          <div class="item-content">${item.message.substring(0, 100)}...</div>
+          <div class="item-meta">${item.timestamp}</div>
+          <div class="item-actions">
+            <button class="form-btn danger" onclick="deleteLetterFrom('${item.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('timeline-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: generateId(),
+        date: document.getElementById('timeline-date').value,
+        title: document.getElementById('timeline-title').value,
+        content: document.getElementById('timeline-content').value,
+        position: document.getElementById('timeline-position').value
+      };
+      
+      localData.timeline.push(newItem);
+      saveLocalData();
+      document.getElementById('timeline-form').reset();
+      renderTimeline();
+      showStatus('타임라인이 추가되었습니다', 'success');
+    });
+
+    document.getElementById('photo-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const file = document.getElementById('photo-file').files[0];
+      if (!file) {
+        showStatus('사진을 선택해주세요', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const newItem = {
+          id: generateId(),
+          url: event.target.result,
+          title: document.getElementById('photo-title').value,
+          description: document.getElementById('photo-description').value,
+          date: document.getElementById('photo-date').value
         };
         
-        await addDoc(collection(db, 'timeline'), data);
-        document.getElementById('timeline-form').reset();
-        loadTimeline();
-        showStatus('타임라인이 추가되었습니다', 'success');
-      } catch (error) {
-        console.error('타임라인 추가 실패:', error);
-        showStatus('타임라인 추가 실패', 'error');
-      }
-    });
-
-    document.getElementById('photo-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!isConnected || !db || !storage) {
-        showStatus('Firebase 연결이 필요합니다', 'error');
-        return;
-      }
-      
-      try {
-        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const { ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js");
-        
-        const file = document.getElementById('photo-file').files[0];
-        const title = document.getElementById('photo-title').value;
-        const description = document.getElementById('photo-description').value;
-        const date = document.getElementById('photo-date').value;
-
-        if (!file) {
-          showStatus('사진을 선택해주세요', 'error');
-          return;
-        }
-
-        showStatus('사진 업로드 중...', 'info');
-        
-        const storageRef = ref(storage, `photos/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-
-        await addDoc(collection(db, 'photos'), { url, title, description, date });
+        localData.photos.push(newItem);
+        saveLocalData();
         document.getElementById('photo-form').reset();
-        loadPhotos();
-        showStatus('사진이 업로드되었습니다', 'success');
-      } catch (error) {
-        console.error('사진 업로드 실패:', error);
-        showStatus('사진 업로드 실패', 'error');
-      }
+        renderPhotos();
+        showStatus('사진이 추가되었습니다', 'success');
+      };
+      reader.readAsDataURL(file);
     });
 
-    document.getElementById('quote-form').addEventListener('submit', async (e) => {
+    document.getElementById('quote-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!isConnected || !db) {
-        showStatus('Firebase 연결이 필요합니다', 'error');
+      const text = document.getElementById('quote-input').value;
+      if (!text) return;
+      
+      const newItem = {
+        id: generateId(),
+        text: text
+      };
+      
+      localData.quotes.push(newItem);
+      saveLocalData();
+      document.getElementById('quote-form').reset();
+      renderQuotes();
+      showStatus('어록이 추가되었습니다', 'success');
+    });
+
+    document.getElementById('letter-to-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: generateId(),
+        title: document.getElementById('letter-to-title').value,
+        content: document.getElementById('letter-to-content').value,
+        timestamp: getCurrentTimestamp()
+      };
+      
+      localData.lettersTo.push(newItem);
+      saveLocalData();
+      document.getElementById('letter-to-form').reset();
+      renderLettersTo();
+      showStatus('편지가 작성되었습니다', 'success');
+    });
+
+    document.getElementById('letter-from-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: generateId(),
+        name: document.getElementById('letter-from-name').value,
+        message: document.getElementById('letter-from-content').value,
+        timestamp: getCurrentTimestamp()
+      };
+      
+      localData.lettersFrom.push(newItem);
+      saveLocalData();
+      document.getElementById('letter-from-form').reset();
+      renderLettersFrom();
+      showStatus('편지가 추가되었습니다', 'success');
+    });
+
+    window.deleteTimeline = function(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      localData.timeline = localData.timeline.filter(item => item.id !== id);
+      saveLocalData();
+      renderTimeline();
+      showStatus('타임라인이 삭제되었습니다', 'success');
+    };
+
+    window.deletePhoto = function(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      localData.photos = localData.photos.filter(item => item.id !== id);
+      saveLocalData();
+      renderPhotos();
+      showStatus('사진이 삭제되었습니다', 'success');
+    };
+
+    window.deleteQuote = function(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      localData.quotes = localData.quotes.filter(item => item.id !== id);
+      saveLocalData();
+      renderQuotes();
+      showStatus('어록이 삭제되었습니다', 'success');
+    };
+
+    window.deleteLetterTo = function(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      localData.lettersTo = localData.lettersTo.filter(item => item.id !== id);
+      saveLocalData();
+      renderLettersTo();
+      showStatus('편지가 삭제되었습니다', 'success');
+    };
+
+    window.deleteLetterFrom = function(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      localData.lettersFrom = localData.lettersFrom.filter(item => item.id !== id);
+      saveLocalData();
+      renderLettersFrom();
+      showStatus('편지가 삭제되었습니다', 'success');
+    };
+
+    window.manageApp = function(appType) {
+      if (!confirm(`${appType} 데이터를 모두 삭제하시겠습니까?`)) return;
+      
+      switch(appType) {
+        case 'timeline':
+          localData.timeline = [];
+          renderTimeline();
+          break;
+        case 'photos':
+          localData.photos = [];
+          renderPhotos();
+          break;
+        case 'quotes':
+          localData.quotes = [];
+          renderQuotes();
+          break;
+        case 'letters':
+          localData.lettersTo = [];
+          localData.lettersFrom = [];
+          renderLettersTo();
+          renderLettersFrom();
+          break;
+      }
+      
+      saveLocalData();
+      showStatus(`${appType} 데이터가 초기화되었습니다`, 'success');
+    };
+
+    window.exportData = function() {
+      const dataStr = JSON.stringify(localData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nyangkun-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showStatus('데이터가 내보내기되었습니다', 'success');
+    };
+
+    window.importData = function() {
+      const fileInput = document.getElementById('import-file');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showStatus('파일을 선택해주세요', 'error');
         return;
       }
       
-      try {
-        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const text = document.getElementById('quote-input').value;
-        if (!text) return;
-        
-        await addDoc(collection(db, 'quotes'), { text });
-        document.getElementById('quote-form').reset();
-        loadQuotes();
-        showStatus('어록이 추가되었습니다', 'success');
-      } catch (error) {
-        console.error('어록 추가 실패:', error);
-        showStatus('어록 추가 실패', 'error');
-      }
-    });
-
-    document.getElementById('letter-to-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!isConnected || !db) {
-        showStatus('Firebase 연결이 필요합니다', 'error');
-        return;
-      }
-      
-      try {
-        const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        const title = document.getElementById('letter-to-title').value;
-        const content = document.getElementById('letter-to-content').value;
-        
-        await addDoc(collection(db, 'lettersToNyangkun'), { 
-          title, 
-          content, 
-          timestamp: serverTimestamp() 
-        });
-        document.getElementById('letter-to-form').reset();
-        loadLettersTo();
-        showStatus('편지가 작성되었습니다', 'success');
-      } catch (error) {
-        console.error('편지 작성 실패:', error);
-        showStatus('편지 작성 실패', 'error');
-      }
-    });
-
-    window.deleteTimeline = async function(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      
-      try {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        await deleteDoc(doc(db, 'timeline', id));
-        loadTimeline();
-        showStatus('타임라인이 삭제되었습니다', 'success');
-      } catch (error) {
-        console.error('삭제 실패:', error);
-        showStatus('삭제 실패', 'error');
-      }
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (confirm('기존 데이터를 모두 덮어쓰시겠습니까?')) {
+            localData = { ...localData, ...importedData };
+            saveLocalData();
+            renderAll();
+            showStatus('데이터가 가져오기되었습니다', 'success');
+          }
+        } catch (error) {
+          showStatus('잘못된 파일 형식입니다', 'error');
+        }
+      };
+      reader.readAsText(file);
     };
 
-    window.deletePhoto = async function(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      
-      try {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        await deleteDoc(doc(db, 'photos', id));
-        loadPhotos();
-        showStatus('사진이 삭제되었습니다', 'success');
-      } catch (error) {
-        console.error('삭제 실패:', error);
-        showStatus('삭제 실패', 'error');
-      }
-    };
+    function renderAll() {
+      renderTimeline();
+      renderPhotos();
+      renderQuotes();
+      renderLettersTo();
+      renderLettersFrom();
+    }
 
-    window.deleteQuote = async function(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      
-      try {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        await deleteDoc(doc(db, 'quotes', id));
-        loadQuotes();
-        showStatus('어록이 삭제되었습니다', 'success');
-      } catch (error) {
-        console.error('삭제 실패:', error);
-        showStatus('삭제 실패', 'error');
-      }
-    };
-
-    window.deleteLetterTo = async function(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      
-      try {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-        await deleteDoc(doc(db, 'lettersToNyangkun', id));
-        loadLettersTo();
-        showStatus('편지가 삭제되었습니다', 'success');
-      } catch (error) {
-        console.error('삭제 실패:', error);
-        showStatus('삭제 실패', 'error');
-      }
-    };
-
-    window.previewApp = function(appName) {
-      const iframe = document.getElementById('app-preview-iframe');
-      if (apps[appName]) {
-        iframe.src = apps[appName];
-      } else {
-        showStatus(`${appName} 앱을 찾을 수 없습니다`, 'error');
-      }
-    };
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('관리자 페이지 초기화');
-      showStatus('시스템 초기화 중...', 'info');
-      
-      await initFirebase();
-      
-      if (isConnected) {
-        loadTimeline();
-        loadPhotos();
-        loadQuotes();
-        loadLettersTo();
-        
-        document.getElementById('letters-from-iframe').src = apps['letters-from'] || '';
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('관리자 페이지 초기화 (Blob 버전)');
+      loadLocalData();
+      renderAll();
+      showStatus('시스템 준비완료', 'success');
     });
   </script>
 
