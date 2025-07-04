@@ -350,33 +350,7 @@ box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
 </style>
 </head>
 <body>
-<script>
-function checkAuth() {
-  const auth = localStorage.getItem('nyangkun_auth');
-  const authTime = localStorage.getItem('nyangkun_auth_time');
 
-  if (!auth || !authTime) {
-    window.location.href = './login.html';
-    return false;
-  }
-
-  const timeDiff = Date.now() - parseInt(authTime);
-  const hoursDiff = timeDiff / (1000 * 60 * 60);
-
-  if (hoursDiff > 24) {
-    localStorage.removeItem('nyangkun_auth');
-    localStorage.removeItem('nyangkun_auth_time');
-    window.location.href = './login.html';
-    return false;
-  }
-
-  return auth === 'authenticated';
-}
-
-if (!checkAuth()) {
-  document.body.innerHTML = '<div style="color: white; text-align: center; padding: 50px;">인증 중...</div>';
-} else {
-  document.write(`
 <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
 
 <div class="admin-container">
@@ -385,7 +359,7 @@ if (!checkAuth()) {
 <div class="admin-header">
 <div>
   <div class="admin-title">📂 냥쿤OS 관리자 페이지</div>
-  <div class="admin-subtitle">로컬 데이터 관리 시스템</div>
+  <div class="admin-subtitle">Blob 데이터 관리 시스템</div>
 </div>
 <button class="logout-btn" onclick="logout()">🚪 로그아웃</button>
 </div>
@@ -500,6 +474,7 @@ if (!checkAuth()) {
     <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
     <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
     <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
+    <button class="app-btn" onclick="loadLocalData()">☁️ 클라우드에서 불러오기</button>
     <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
   </div>
   <div class="form-group">
@@ -509,11 +484,24 @@ if (!checkAuth()) {
 </div>
 </div>
 </div>
-  `);
-}
-</script>
 
 <script>
+const auth = localStorage.getItem('nyangkun_auth');
+const authTime = localStorage.getItem('nyangkun_auth_time');
+
+if (!auth || auth !== 'authenticated') {
+  window.location.href = './login.html';
+} else {
+  const timeDiff = Date.now() - parseInt(authTime || '0');
+  const hoursDiff = timeDiff / (1000 * 60 * 60);
+  
+  if (hoursDiff > 24) {
+    localStorage.removeItem('nyangkun_auth');
+    localStorage.removeItem('nyangkun_auth_time');
+    window.location.href = './login.html';
+  }
+}
+
 let localData = {
   timeline: [],
   photos: [],
@@ -528,6 +516,77 @@ function logout() {
     localStorage.removeItem('nyangkun_auth_time');
     window.location.href = './login.html';
   }
+}
+
+async function saveToBlob() {
+  try {
+    const filename = `nyangkun-data-${Date.now()}.json`;
+    
+    const response = await fetch(`/api/data/upload?filename=${filename}`, {
+      method: 'POST',
+      body: JSON.stringify(localData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const result = await response.json();
+    console.log('Data saved to blob:', result);
+    return true;
+  } catch (error) {
+    console.error('Save failed:', error);
+    return false;
+  }
+}
+
+function loadLocalData() {
+  showStatus('클라우드에서 로딩중...', 'info');
+  
+  fetch('/api/data/load')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('No data found');
+      }
+      return response.json();
+    })
+    .then(data => {
+      localData = { ...localData, ...data };
+      renderAll();
+      showStatus('클라우드에서 로딩 완료', 'success');
+    })
+    .catch(error => {
+      console.error('Load failed:', error);
+      showStatus('클라우드 로딩 실패', 'error');
+    });
+}
+
+function loadChatLogs() {
+  showStatus('챗봇 로그 로딩중...', 'info');
+  
+  fetch('/api/data/load')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('No chat logs found');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.chatLogs) {
+        localData.chatLogs = data.chatLogs;
+        renderChatLogs();
+        showStatus(`챗봇 로그 ${data.chatLogs.length}개 로딩 완료`, 'success');
+      } else {
+        localData.chatLogs = [];
+        renderChatLogs();
+        showStatus('저장된 챗봇 로그가 없습니다', 'info');
+      }
+    })
+    .catch(error => {
+      console.error('Chat logs loading failed:', error);
+      localData.chatLogs = [];
+      renderChatLogs();
+      showStatus('챗봇 로그 로딩 실패', 'error');
+    });
 }
 
 function showStatus(message, type = 'info') {
@@ -549,33 +608,6 @@ function generateId() {
 
 function getCurrentTimestamp() {
   return new Date().toLocaleString('ko-KR');
-}
-
-function loadChatLogs() {
-  showStatus('챗봇 로그 로딩중...', 'info');
-  
-  try {
-    const savedLogs = localStorage.getItem('nyangkun_chat_logs');
-    console.log('저장된 로그:', savedLogs);
-    
-    if (savedLogs) {
-      const logs = JSON.parse(savedLogs);
-      localData.chatLogs = logs.map(log => ({
-        id: log.id || generateId(),
-        sender: log.sender,
-        message: log.message,
-        timestamp: log.timestamp || getCurrentTimestamp()
-      }));
-    } else {
-      localData.chatLogs = [];
-    }
-    
-    renderChatLogs();
-    showStatus(`챗봇 로그 ${localData.chatLogs.length}개 로딩 완료`, 'success');
-  } catch (error) {
-    console.error('Chat logs loading failed:', error);
-    showStatus('챗봇 로그 로딩 실패', 'error');
-  }
 }
 
 function renderChatLogs() {
@@ -604,7 +636,7 @@ function clearChatLogs() {
   if (!confirm('모든 챗봇 대화 로그를 삭제하시겠습니까?')) return;
   
   localData.chatLogs = [];
-  localStorage.removeItem('nyangkun_chat_logs');
+  saveToBlob();
   renderChatLogs();
   showStatus('챗봇 로그가 삭제되었습니다', 'success');
 }
@@ -641,7 +673,7 @@ function deleteChatLog(id) {
   if (!confirm('이 대화 로그를 삭제하시겠습니까?')) return;
   
   localData.chatLogs = localData.chatLogs.filter(item => item.id !== id);
-  localStorage.setItem('nyangkun_chat_logs', JSON.stringify(localData.chatLogs));
+  saveToBlob();
   renderChatLogs();
   showStatus('대화 로그가 삭제되었습니다', 'success');
 }
@@ -741,23 +773,61 @@ function renderAll() {
   renderChatLogs();
 }
 
+async function uploadToVercelBlob(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    body: formData
+  });
+  
+  if (!response.ok) {
+    throw new Error('파일 업로드 실패');
+  }
+  
+  const result = await response.json();
+  return result.url;
+}
+
 function deleteTimeline(id) {
   if (!confirm('정말 삭제하시겠습니까?')) return;
   localData.timeline = localData.timeline.filter(item => item.id !== id);
+  saveToBlob();
   renderTimeline();
   showStatus('타임라인이 삭제되었습니다', 'success');
 }
 
-function deletePhoto(id) {
+async function deletePhoto(id) {
   if (!confirm('정말 삭제하시겠습니까?')) return;
-  localData.photos = localData.photos.filter(item => item.id !== id);
-  renderPhotos();
-  showStatus('사진이 삭제되었습니다', 'success');
+  
+  try {
+    const photoItem = localData.photos.find(item => item.id === id);
+    
+    if (photoItem) {
+      await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: photoItem.url })
+      });
+    }
+    
+    localData.photos = localData.photos.filter(item => item.id !== id);
+    await saveToBlob();
+    renderPhotos();
+    showStatus('사진이 삭제되었습니다', 'success');
+  } catch (error) {
+    console.error('사진 삭제 에러:', error);
+    showStatus('사진 삭제에 실패했습니다', 'error');
+  }
 }
 
 function deleteLetterTo(id) {
   if (!confirm('정말 삭제하시겠습니까?')) return;
   localData.lettersTo = localData.lettersTo.filter(item => item.id !== id);
+  saveToBlob();
   renderLettersTo();
   showStatus('편지가 삭제되었습니다', 'success');
 }
@@ -765,6 +835,7 @@ function deleteLetterTo(id) {
 function deleteLetterFrom(id) {
   if (!confirm('정말 삭제하시겠습니까?')) return;
   localData.lettersFrom = localData.lettersFrom.filter(item => item.id !== id);
+  saveToBlob();
   renderLettersFrom();
   showStatus('편지가 삭제되었습니다', 'success');
 }
@@ -789,6 +860,7 @@ function manageApp(appType) {
       break;
   }
   
+  saveToBlob();
   showStatus(`${appType} 데이터가 초기화되었습니다`, 'success');
 }
 
@@ -825,6 +897,7 @@ function importData() {
       const importedData = JSON.parse(event.target.result);
       if (confirm('기존 데이터를 모두 덮어쓰시겠습니까?')) {
         localData = { ...localData, ...importedData };
+        saveToBlob();
         renderAll();
         showStatus('데이터가 가져오기되었습니다', 'success');
       }
@@ -835,74 +908,91 @@ function importData() {
   reader.readAsText(file);
 }
 
-window.addEventListener('load', () => {
-  const timelineForm = document.getElementById('timeline-form');
-  if (timelineForm) {
-    timelineForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newItem = {
-        id: generateId(),
-        date: document.getElementById('timeline-date').value,
-        title: document.getElementById('timeline-title').value,
-        content: document.getElementById('timeline-content').value,
-        position: document.getElementById('timeline-position').value
-      };
-      
-      localData.timeline.push(newItem);
-      timelineForm.reset();
-      renderTimeline();
-      showStatus('타임라인이 추가되었습니다', 'success');
-    });
-  }
-
-  const photoForm = document.getElementById('photo-form');
-  if (photoForm) {
-    photoForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      showStatus('사진 업로드는 서버 API가 필요합니다', 'error');
-    });
-  }
-
-  const letterToForm = document.getElementById('letter-to-form');
-  if (letterToForm) {
-    letterToForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newItem = {
-        id: generateId(),
-        title: document.getElementById('letter-to-title').value,
-        content: document.getElementById('letter-to-content').value,
-        timestamp: getCurrentTimestamp()
-      };
-      
-      localData.lettersTo.push(newItem);
-      letterToForm.reset();
-      renderLettersTo();
-      showStatus('편지가 작성되었습니다', 'success');
-    });
-  }
-
-  const letterFromForm = document.getElementById('letter-from-form');
-  if (letterFromForm) {
-    letterFromForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newItem = {
-        id: generateId(),
-        name: document.getElementById('letter-from-name').value,
-        message: document.getElementById('letter-from-content').value,
-        timestamp: getCurrentTimestamp()
-      };
-      
-      localData.lettersFrom.push(newItem);
-      letterFromForm.reset();
-      renderLettersFrom();
-      showStatus('편지가 추가되었습니다', 'success');
-    });
-  }
-
-  renderAll();
-  loadChatLogs();
-  showStatus('시스템 초기화 완료', 'success');
+document.getElementById('timeline-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newItem = {
+    id: generateId(),
+    date: document.getElementById('timeline-date').value,
+    title: document.getElementById('timeline-title').value,
+    content: document.getElementById('timeline-content').value,
+    position: document.getElementById('timeline-position').value
+  };
+  
+  localData.timeline.push(newItem);
+  saveToBlob();
+  document.getElementById('timeline-form').reset();
+  renderTimeline();
+  showStatus('타임라인이 추가되었습니다', 'success');
 });
+
+document.getElementById('photo-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const file = document.getElementById('photo-file').files[0];
+  if (!file) {
+    showStatus('사진을 선택해주세요', 'error');
+    return;
+  }
+
+  try {
+    showStatus('사진 업로드 중...', 'info');
+    
+    const url = await uploadToVercelBlob(file);
+    
+    const newItem = {
+      id: generateId(),
+      url: url,
+      title: document.getElementById('photo-title').value,
+      description: document.getElementById('photo-description').value,
+      date: document.getElementById('photo-date').value
+    };
+    
+    localData.photos.push(newItem);
+    await saveToBlob();
+    document.getElementById('photo-form').reset();
+    renderPhotos();
+    showStatus('사진이 추가되었습니다', 'success');
+  } catch (error) {
+    console.error('사진 업로드 에러:', error);
+    showStatus('사진 업로드에 실패했습니다', 'error');
+  }
+});
+
+document.getElementById('letter-to-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newItem = {
+    id: generateId(),
+    title: document.getElementById('letter-to-title').value,
+    content: document.getElementById('letter-to-content').value,
+    timestamp: getCurrentTimestamp()
+  };
+  
+  localData.lettersTo.push(newItem);
+  saveToBlob();
+  document.getElementById('letter-to-form').reset();
+  renderLettersTo();
+  showStatus('편지가 작성되었습니다', 'success');
+});
+
+document.getElementById('letter-from-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newItem = {
+    id: generateId(),
+    name: document.getElementById('letter-from-name').value,
+    message: document.getElementById('letter-from-content').value,
+    timestamp: getCurrentTimestamp()
+  };
+  
+  localData.lettersFrom.push(newItem);
+  saveToBlob();
+  document.getElementById('letter-from-form').reset();
+  renderLettersFrom();
+  showStatus('편지가 추가되었습니다', 'success');
+});
+
+renderAll();
+loadLocalData();
+loadChatLogs();
+showStatus('시스템 초기화 완료', 'success');
 </script>
 </body>
 </html>
