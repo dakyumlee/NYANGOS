@@ -109,18 +109,12 @@
     .back-btn {
       border-color: #f59e0b;
       color: #f59e0b;
-      display: none;
+      display: block;
     }
 
     .back-btn:hover {
       background: rgba(245, 158, 11, 0.1);
       box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-    }
-
-    @media (max-width: 768px) {
-      .back-btn {
-        display: block;
-      }
     }
 
     .main-area {
@@ -539,11 +533,6 @@
             <textarea class="form-input form-textarea" id="letter-content" placeholder="마음을 담은 편지를 써보세요..." required></textarea>
           </div>
           
-          <div class="form-group">
-            <label class="form-label">삭제 비밀번호</label>
-            <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
-          </div>
-          
           <div class="form-actions">
             <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
             <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
@@ -660,7 +649,7 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const savedData = localStorage.getItem('nyangkun-admin-data');
+        const savedData = localStorage.getItem('nyangkun-data');
         if (savedData) {
           const data = JSON.parse(savedData);
           letters = data.lettersFrom || [];
@@ -726,11 +715,6 @@
             <textarea class="form-input form-textarea" id="letter-content" placeholder="마음을 담은 편지를 써보세요..." required></textarea>
           </div>
           
-          <div class="form-group">
-            <label class="form-label">삭제 비밀번호</label>
-            <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
-          </div>
-          
           <div class="form-actions">
             <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
             <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
@@ -756,15 +740,14 @@
     window.sendLetter = function() {
       const name = document.getElementById('sender-name').value.trim();
       const content = document.getElementById('letter-content').value.trim();
-      const password = document.getElementById('delete-password').value.trim();
       
-      if (!name || !content || !password) {
+      if (!name || !content) {
         alert('모든 항목을 입력해주세요!');
         return;
       }
       
       try {
-        const savedData = localStorage.getItem('nyangkun-admin-data');
+        const savedData = localStorage.getItem('nyangkun-data');
         let data = savedData ? JSON.parse(savedData) : {};
         
         if (!data.lettersFrom) {
@@ -775,12 +758,11 @@
           id: Date.now().toString(),
           name: name,
           message: content,
-          password: password,
           timestamp: new Date().toLocaleString('ko-KR')
         };
         
         data.lettersFrom.push(newLetter);
-        localStorage.setItem('nyangkun-admin-data', JSON.stringify(data));
+        localStorage.setItem('nyangkun-data', JSON.stringify(data));
         
         playSound('send');
         alert('편지가 성공적으로 전송되었습니다! 💌');
@@ -804,15 +786,7 @@
     };
 
     window.goBack = function() {
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'closeWindow' }, '*');
-        } else {
-          history.back();
-        }
-      } catch(e) {
-        history.back();
-      }
+      window.history.back();
       playSound();
     };
 
@@ -822,7 +796,7 @@
     });
 
     window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-admin-data') {
+      if (e.key === 'nyangkun-data') {
         loadLetters();
       }
     });

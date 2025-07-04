@@ -94,18 +94,12 @@
     .back-btn {
       border-color: #f59e0b;
       color: #f59e0b;
-      display: none;
+      display: block;
     }
 
     .back-btn:hover {
       background: rgba(245, 158, 11, 0.1);
       box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-    }
-
-    @media (max-width: 768px) {
-      .back-btn {
-        display: block;
-      }
     }
 
     .letters-area {
@@ -473,7 +467,7 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const savedData = localStorage.getItem('nyangkun-admin-data');
+        const savedData = localStorage.getItem('nyangkun-data');
         if (savedData) {
           const data = JSON.parse(savedData);
           letters = data.lettersTo || [];
@@ -521,15 +515,7 @@
     };
 
     window.goBack = function() {
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'closeWindow' }, '*');
-        } else {
-          history.back();
-        }
-      } catch(e) {
-        history.back();
-      }
+      window.history.back();
       playSound();
     };
 
@@ -539,7 +525,7 @@
     });
 
     window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-admin-data') {
+      if (e.key === 'nyangkun-data') {
         loadLetters();
       }
     });
