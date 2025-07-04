@@ -533,14 +533,6 @@ text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 </div>
 
 <script>
-let localData = {
-  timeline: [],
-  photos: [],
-  lettersTo: [],
-  lettersFrom: [],
-  chatLogs: []
-};
-
 function isAuthenticated() {
   const auth = localStorage.getItem('nyangkun_auth');
   const authTime = localStorage.getItem('nyangkun_auth_time');
@@ -558,6 +550,21 @@ function isAuthenticated() {
 
   return auth === 'authenticated';
 }
+//이게 문제였군
+if (!isAuthenticated()) {
+  window.location.href = './login.html';
+} else {
+  document.getElementById('loading-overlay').classList.add('hidden');
+  initializeAdmin();
+}
+
+let localData = {
+  timeline: [],
+  photos: [],
+  lettersTo: [],
+  lettersFrom: [],
+  chatLogs: []
+};
 
 function logout() {
   if (confirm('정말 로그아웃 하시겠습니까?')) {
@@ -936,91 +943,88 @@ function importData() {
   reader.readAsText(file);
 }
 
-document.getElementById('timeline-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const newItem = {
-    id: generateId(),
-    date: document.getElementById('timeline-date').value,
-    title: document.getElementById('timeline-title').value,
-    content: document.getElementById('timeline-content').value,
-    position: document.getElementById('timeline-position').value
-  };
-  
-  localData.timeline.push(newItem);
-  saveToBlob();
-  document.getElementById('timeline-form').reset();
-  renderTimeline();
-  showStatus('타임라인이 추가되었습니다', 'success');
-});
-
-document.getElementById('photo-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const file = document.getElementById('photo-file').files[0];
-  if (!file) {
-    showStatus('사진을 선택해주세요', 'error');
-    return;
-  }
-
-  try {
-    showStatus('사진 업로드 중...', 'info');
-    
-    const url = await uploadToVercelBlob(file);
-    
+function initializeAdmin() {
+  document.getElementById('timeline-form').addEventListener('submit', (e) => {
+    e.preventDefault();
     const newItem = {
       id: generateId(),
-      url: url,
-      title: document.getElementById('photo-title').value,
-      description: document.getElementById('photo-description').value,
-      date: document.getElementById('photo-date').value
+      date: document.getElementById('timeline-date').value,
+      title: document.getElementById('timeline-title').value,
+      content: document.getElementById('timeline-content').value,
+      position: document.getElementById('timeline-position').value
     };
     
-    localData.photos.push(newItem);
-    await saveToBlob();
-    document.getElementById('photo-form').reset();
-    renderPhotos();
-    showStatus('사진이 추가되었습니다', 'success');
-  } catch (error) {
-    console.error('사진 업로드 에러:', error);
-    showStatus('사진 업로드에 실패했습니다', 'error');
-  }
-});
+    localData.timeline.push(newItem);
+    saveToBlob();
+    document.getElementById('timeline-form').reset();
+    renderTimeline();
+    showStatus('타임라인이 추가되었습니다', 'success');
+  });
 
-document.getElementById('letter-to-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const newItem = {
-    id: generateId(),
-    title: document.getElementById('letter-to-title').value,
-    content: document.getElementById('letter-to-content').value,
-    timestamp: getCurrentTimestamp()
-  };
-  
-  localData.lettersTo.push(newItem);
-  saveToBlob();
-  document.getElementById('letter-to-form').reset();
-  renderLettersTo();
-  showStatus('편지가 작성되었습니다', 'success');
-});
+  document.getElementById('photo-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = document.getElementById('photo-file').files[0];
+    if (!file) {
+      showStatus('사진을 선택해주세요', 'error');
+      return;
+    }
 
-document.getElementById('letter-from-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const newItem = {
-    id: generateId(),
-    name: document.getElementById('letter-from-name').value,
-    message: document.getElementById('letter-from-content').value,
-    timestamp: getCurrentTimestamp()
-  };
-  
-  localData.lettersFrom.push(newItem);
-  saveToBlob();
-  document.getElementById('letter-from-form').reset();
-  renderLettersFrom();
-  showStatus('편지가 추가되었습니다', 'success');
-});
+    try {
+      showStatus('사진 업로드 중...', 'info');
+      
+      const url = await uploadToVercelBlob(file);
+      
+      const newItem = {
+        id: generateId(),
+        url: url,
+        title: document.getElementById('photo-title').value,
+        description: document.getElementById('photo-description').value,
+        date: document.getElementById('photo-date').value
+      };
+      
+      localData.photos.push(newItem);
+      await saveToBlob();
+      document.getElementById('photo-form').reset();
+      renderPhotos();
+      showStatus('사진이 추가되었습니다', 'success');
+    } catch (error) {
+      console.error('사진 업로드 에러:', error);
+      showStatus('사진 업로드에 실패했습니다', 'error');
+    }
+  });
 
-if (!isAuthenticated()) {
-  window.location.href = './login.html';
-} else {
-  document.getElementById('loading-overlay').classList.add('hidden');
+  document.getElementById('letter-to-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newItem = {
+      id: generateId(),
+      title: document.getElementById('letter-to-title').value,
+      content: document.getElementById('letter-to-content').value,
+      timestamp: getCurrentTimestamp()
+    };
+    
+    localData.lettersTo.push(newItem);
+    saveToBlob();
+    document.getElementById('letter-to-form').reset();
+    renderLettersTo();
+    showStatus('편지가 작성되었습니다', 'success');
+  });
+
+  document.getElementById('letter-from-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newItem = {
+      id: generateId(),
+      name: document.getElementById('letter-from-name').value,
+      message: document.getElementById('letter-from-content').value,
+      timestamp: getCurrentTimestamp()
+    };
+    
+    localData.lettersFrom.push(newItem);
+    saveToBlob();
+    document.getElementById('letter-from-form').reset();
+    renderLettersFrom();
+    showStatus('편지가 추가되었습니다', 'success');
+  });
+
   renderAll();
   loadLocalData();
   loadChatLogs();
