@@ -616,27 +616,6 @@
           throw error;
         }
       }
-
-      static async uploadFile(filename, fileData, contentType) {
-        try {
-          const response = await fetch('/api/upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ filename, fileData, contentType })
-          });
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          
-          return await response.json();
-        } catch (error) {
-          console.error('파일 업로드 실패:', error);
-          throw error;
-        }
-      }
     }
 
     const auth = new SecureAuth();
@@ -795,24 +774,28 @@
         return;
       }
       
+      if (file.size > 5 * 1024 * 1024) {
+        showStatus('파일 크기가 너무 큽니다 (5MB 이하)', 'error');
+        return;
+      }
+      
       submitBtn.disabled = true;
       submitBtn.textContent = '업로드 중...';
       
       try {
-        const fileData = await new Promise((resolve) => {
+        const fileData = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = reject;
           reader.readAsDataURL(file);
         });
-
-        const uploadResult = await BlobAPI.uploadFile(file.name, fileData, file.type);
         
         const newItem = {
           id: generateId(),
           title: document.getElementById('photo-title').value,
           description: document.getElementById('photo-description').value,
           date: document.getElementById('photo-date').value,
-          url: uploadResult.url,
+          url: fileData, // base64 데이터 직접 저장
           timestamp: new Date().toLocaleString('ko-KR')
         };
         
@@ -1127,7 +1110,8 @@
       
       try {
         showStatus('챗봇 로그 삭제 중...', 'info');
-
+        
+        // ...하
         await BlobAPI.saveData('chatlogs', []);
         
         localData.chatLogs = [];

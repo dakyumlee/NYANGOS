@@ -429,7 +429,7 @@
 
     let isConnected = false;
     let messageCount = 0;
-    let chatLogs = []; // 대화 로그 저장용
+    let chatLogs = [];
 
     function updateConnectionStatus(text, color, isError = false) {
       connectionStatus.textContent = text;
@@ -475,7 +475,7 @@
         };
         
         chatLogs.push(logEntry);
-        
+
         const response = await fetch('/api/data', {
           method: 'POST',
           headers: {
@@ -667,7 +667,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('냥GPT 시스템 초기화');
-
+      
       await loadChatLogs();
       
       setTimeout(() => {
