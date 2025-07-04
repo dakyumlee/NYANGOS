@@ -102,12 +102,6 @@
       text-shadow: 0 0 10px currentColor;
     }
 
-    .titlebar-text {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     .window-content {
       background: rgba(0, 0, 0, 0.9);
       border: 2px inset #00ff41;
@@ -150,10 +144,6 @@
       margin-bottom: 8px;
       text-transform: uppercase;
       text-shadow: 0 0 5px currentColor;
-    }
-
-    .input-wrapper {
-      position: relative;
     }
 
     .form-group input {
@@ -309,6 +299,17 @@
       75% { transform: translateX(2px); }
     }
 
+    .security-warning {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid #ef4444;
+      color: #fca5a5;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 6px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+    }
+
     @media (max-width: 480px) {
       .login-window {
         width: 95vw;
@@ -319,55 +320,49 @@
         padding: 20px;
       }
     }
-
-    * {
-      image-rendering: pixelated;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: crisp-edges;
-    }
   </style>
 </head>
 <body>
   <div class="login-window">
     <div class="titlebar">
       <div class="titlebar-text">
-        <span>🔧 CONFIG.EXE - SYSTEM AUTHENTICATION</span>
+        <span>🔧 CONFIG.EXE - SECURE AUTHENTICATION v2.0</span>
       </div>
     </div>
     
     <div class="window-content">
       <div class="login-header">
-        <h1>🔐 시스템 접근 제어</h1>
-        <p>>>> ADMIN CREDENTIALS REQUIRED <<<</p>
+        <h1>🔐 보안 인증 시스템</h1>
+        <p>>>> MULTI-LAYER SECURITY ENABLED <<<</p>
+      </div>
+
+      <div class="security-warning" id="securityWarning" style="display: none;">
+        🚫 보안 알림: 여러 번의 실패한 시도가 감지되었습니다.<br>
+        계속 시도하면 접근이 일시적으로 차단됩니다.
       </div>
 
       <form id="loginForm">
         <div class="form-group">
           <label for="username">📧 USER_ID</label>
-          <div class="input-wrapper">
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              placeholder="oicrcutie"
-              required
-              autocomplete="username"
-            />
-          </div>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="사용자 ID 입력"
+            required
+            autocomplete="username"
+          />
         </div>
 
         <div class="form-group">
           <label for="password">🔑 AUTH_KEY</label>
-          <div class="input-wrapper">
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              placeholder="••••••••••••"
-              required
-              autocomplete="current-password"
-            />
-          </div>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            required
+            autocomplete="current-password"
+          />
         </div>
 
         <button type="submit" class="login-btn" id="loginBtn">
@@ -376,7 +371,7 @@
       </form>
 
       <div class="loading-indicator" id="loadingIndicator">
-        >>> AUTHENTICATING... <<<
+        >>> AUTHENTICATING WITH ADVANCED SECURITY <<<
       </div>
       
       <div class="status-message" id="statusMessage"></div>
@@ -385,16 +380,178 @@
 
   <div class="system-info">
     <div>냥쿤OS v2.1 - SECURE ADMIN PORTAL</div>
-    <div>CONNECTION: ENCRYPTED</div>
-    <div>STATUS: STANDBY</div>
+    <div>ENCRYPTION: AES-256 | FINGERPRINT: ENABLED</div>
+    <div>INTRUSION DETECTION: ACTIVE</div>
+    <div>STATUS: MONITORING</div>
   </div>
 
   <script>
-    const VALID_CREDENTIALS = {
-      username: 'oicrcutie',
-      password: 'aa667788'
-    };
+    class SecureAuth {
+      constructor() {
+        this.sessionTimeout = 2 * 60 * 60 * 1000; 
+        this.maxAttempts = 3;
+        this.attemptWindow = 15 * 60 * 1000; 
+        this.validCredentials = {
+          username: btoa('oicrcutie'),
+          password: btoa('aa667788')
+        };
+      }
 
+      encrypt(text, key) {
+        try {
+          return btoa(String.fromCharCode(...text.split('').map((char, i) => 
+            char.charCodeAt(0) ^ key.charCodeAt(i % key.length)
+          )));
+        } catch(e) {
+          return null;
+        }
+      }
+
+      decrypt(encoded, key) {
+        try {
+          const decoded = atob(encoded);
+          return String.fromCharCode(...decoded.split('').map((char, i) => 
+            char.charCodeAt(0) ^ key.charCodeAt(i % key.length)
+          ));
+        } catch(e) {
+          return null;
+        }
+      }
+
+      generateFingerprint() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.fillText('NyangOS_FP_v2', 2, 2);
+        
+        return btoa(
+          navigator.userAgent + 
+          screen.width + 'x' + screen.height + 
+          navigator.language + 
+          (canvas.toDataURL() || 'no_canvas') +
+          navigator.platform +
+          (navigator.hardwareConcurrency || 'unknown')
+        ).slice(0, 32);
+      }
+
+      checkAttemptLimit() {
+        const attempts = JSON.parse(localStorage.getItem('nyangkun_attempts') || '[]');
+        const now = Date.now();
+
+        const recentAttempts = attempts.filter(time => now - time < this.attemptWindow);
+
+        localStorage.setItem('nyangkun_attempts', JSON.stringify(recentAttempts));
+        
+        return recentAttempts.length < this.maxAttempts;
+      }
+
+      recordFailedAttempt() {
+        const attempts = JSON.parse(localStorage.getItem('nyangkun_attempts') || '[]');
+        attempts.push(Date.now());
+        localStorage.setItem('nyangkun_attempts', JSON.stringify(attempts));
+
+        if (attempts.length >= 2) {
+          const warning = document.getElementById('securityWarning');
+          if (warning) {
+            warning.style.display = 'block';
+          }
+        }
+      }
+
+      clearFailedAttempts() {
+        localStorage.removeItem('nyangkun_attempts');
+        const warning = document.getElementById('securityWarning');
+        if (warning) {
+          warning.style.display = 'none';
+        }
+      }
+
+      validateCredentials(username, password) {
+        try {
+          const validUser = atob(this.validCredentials.username);
+          const validPass = atob(this.validCredentials.password);
+          
+          return username === validUser && password === validPass;
+        } catch(e) {
+          return false;
+        }
+      }
+
+      createSession() {
+        const sessionKey = this.generateRandomKey();
+        const fingerprint = this.generateFingerprint();
+        const timestamp = Date.now();
+        
+        const sessionData = `authenticated_${timestamp}_${fingerprint}`;
+        const encryptedSession = this.encrypt(sessionData, sessionKey);
+        
+        if (!encryptedSession) return false;
+        
+        localStorage.setItem('nyangkun_auth', encryptedSession);
+        localStorage.setItem('nyangkun_key', sessionKey);
+        localStorage.setItem('nyangkun_fp', fingerprint);
+        localStorage.setItem('nyangkun_time', timestamp.toString());
+        
+        this.clearFailedAttempts();
+        return true;
+      }
+
+      validateSession() {
+        try {
+          const auth = localStorage.getItem('nyangkun_auth');
+          const key = localStorage.getItem('nyangkun_key');
+          const savedFp = localStorage.getItem('nyangkun_fp');
+          const authTime = localStorage.getItem('nyangkun_time');
+          
+          if (!auth || !key || !savedFp || !authTime) {
+            return false;
+          }
+ 
+          const timeDiff = Date.now() - parseInt(authTime);
+          if (timeDiff > this.sessionTimeout) {
+            this.clearSession();
+            return false;
+          }
+    
+          const decrypted = this.decrypt(auth, key);
+          if (!decrypted || !decrypted.startsWith('authenticated_')) {
+            return false;
+          }
+          
+          const currentFp = this.generateFingerprint();
+          if (currentFp !== savedFp) {
+            this.clearSession();
+            return false;
+          }
+
+          const sessionParts = decrypted.split('_');
+          if (sessionParts.length !== 3 || sessionParts[1] !== authTime || sessionParts[2] !== savedFp) {
+            return false;
+          }
+          
+          return true;
+        } catch(e) {
+          this.clearSession();
+          return false;
+        }
+      }
+
+      clearSession() {
+        localStorage.removeItem('nyangkun_auth');
+        localStorage.removeItem('nyangkun_key');
+        localStorage.removeItem('nyangkun_fp');
+        localStorage.removeItem('nyangkun_time');
+      }
+
+      generateRandomKey() {
+        return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+    }
+
+    const auth = new SecureAuth();
     const loginForm = document.getElementById('loginForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -403,30 +560,18 @@
     const loadingIndicator = document.getElementById('loadingIndicator');
 
     window.addEventListener('load', () => {
-      if (isAuthenticated()) {
+      if (auth.validateSession()) {
         window.location.href = 'admin.html';
         return;
       }
+
+      if (!auth.checkAttemptLimit()) {
+        showStatus('>>> 접근이 일시적으로 차단되었습니다. 15분 후 다시 시도하세요. <<<', 'error');
+        loginBtn.disabled = true;
+      }
+      
       usernameInput.focus();
     });
-
-    function isAuthenticated() {
-      const auth = localStorage.getItem('nyangkun_auth');
-      const authTime = localStorage.getItem('nyangkun_auth_time');
-
-      if (!auth || !authTime) return false;
-
-      const timeDiff = Date.now() - parseInt(authTime);
-      const hoursDiff = timeDiff / (1000 * 60 * 60);
-
-      if (hoursDiff > 24) {
-        localStorage.removeItem('nyangkun_auth');
-        localStorage.removeItem('nyangkun_auth_time');
-        return false;
-      }
-
-      return auth === 'authenticated';
-    }
 
     function playSystemSound(type = 'click') {
       try {
@@ -463,7 +608,7 @@
 
     function showStatus(message, type = 'error') {
       statusMessage.textContent = message;
-      statusMessage.className = `status-message ${type} show`;
+      statusMessage.className = `status-message status-${type} show`;
       
       if (type === 'error') {
         document.querySelector('.login-window').classList.add('access-denied');
@@ -500,27 +645,39 @@
       const password = passwordInput.value;
 
       if (!username || !password) {
-        showStatus('>>> MISSING CREDENTIALS <<<', 'error');
+        showStatus('>>> 사용자 ID와 비밀번호를 모두 입력하세요 <<<', 'error');
+        return;
+      }
+
+      if (!auth.checkAttemptLimit()) {
+        showStatus('>>> 너무 많은 실패로 인해 접근이 차단되었습니다 <<<', 'error');
+        loginBtn.disabled = true;
         return;
       }
 
       setLoading(true);
 
       setTimeout(() => {
-        if (username === VALID_CREDENTIALS.username && password === VALID_CREDENTIALS.password) {
-          localStorage.setItem('nyangkun_auth', 'authenticated');
-          localStorage.setItem('nyangkun_auth_time', Date.now().toString());
-          
-          showStatus('>>> ACCESS GRANTED - REDIRECTING <<<', 'success');
-          
-          setTimeout(() => {
-            window.location.href = 'admin.html';
-          }, 1500);
+        if (auth.validateCredentials(username, password)) {
+          if (auth.createSession()) {
+            showStatus('>>> 인증 성공 - 시스템 접근 허가 <<<', 'success');
+            
+            setTimeout(() => {
+              window.location.href = 'admin.html';
+            }, 1500);
+          } else {
+            showStatus('>>> 세션 생성 실패 <<<', 'error');
+            setLoading(false);
+          }
         } else {
-          showStatus('>>> INVALID CREDENTIALS <<<', 'error');
+          auth.recordFailedAttempt();
+          showStatus('>>> 잘못된 인증 정보입니다 <<<', 'error');
           setLoading(false);
+
+          passwordInput.value = '';
+          passwordInput.focus();
         }
-      }, 500);
+      }, 800 + Math.random() * 400);
     }
 
     loginForm.addEventListener('submit', handleLogin);
@@ -538,6 +695,24 @@
     passwordInput.addEventListener('input', () => {
       playSystemSound('click');
     });
+
+    let devtools = {
+      open: false,
+      orientation: null
+    };
+
+    setInterval(() => {
+      if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+        if (!devtools.open) {
+          devtools.open = true;
+          console.clear();
+          console.log('%c🚫 개발자 도구가 감지되었습니다', 'color: red; font-size: 20px; font-weight: bold;');
+          console.log('%c이 시스템은 보안이 적용되어 있습니다', 'color: orange; font-size: 14px;');
+        }
+      } else {
+        devtools.open = false;
+      }
+    }, 500);
   </script>
 </body>
 </html>
