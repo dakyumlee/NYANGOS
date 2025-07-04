@@ -510,19 +510,19 @@
       document.getElementById('next-btn').disabled = currentSlide === photos.length - 1;
     }
 
-    function loadMemories() {
+    async function loadMemories() {
       const loadingEl = document.getElementById('loading-screen');
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const savedData = localStorage.getItem('nyangkun-data');
-        if (savedData) {
-          const data = JSON.parse(savedData);
-          photos = data.photos || [];
-        } else {
-          photos = [];
+        const response = await fetch('/api/data/load');
+        if (!response.ok) {
+          throw new Error('No data found');
         }
+        
+        const data = await response.json();
+        photos = data.photos || [];
         
         console.log(`${photos.length}개의 사진을 불러왔습니다`);
         updateConnectionStatus('LOADED', '#00ff41');
@@ -615,12 +615,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       console.log('사진첩 시스템 시작');
       loadMemories();
-    });
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'nyangkun-data') {
-        loadMemories();
-      }
     });
   </script>
 </body>
