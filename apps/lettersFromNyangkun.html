@@ -364,6 +364,12 @@
       transform: scale(1.05);
     }
 
+    .form-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .form-btn.cancel {
       border-color: #ef4444;
       color: #ef4444;
@@ -553,24 +559,32 @@
       status.style.color = color;
     }
 
-    async function saveToBlob() {
+    async function saveLettersToBlob() {
       try {
-        const dataToSave = { lettersFrom: letters };
-        const filename = `nyangkun-data-${Date.now()}.json`;
+        updateConnectionStatus('SAVING...', '#f59e0b');
         
-        const response = await fetch(`/api/data/upload?filename=${filename}`, {
+        const response = await fetch('/api/data', {
           method: 'POST',
-          body: JSON.stringify(dataToSave),
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            type: 'lettersFrom', 
+            data: letters 
+          })
         });
         
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
-        console.log('Data saved to blob:', result);
+        updateConnectionStatus('SAVED', '#00ff41');
+        console.log('편지가 Blob에 저장되었습니다:', result);
         return true;
       } catch (error) {
-        console.error('Save failed:', error);
+        console.error('편지 저장 실패:', error);
+        updateConnectionStatus('SAVE ERROR', '#ff6b6b');
         return false;
       }
     }
@@ -617,33 +631,37 @@
       `;
     }
 
-    function loadLetters() {
+    async function loadLetters() {
       const loadingEl = document.getElementById('loading');
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
-      fetch('/api/data/load')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('No data found');
-          }
-          return response.json();
-        })
-        .then(data => {
-          letters = data.lettersFrom || [];
-          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          
-          updateConnectionStatus('LOADED', '#00ff41');
-          loadingEl.classList.add('hidden');
-          renderLettersList();
-        })
-        .catch(error => {
-          console.error('편지 로딩 실패:', error);
-          updateConnectionStatus('ERROR', '#ff6b6b');
-          letters = [];
-          loadingEl.classList.add('hidden');
-          renderLettersList();
-        });
+      try {
+        const response = await fetch('/api/app-data?type=lettersFrom');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || '데이터 로드 실패');
+        }
+        
+        letters = result.data || [];
+        letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        updateConnectionStatus('LOADED', '#00ff41');
+        loadingEl.classList.add('hidden');
+        renderLettersList();
+      } catch (error) {
+        console.error('편지 로딩 실패:', error);
+        updateConnectionStatus('ERROR', '#ff6b6b');
+        letters = [];
+        loadingEl.classList.add('hidden');
+        renderLettersList();
+      }
     }
 
     window.setReadMode = function() {
@@ -680,7 +698,7 @@
           
           <div class="form-group">
             <label class="form-label">닉네임/별명</label>
-            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" required>
+            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
           </div>
           
           <div class="form-group">
@@ -708,13 +726,20 @@
     };
 
     window.sendLetter = async function() {
-      const name = document.getElementById('sender-name').value.trim();
-      const content = document.getElementById('letter-content').value.trim();
+      const nameInput = document.getElementById('sender-name');
+      const contentInput = document.getElementById('letter-content');
+      const sendBtn = document.querySelector('.form-btn:not(.cancel)');
+      
+      const name = nameInput.value.trim();
+      const content = contentInput.value.trim();
       
       if (!name || !content) {
         alert('모든 항목을 입력해주세요!');
         return;
       }
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = '전송 중...';
       
       const newLetter = {
         id: Date.now().toString(),
@@ -725,7 +750,7 @@
       
       letters.unshift(newLetter);
       
-      const saved = await saveToBlob();
+      const saved = await saveLettersToBlob();
       if (saved) {
         alert('편지가 성공적으로 전송되었습니다! 💌');
         setReadMode();
@@ -734,6 +759,9 @@
         alert('편지 전송에 실패했습니다.');
         letters.shift();
       }
+      
+      sendBtn.disabled = false;
+      sendBtn.textContent = '💌 편지 보내기';
     };
 
     window.cancelWrite = function() {

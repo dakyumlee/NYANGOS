@@ -569,13 +569,19 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const response = await fetch('/api/data/load');
+        const response = await fetch('/api/app-data?type=timeline');
+        
         if (!response.ok) {
-          throw new Error('No data found');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json();
-        memories = data.timeline || [];
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || '데이터 로드 실패');
+        }
+        
+        memories = result.data || [];
         memories.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         console.log(`${memories.length}개의 타임라인 이벤트를 불러왔습니다`);

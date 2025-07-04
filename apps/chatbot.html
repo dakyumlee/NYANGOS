@@ -429,6 +429,7 @@
 
     let isConnected = false;
     let messageCount = 0;
+    let chatLogs = [];
 
     function updateConnectionStatus(text, color, isError = false) {
       connectionStatus.textContent = text;
@@ -464,6 +465,55 @@
       }
     }
 
+    async function saveChatLog(sender, message) {
+      try {
+        const logEntry = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          sender: sender,
+          message: message,
+          timestamp: new Date().toLocaleString('ko-KR')
+        };
+        
+        chatLogs.push(logEntry);
+ 
+        const response = await fetch('/api/data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            type: 'chatlogs', 
+            data: chatLogs 
+          })
+        });
+        
+        if (response.ok) {
+          console.log('채팅 로그 저장 성공');
+        } else {
+          console.log('채팅 로그 저장 실패:', response.status);
+        }
+      } catch (error) {
+        console.error('채팅 로그 저장 에러:', error);
+      }
+    }
+
+    async function loadChatLogs() {
+      try {
+        const response = await fetch('/api/app-data?type=chatlogs');
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            chatLogs = result.data || [];
+            console.log(`기존 채팅 로그 ${chatLogs.length}개 로드 완료`);
+          }
+        }
+      } catch (error) {
+        console.log('기존 채팅 로그 로드 실패:', error);
+        chatLogs = [];
+      }
+    }
+
     function addMessage(text, isUser = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -485,6 +535,10 @@
       playBeep();
       
       messageCount++;
+      
+      if (text !== '안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱') {
+        saveChatLog(isUser ? 'user' : 'bot', text);
+      }
     }
 
     function showTyping() {
@@ -509,7 +563,7 @@
       try {
         const startTime = Date.now();
         
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/claude', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -589,7 +643,7 @@
       try {
         updateConnectionStatus('TESTING...', '#f59e0b');
         
-        const response = await fetch('/api/chat', {
+        const response = await fetch('/api/claude', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'connection test' })
@@ -611,8 +665,10 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       console.log('냥GPT 시스템 초기화');
+
+      await loadChatLogs();
       
       setTimeout(() => {
         addMessage('안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱', false);
@@ -626,6 +682,7 @@
       console.log('=== 냥GPT 디버그 정보 ===');
       console.log('연결 상태:', isConnected);
       console.log('메시지 수:', messageCount);
+      console.log('채팅 로그 수:', chatLogs.length);
       console.log('현재 상태:', connectionStatus.textContent);
     };
   </script>

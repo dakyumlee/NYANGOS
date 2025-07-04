@@ -441,33 +441,37 @@
       `;
     }
 
-    function loadLetters() {
+    async function loadLetters() {
       const loadingEl = document.getElementById('loading-world');
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
-      fetch('/api/data/load')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('No data found');
-          }
-          return response.json();
-        })
-        .then(data => {
-          letters = data.lettersTo || [];
-          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          
-          updateConnectionStatus('LOADED', '#00ff41');
-          loadingEl.classList.add('hidden');
-          renderLettersList();
-        })
-        .catch(error => {
-          console.error('편지 로딩 실패:', error);
-          updateConnectionStatus('ERROR', '#ff6b6b');
-          letters = [];
-          loadingEl.classList.add('hidden');
-          renderLettersList();
-        });
+      try {
+        const response = await fetch('/api/app-data?type=lettersTo');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || '데이터 로드 실패');
+        }
+        
+        letters = result.data || [];
+        letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        updateConnectionStatus('LOADED', '#00ff41');
+        loadingEl.classList.add('hidden');
+        renderLettersList();
+      } catch (error) {
+        console.error('편지 로딩 실패:', error);
+        updateConnectionStatus('ERROR', '#ff6b6b');
+        letters = [];
+        loadingEl.classList.add('hidden');
+        renderLettersList();
+      }
     }
 
     window.selectLetter = function(index) {

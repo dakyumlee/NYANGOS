@@ -516,14 +516,21 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const response = await fetch('/api/photos');
+        const response = await fetch('/api/app-data?type=photos');
         
         if (!response.ok) {
-          throw new Error('Failed to load photos');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json();
-        photos = data.photos || [];
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || '데이터 로드 실패');
+        }
+        
+        photos = result.data || [];
+        
+        photos.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
         
         console.log(`${photos.length}개의 사진을 불러왔습니다`);
         updateConnectionStatus('LOADED', '#00ff41');
@@ -543,7 +550,10 @@
     }
 
     window.setGalleryView = function() {
-      if (photos.length === 0) return;
+      if (photos.length === 0) {
+        loadMemories();
+        return;
+      }
       
       viewMode = 'gallery';
       document.getElementById('gallery-btn').classList.add('active');
@@ -555,7 +565,10 @@
     };
 
     window.setSlideshowView = function() {
-      if (photos.length === 0) return;
+      if (photos.length === 0) {
+        loadMemories();
+        return;
+      }
       
       viewMode = 'slideshow';
       document.getElementById('slide-btn').classList.add('active');
