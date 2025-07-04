@@ -429,7 +429,7 @@
 
     let isConnected = false;
     let messageCount = 0;
-    let chatLogs = [];
+    let chatLogs = []; // 대화 로그 저장용
 
     function updateConnectionStatus(text, color, isError = false) {
       connectionStatus.textContent = text;
@@ -475,7 +475,7 @@
         };
         
         chatLogs.push(logEntry);
- 
+        
         const response = await fetch('/api/data', {
           method: 'POST',
           headers: {
@@ -535,7 +535,7 @@
       playBeep();
       
       messageCount++;
-      
+
       if (text !== '안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱') {
         saveChatLog(isUser ? 'user' : 'bot', text);
       }
