@@ -20,6 +20,7 @@ const saveChatLog = (sender, message) => {
     }
     
     localStorage.setItem('nyangkun_chat_logs', JSON.stringify(existingLogs));
+    console.log('로그 저장됨:', newLog);
   } catch (error) {
     console.error('로그 저장 실패:', error);
   }
@@ -40,7 +41,7 @@ const appendMessage = (text, role) => {
 const showTyping = () => {
   const typingDiv = document.createElement('div');
   typingDiv.className = 'message bot';
-  typingDiv.textContent = '입력 중...';
+  typingDiv.textContent = '생각하는 중...';
   typingDiv.id = 'typing';
   chatLog.appendChild(typingDiv);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -60,50 +61,74 @@ const sendMessage = async () => {
   showTyping();
 
   try {
-    const res = await fetch('/api/claude', {
+    const response = await fetch('/api/claude', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({ message: userText })
     });
 
-    const data = await res.json();
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('API 응답:', data);
     
     let reply = '';
-    if (data && data.reply) {
+    if (data.reply) {
       reply = data.reply;
-    } else if (data && data.content && Array.isArray(data.content) && data.content[0] && data.content[0].text) {
+    } else if (data.content && data.content[0] && data.content[0].text) {
       reply = data.content[0].text;
+    } else if (data.message) {
+      reply = data.message;
     } else {
-      reply = '응답을 받을 수 없습니다.';
+      reply = '죄송합니다. 응답을 생성할 수 없습니다.';
     }
     
     removeTyping();
     appendMessage(reply, 'bot');
-  } catch (err) {
+    
+  } catch (error) {
+    console.error('전체 에러:', error);
     removeTyping();
-    appendMessage('서버 연결에 문제가 발생했습니다.', 'bot');
-    console.error('API 에러:', err);
+    
+    let errorMsg = '연결에 문제가 발생했습니다.';
+    if (error.message.includes('404')) {
+      errorMsg = 'API 엔드포인트를 찾을 수 없습니다.';
+    } else if (error.message.includes('500')) {
+      errorMsg = '서버 내부 오류가 발생했습니다.';
+    }
+    
+    appendMessage(errorMsg, 'bot');
   }
 };
 
 sendBtn.addEventListener('click', sendMessage);
-input.addEventListener('keydown', e => {
+
+input.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
     sendMessage();
   }
 });
 
-emojiButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    input.value += btn.textContent;
-    input.focus();
+if (emojiButtons.length > 0) {
+  emojiButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value += btn.textContent;
+      input.focus();
+    });
   });
-});
+}
 
 window.addEventListener('load', () => {
   try {
     const savedLogs = JSON.parse(localStorage.getItem('nyangkun_chat_logs') || '[]');
+    console.log('저장된 로그 개수:', savedLogs.length);
+    
     const recentLogs = savedLogs.slice(-10);
     
     recentLogs.forEach(log => {
@@ -116,6 +141,8 @@ window.addEventListener('load', () => {
     if (recentLogs.length > 0) {
       chatLog.scrollTop = chatLog.scrollHeight;
     }
+    
+    input.focus();
   } catch (error) {
     console.error('로그 복원 실패:', error);
   }
