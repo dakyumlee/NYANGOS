@@ -214,6 +214,16 @@
       color: #000000;
     }
 
+    .form-btn.warning {
+      border-color: #f59e0b;
+      color: #f59e0b;
+    }
+
+    .form-btn.warning:hover {
+      background: #f59e0b;
+      color: #000000;
+    }
+
     .items-list {
       max-height: 300px;
       overflow-y: auto;
@@ -286,7 +296,6 @@
     </div>
   </div>
 
-
   <div class="admin-content" id="adminContent">
     <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
     
@@ -298,6 +307,16 @@
     </div>
 
     <div class="admin-grid">
+      <div class="admin-section">
+        <div class="section-title">💬 챗봇 대화 로그</div>
+        <div class="form-group">
+          <button class="form-btn" onclick="loadChatLogs()">🔄 로그 새로고침</button>
+          <button class="form-btn danger" onclick="clearChatLogs()">🗑️ 로그 삭제</button>
+          <button class="form-btn" onclick="exportChatLogs()">📤 로그 내보내기</button>
+        </div>
+        <div class="items-list" id="chat-logs-list"></div>
+      </div>
+
       <div class="admin-section">
         <div class="section-title">📅 연애 타임라인 관리</div>
         <form id="timeline-form">
@@ -347,19 +366,62 @@
       </div>
 
       <div class="admin-section">
-        <div class="section-title">💌 편지 관리</div>
-        <form id="letter-form">
+        <div class="section-title">💌 내가 냥쿤에게 쓴 편지</div>
+        <form id="letter-to-form">
           <div class="form-group">
             <label class="form-label">제목</label>
-            <input type="text" class="form-input" id="letter-title" placeholder="사랑하는 냥쿤에게" required />
+            <input type="text" class="form-input" id="letter-to-title" placeholder="사랑하는 냥쿤에게" required />
           </div>
           <div class="form-group">
             <label class="form-label">내용</label>
-            <textarea class="form-input form-textarea" id="letter-content" placeholder="편지 내용..." required></textarea>
+            <textarea class="form-input form-textarea" id="letter-to-content" placeholder="냥쿤에게 전하고 싶은 마음을 써보세요..." required></textarea>
           </div>
           <button type="submit" class="form-btn">편지 작성</button>
         </form>
-        <div class="items-list" id="letter-list"></div>
+        <div class="items-list" id="letter-to-list"></div>
+      </div>
+
+      <div class="admin-section">
+        <div class="section-title">📨 냥쿤이 나에게 쓴 편지</div>
+        <form id="letter-from-form">
+          <div class="form-group">
+            <label class="form-label">작성자</label>
+            <input type="text" class="form-input" id="letter-from-name" placeholder="냥쿤" value="냥쿤" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">편지 내용</label>
+            <textarea class="form-input form-textarea" id="letter-from-content" placeholder="냥쿤이 보내는 편지 내용..." required></textarea>
+          </div>
+          <button type="submit" class="form-btn">편지 추가</button>
+        </form>
+        <div class="items-list" id="letter-from-list"></div>
+      </div>
+
+      <div class="admin-section">
+        <div class="section-title">⚙️ 시스템 총괄 관리</div>
+        <div class="form-group">
+          <button class="form-btn warning" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
+          <button class="form-btn warning" onclick="manageApp('photos')">📸 사진 초기화</button>
+          <button class="form-btn warning" onclick="manageApp('letters')">💌 편지 초기화</button>
+          <button class="form-btn danger" onclick="manageApp('chatlogs')">💬 채팅로그 초기화</button>
+        </div>
+        <div class="form-group">
+          <button class="form-btn" onclick="exportData()">📤 전체 데이터 내보내기</button>
+          <button class="form-btn" onclick="importData()">📥 데이터 가져오기</button>
+          <button class="form-btn warning" onclick="resetAllData()">🔄 시스템 전체 초기화</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">데이터 파일 가져오기</label>
+          <input type="file" class="form-input" id="import-file" accept=".json" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">시스템 상태</label>
+          <div style="font-size: 6px; color: #86efac; padding: 8px; background: rgba(74, 222, 128, 0.05); border: 1px solid rgba(74, 222, 128, 0.2);">
+            - 총 관리 항목: 타임라인, 사진, 편지, 채팅로그<br>
+            - 보안 상태: 활성화<br>
+            - 데이터 백업: 로컬스토리지
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -367,9 +429,9 @@
   <script>
     class SecureAuth {
       constructor() {
-        this.sessionTimeout = 2 * 60 * 60 * 1000; 
+        this.sessionTimeout = 2 * 60 * 60 * 1000;
         this.maxAttempts = 3;
-        this.attemptWindow = 15 * 60 * 1000; 
+        this.attemptWindow = 15 * 60 * 1000;
       }
 
       encrypt(text, key) {
@@ -412,14 +474,8 @@
       checkAttemptLimit() {
         const attempts = JSON.parse(localStorage.getItem('nyangkun_attempts') || '[]');
         const now = Date.now();
-        
         const recentAttempts = attempts.filter(time => now - time < this.attemptWindow);
-        
-        if (recentAttempts.length >= this.maxAttempts) {
-          return false; 
-        }
-        
-        return true;
+        return recentAttempts.length < this.maxAttempts;
       }
 
       recordFailedAttempt() {
@@ -436,7 +492,6 @@
         const sessionKey = this.generateRandomKey();
         const fingerprint = this.generateFingerprint();
         const timestamp = Date.now();
-        
         const sessionData = `authenticated_${timestamp}_${fingerprint}`;
         const encryptedSession = this.encrypt(sessionData, sessionKey);
         
@@ -458,20 +513,16 @@
           const savedFp = localStorage.getItem('nyangkun_fp');
           const authTime = localStorage.getItem('nyangkun_time');
           
-          if (!auth || !key || !savedFp || !authTime) {
-            return false;
-          }
+          if (!auth || !key || !savedFp || !authTime) return false;
           
           const timeDiff = Date.now() - parseInt(authTime);
           if (timeDiff > this.sessionTimeout) {
             this.clearSession();
             return false;
           }
-
+          
           const decrypted = this.decrypt(auth, key);
-          if (!decrypted || !decrypted.startsWith('authenticated_')) {
-            return false;
-          }
+          if (!decrypted || !decrypted.startsWith('authenticated_')) return false;
           
           const currentFp = this.generateFingerprint();
           if (currentFp !== savedFp) {
@@ -509,7 +560,9 @@
     let localData = {
       timeline: [],
       photos: [],
-      letters: []
+      lettersTo: [],
+      lettersFrom: [],
+      chatLogs: []
     };
 
     window.addEventListener('load', async () => {
@@ -566,15 +619,20 @@
       if (timelineForm) {
         timelineForm.addEventListener('submit', handleTimelineSubmit);
       }
-      
+
       const photoForm = document.getElementById('photo-form');
       if (photoForm) {
         photoForm.addEventListener('submit', handlePhotoSubmit);
       }
       
-      const letterForm = document.getElementById('letter-form');
-      if (letterForm) {
-        letterForm.addEventListener('submit', handleLetterSubmit);
+      const letterToForm = document.getElementById('letter-to-form');
+      if (letterToForm) {
+        letterToForm.addEventListener('submit', handleLetterToSubmit);
+      }
+
+      const letterFromForm = document.getElementById('letter-from-form');
+      if (letterFromForm) {
+        letterFromForm.addEventListener('submit', handleLetterFromSubmit);
       }
     }
 
@@ -582,13 +640,16 @@
       try {
         const savedTimeline = localStorage.getItem('nyangkun_timeline');
         const savedPhotos = localStorage.getItem('nyangkun_photos');
-        const savedLetters = localStorage.getItem('nyangkun_letters');
+        const savedLettersTo = localStorage.getItem('nyangkun_lettersTo');
+        const savedLettersFrom = localStorage.getItem('nyangkun_lettersFrom');
         
         if (savedTimeline) localData.timeline = JSON.parse(savedTimeline);
         if (savedPhotos) localData.photos = JSON.parse(savedPhotos);
-        if (savedLetters) localData.letters = JSON.parse(savedLetters);
+        if (savedLettersTo) localData.lettersTo = JSON.parse(savedLettersTo);
+        if (savedLettersFrom) localData.lettersFrom = JSON.parse(savedLettersFrom);
         
         renderAll();
+        loadChatLogs();
       } catch(e) {
         console.error('데이터 로드 실패:', e);
         showStatus('데이터 로드 실패', 'error');
@@ -648,22 +709,132 @@
       reader.readAsDataURL(file);
     }
 
-    function handleLetterSubmit(e) {
+    function handleLetterToSubmit(e) {
       e.preventDefault();
       
       const newItem = {
         id: generateId(),
-        title: document.getElementById('letter-title').value,
-        content: document.getElementById('letter-content').value,
+        title: document.getElementById('letter-to-title').value,
+        content: document.getElementById('letter-to-content').value,
         timestamp: new Date().toLocaleString('ko-KR')
       };
       
-      localData.letters.push(newItem);
-      localStorage.setItem('nyangkun_letters', JSON.stringify(localData.letters));
+      localData.lettersTo.push(newItem);
+      localStorage.setItem('nyangkun_lettersTo', JSON.stringify(localData.lettersTo));
       
       e.target.reset();
-      renderLetters();
+      renderLettersTo();
       showStatus('편지가 작성되었습니다', 'success');
+    }
+
+    function handleLetterFromSubmit(e) {
+      e.preventDefault();
+      
+      const newItem = {
+        id: generateId(),
+        name: document.getElementById('letter-from-name').value,
+        message: document.getElementById('letter-from-content').value,
+        timestamp: new Date().toLocaleString('ko-KR')
+      };
+      
+      localData.lettersFrom.push(newItem);
+      localStorage.setItem('nyangkun_lettersFrom', JSON.stringify(localData.lettersFrom));
+      
+      e.target.reset();
+      renderLettersFrom();
+      showStatus('편지가 추가되었습니다', 'success');
+    }
+
+    function loadChatLogs() {
+      showStatus('챗봇 로그 로딩중...', 'info');
+      
+      try {
+        const savedLogs = localStorage.getItem('nyangkun_chat_logs');
+        
+        if (savedLogs) {
+          const logs = JSON.parse(savedLogs);
+          localData.chatLogs = logs.map(log => ({
+            id: log.id || generateId(),
+            sender: log.sender,
+            message: log.message,
+            timestamp: log.timestamp || new Date().toLocaleString('ko-KR')
+          }));
+        } else {
+          localData.chatLogs = [];
+        }
+        
+        renderChatLogs();
+        showStatus(`챗봇 로그 ${localData.chatLogs.length}개 로딩 완료`, 'success');
+      } catch (error) {
+        console.error('Chat logs loading failed:', error);
+        showStatus('챗봇 로그 로딩 실패', 'error');
+      }
+    }
+
+    function renderChatLogs() {
+      const list = document.getElementById('chat-logs-list');
+      if (!list) return;
+      
+      if (localData.chatLogs.length === 0) {
+        list.innerHTML = '<div class="loading">대화 로그가 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.chatLogs.map(item => `
+        <div class="list-item">
+          <div class="item-title">${item.sender === 'user' ? '👤 사용자' : '🤖 냥GPT'}</div>
+          <div class="item-content">${item.message.substring(0, 200)}${item.message.length > 200 ? '...' : ''}</div>
+          <div class="item-meta">${item.timestamp}</div>
+          <button class="form-btn warning" onclick="viewFullMessage('${item.id}')">전체보기</button>
+          <button class="form-btn danger" onclick="deleteChatLog('${item.id}')">삭제</button>
+        </div>
+      `).join('');
+    }
+
+    function clearChatLogs() {
+      if (!confirm('모든 챗봇 대화 로그를 삭제하시겠습니까?')) return;
+      
+      localData.chatLogs = [];
+      localStorage.removeItem('nyangkun_chat_logs');
+      renderChatLogs();
+      showStatus('챗봇 로그가 삭제되었습니다', 'success');
+    }
+
+    function exportChatLogs() {
+      if (localData.chatLogs.length === 0) {
+        showStatus('내보낼 로그가 없습니다', 'error');
+        return;
+      }
+      
+      const logsStr = JSON.stringify(localData.chatLogs, null, 2);
+      const blob = new Blob([logsStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nyangkun-chat-logs-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showStatus('챗봇 로그가 내보내기되었습니다', 'success');
+    }
+
+    function viewFullMessage(id) {
+      const logItem = localData.chatLogs.find(item => item.id === id);
+      if (logItem) {
+        alert(`[${logItem.sender === 'user' ? '사용자' : '냥GPT'}] ${logItem.timestamp}\n\n${logItem.message}`);
+      }
+    }
+
+    function deleteChatLog(id) {
+      if (!confirm('이 대화 로그를 삭제하시겠습니까?')) return;
+      
+      localData.chatLogs = localData.chatLogs.filter(item => item.id !== id);
+      localStorage.setItem('nyangkun_chat_logs', JSON.stringify(localData.chatLogs));
+      renderChatLogs();
+      showStatus('대화 로그가 삭제되었습니다', 'success');
     }
 
     function renderTimeline() {
@@ -707,21 +878,40 @@
       `).join('');
     }
 
-    function renderLetters() {
-      const list = document.getElementById('letter-list');
+    function renderLettersTo() {
+      const list = document.getElementById('letter-to-list');
       if (!list) return;
       
-      if (localData.letters.length === 0) {
+      if (localData.lettersTo.length === 0) {
         list.innerHTML = '<div class="loading">작성된 편지가 없습니다.</div>';
         return;
       }
       
-      list.innerHTML = localData.letters.map(item => `
+      list.innerHTML = localData.lettersTo.map(item => `
         <div class="list-item">
           <div class="item-title">${item.title}</div>
           <div class="item-content">${item.content.substring(0, 100)}...</div>
           <div class="item-meta">${item.timestamp}</div>
-          <button class="form-btn danger" onclick="deleteItem('letters', '${item.id}')">삭제</button>
+          <button class="form-btn danger" onclick="deleteItem('lettersTo', '${item.id}')">삭제</button>
+        </div>
+      `).join('');
+    }
+
+    function renderLettersFrom() {
+      const list = document.getElementById('letter-from-list');
+      if (!list) return;
+      
+      if (localData.lettersFrom.length === 0) {
+        list.innerHTML = '<div class="loading">받은 편지가 없습니다.</div>';
+        return;
+      }
+      
+      list.innerHTML = localData.lettersFrom.map(item => `
+        <div class="list-item">
+          <div class="item-title">${item.name}로부터</div>
+          <div class="item-content">${item.message.substring(0, 100)}...</div>
+          <div class="item-meta">${item.timestamp}</div>
+          <button class="form-btn danger" onclick="deleteItem('lettersFrom', '${item.id}')">삭제</button>
         </div>
       `).join('');
     }
@@ -729,7 +919,9 @@
     function renderAll() {
       renderTimeline();
       renderPhotos();
-      renderLetters();
+      renderLettersTo();
+      renderLettersFrom();
+      renderChatLogs();
     }
 
     function deleteItem(type, id) {
@@ -740,6 +932,109 @@
       
       renderAll();
       showStatus('항목이 삭제되었습니다', 'success');
+    }
+
+    function manageApp(appType) {
+      if (!confirm(`${appType} 데이터를 모두 삭제하시겠습니까?`)) return;
+      
+      switch(appType) {
+        case 'timeline':
+          localData.timeline = [];
+          localStorage.removeItem('nyangkun_timeline');
+          renderTimeline();
+          break;
+        case 'photos':
+          localData.photos = [];
+          localStorage.removeItem('nyangkun_photos');
+          renderPhotos();
+          break;
+        case 'letters':
+          localData.lettersTo = [];
+          localData.lettersFrom = [];
+          localStorage.removeItem('nyangkun_lettersTo');
+          localStorage.removeItem('nyangkun_lettersFrom');
+          renderLettersTo();
+          renderLettersFrom();
+          break;
+        case 'chatlogs':
+          localData.chatLogs = [];
+          localStorage.removeItem('nyangkun_chat_logs');
+          renderChatLogs();
+          break;
+      }
+      
+      showStatus(`${appType} 데이터가 초기화되었습니다`, 'success');
+    }
+
+    function exportData() {
+      const dataStr = JSON.stringify(localData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nyangkun-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showStatus('전체 데이터가 내보내기되었습니다', 'success');
+    }
+
+    function importData() {
+      const fileInput = document.getElementById('import-file');
+      if (!fileInput) return;
+      
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showStatus('파일을 선택해주세요', 'error');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (confirm('기존 데이터를 모두 덮어쓰시겠습니까?')) {
+            localData = { ...localData, ...importedData };
+            
+            localStorage.setItem('nyangkun_timeline', JSON.stringify(localData.timeline || []));
+            localStorage.setItem('nyangkun_photos', JSON.stringify(localData.photos || []));
+            localStorage.setItem('nyangkun_lettersTo', JSON.stringify(localData.lettersTo || []));
+            localStorage.setItem('nyangkun_lettersFrom', JSON.stringify(localData.lettersFrom || []));
+            localStorage.setItem('nyangkun_chat_logs', JSON.stringify(localData.chatLogs || []));
+            
+            renderAll();
+            showStatus('데이터가 가져오기되었습니다', 'success');
+          }
+        } catch (error) {
+          showStatus('잘못된 파일 형식입니다', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetAllData() {
+      if (!confirm('정말로 모든 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다!')) return;
+      
+      localStorage.removeItem('nyangkun_timeline');
+      localStorage.removeItem('nyangkun_photos');
+      localStorage.removeItem('nyangkun_lettersTo');
+      localStorage.removeItem('nyangkun_lettersFrom');
+      localStorage.removeItem('nyangkun_chat_logs');
+      
+      localData = {
+        timeline: [],
+        photos: [],
+        lettersTo: [],
+        lettersFrom: [],
+        chatLogs: []
+      };
+      
+      renderAll();
+      showStatus('시스템이 완전히 초기화되었습니다', 'success');
     }
 
     function logout() {
