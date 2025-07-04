@@ -475,7 +475,7 @@
         };
         
         chatLogs.push(logEntry);
-
+        
         const response = await fetch('/api/data', {
           method: 'POST',
           headers: {
@@ -535,7 +535,7 @@
       playBeep();
       
       messageCount++;
-
+      
       if (text !== '안녕하다냥! 나는 냥쿤이야~ 무엇을 도와줄까냥? 🐱') {
         saveChatLog(isUser ? 'user' : 'bot', text);
       }
@@ -563,7 +563,7 @@
       try {
         const startTime = Date.now();
         
-        const response = await fetch('/api/claude', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -643,7 +643,7 @@
       try {
         updateConnectionStatus('TESTING...', '#f59e0b');
         
-        const response = await fetch('/api/claude', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'connection test' })
