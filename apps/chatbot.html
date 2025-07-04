@@ -509,7 +509,7 @@
       try {
         const startTime = Date.now();
         
-        const response = await fetch('/api/claude', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -589,7 +589,7 @@
       try {
         updateConnectionStatus('TESTING...', '#f59e0b');
         
-        const response = await fetch('/api/claude', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: 'connection test' })

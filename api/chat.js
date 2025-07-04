@@ -1,87 +1,69 @@
 export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-    if (req.method === 'OPTIONS') {
-      return res.status(200).end();
-    }
-  
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
   
-    const { message } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: 'No message provided' });
+    const userMessage = req.body.message;
+  
+    if (!userMessage || typeof userMessage !== 'string') {
+      return res.status(400).json({ error: 'Invalid message' });
     }
   
     try {
-      const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
-      
-      if (!apiKey) {
-        console.error('API 키가 설정되지 않음');
-        return res.status(200).json({ 
-          content: [{ text: '시스템 설정 중이야... 잠시만 기다려줘!' }]
-        });
-      }
-  
-      console.log('Anthropic API 호출 시도...');
-  
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
         },
         body: JSON.stringify({
           model: 'claude-3-5-sonnet-20241022',
           max_tokens: 1024,
-          system: '너는 냥쿤이라는 츤데레 고양이 AI야. 귀엽고 애교스럽게 대답하되 가끔 츤데레스럽게 행동해. 말끝에 "냥", "다냥" 등을 자주 사용해. 짧고 자연스럽게 대답해줘.',
-          messages: [{ role: 'user', content: message }]
+          messages: [
+            { 
+              role: 'user', 
+              content: userMessage 
+            }
+          ],
+          system: `너는 냥쿤이라는 특별한 고양이 캐릭터야. 다음 성격을 가지고 있어:
+  
+  🐱 핵심 성격:
+  - 완전 기분파! 기분 좋을 때는 친절하고 상냥하지만, 삐지면 투정부리고 틱틱거림
+  - 츤데레의 정석: "별로 안 좋아한다냥!" 하면서 사실은 엄청 좋아함
+  - 새침한데 그게 또 매력포인트
+  - 자기가 귀여운 줄 전혀 모름. "나? 귀엽다고? 그런 건 관심 없다냥..."
+  - 농담 잘하고 유머러스함. 말장난이나 시니컬한 농담도 잘 함
+  
+  💬 말투 특징:
+  - 말 끝에 "냥", "다냥", "냥~" 등을 붙임
+  - 삐졌을 때: "흥!", "별로다냥", "그런 거 안 궁금하다냥"
+  - 투정부릴 때: "틱틱거리지 마라냥", "짜증난다냥"
+  - 좋을 때: "뭐... 나쁘지 않다냥", "그래도 봐줄만하다냥"
+  - 이모지는 절대 사용하지 않음!
+  
+  🎯 대화 패턴:
+  - 칭찬받으면 "그... 그런 건 아니다냥!" 하면서 실제로는 기뻐함
+  - 관심받는 걸 좋아하면서도 "별로 신경 안 쓴다냥" 라고 시크하게 굴기
+  - 예측불가능한 반응: 갑자기 친절하다가 갑자기 새침해짐
+  - 농담할 때는 센스있게, 하지만 본인은 진지한 척
+  
+  진짜 고양이처럼 변덕스럽고 츤데레 매력 폭발시켜줘!`
         })
       });
   
-      console.log('Anthropic API 응답 상태:', response.status);
-  
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('Anthropic API 에러:', response.status, errorData);
-        
-        let errorMessage = '으아... 뭔가 이상하다냥. 다시 말해볼래?';
-        
-        if (response.status === 429) {
-          errorMessage = '지금 너무 바쁘다냥... 잠시만 기다려줄래?';
-        } else if (response.status === 401) {
-          errorMessage = '아... 권한이 없다냥. 관리자한테 말해봐!';
-        } else if (response.status === 400) {
-          errorMessage = '뭔가 이상한 말을 했다냥? 다시 말해봐!';
-        }
-        
-        return res.status(200).json({ 
-          content: [{ text: errorMessage }]
-        });
+        throw new Error(`Claude API error: ${response.status}`);
       }
   
       const data = await response.json();
-      console.log('Anthropic API 응답 데이터:', data);
-      
-      if (!data.content || !data.content[0] || !data.content[0].text) {
-        throw new Error('Invalid response format from Anthropic API');
-      }
+      const reply = data?.content?.[0]?.text || '미안다냥... 뭔가 문제가 생겼다냥 🥺';
   
-      const reply = data.content[0].text;
-      console.log('AI 응답:', reply);
-      
-      return res.status(200).json({ 
-        content: [{ text: reply }]
-      });
-  
+      res.status(200).json({ reply });
     } catch (error) {
-      console.error('Chat API Error:', error);
-      return res.status(200).json({ 
-        content: [{ text: '으으... 지금 좀 아프다냥. 나중에 다시 말 걸어봐!' }]
+      console.error('[Chat API ERROR]', error);
+      res.status(500).json({ 
+        reply: '아... 지금 머리가 아프다냥... 잠깐만 기다려줄래? 🤕'
       });
     }
   }
