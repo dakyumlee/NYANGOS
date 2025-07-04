@@ -40,7 +40,7 @@ const appendMessage = (text, role) => {
 const showTyping = () => {
   const typingDiv = document.createElement('div');
   typingDiv.className = 'message bot';
-  typingDiv.textContent = '...';
+  typingDiv.textContent = '입력 중...';
   typingDiv.id = 'typing';
   chatLog.appendChild(typingDiv);
   chatLog.scrollTop = chatLog.scrollHeight;
@@ -67,19 +67,31 @@ const sendMessage = async () => {
     });
 
     const data = await res.json();
-    const reply = data?.reply || data?.content?.[0]?.text || '(응답 없음)';
+    
+    let reply = '';
+    if (data && data.reply) {
+      reply = data.reply;
+    } else if (data && data.content && Array.isArray(data.content) && data.content[0] && data.content[0].text) {
+      reply = data.content[0].text;
+    } else {
+      reply = '응답을 받을 수 없습니다.';
+    }
+    
     removeTyping();
     appendMessage(reply, 'bot');
   } catch (err) {
     removeTyping();
-    appendMessage('(에러 발생)', 'bot');
-    console.error(err);
+    appendMessage('서버 연결에 문제가 발생했습니다.', 'bot');
+    console.error('API 에러:', err);
   }
 };
 
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendMessage();
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
 emojiButtons.forEach(btn => {
@@ -92,7 +104,7 @@ emojiButtons.forEach(btn => {
 window.addEventListener('load', () => {
   try {
     const savedLogs = JSON.parse(localStorage.getItem('nyangkun_chat_logs') || '[]');
-    const recentLogs = savedLogs.slice(-20);
+    const recentLogs = savedLogs.slice(-10);
     
     recentLogs.forEach(log => {
       const div = document.createElement('div');
