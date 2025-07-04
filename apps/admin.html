@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -16,461 +15,482 @@
       box-sizing: border-box;
     }
 
-```
-body {
-  font-family: 'Press Start 2P', monospace;
-  background: #0a0a0a;
-  color: #4ade80;
-  min-height: 100vh;
-  image-rendering: pixelated;
-  overflow-x: hidden;
-}
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      color: #4ade80;
+      min-height: 100vh;
+      image-rendering: pixelated;
+      overflow-x: hidden;
+    }
 
-.admin-container {
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 222, 128, 0.01) 2px, rgba(74, 222, 128, 0.01) 4px);
-  min-height: 100vh;
-  padding: 20px;
-}
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 8px 12px;
+      font-size: 8px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
 
-.admin-header {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  border: 2px solid #4ade80;
-  padding: 16px;
-  margin-bottom: 24px;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3), inset 0 0 20px rgba(74, 222, 128, 0.05);
-}
+    .back-button:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
 
-.admin-title {
-  font-size: 14px;
-  color: #4ade80;
-  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-  margin-bottom: 8px;
-}
+    .admin-container {
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 222, 128, 0.01) 2px, rgba(74, 222, 128, 0.01) 4px);
+      min-height: 100vh;
+      padding: 20px;
+      padding-top: 70px;
+    }
 
-.admin-subtitle {
-  font-size: 8px;
-  color: rgba(74, 222, 128, 0.7);
-}
+    .admin-header {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      border: 2px solid #4ade80;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.3), inset 0 0 20px rgba(74, 222, 128, 0.05);
+    }
 
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+    .admin-title {
+      font-size: 14px;
+      color: #4ade80;
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+      margin-bottom: 8px;
+    }
 
-.admin-section {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2), inset 0 0 15px rgba(74, 222, 128, 0.05);
-}
+    .admin-subtitle {
+      font-size: 8px;
+      color: rgba(74, 222, 128, 0.7);
+    }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.3);
-}
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-.section-title {
-  font-size: 10px;
-  color: #86efac;
-  text-shadow: 0 0 5px rgba(134, 239, 172, 0.3);
-}
+    .admin-section {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.2), inset 0 0 15px rgba(74, 222, 128, 0.05);
+    }
 
-.form-group {
-  margin-bottom: 16px;
-}
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+    }
 
-.form-label {
-  display: block;
-  font-size: 7px;
-  color: #4ade80;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
+    .section-title {
+      font-size: 10px;
+      color: #86efac;
+      text-shadow: 0 0 5px rgba(134, 239, 172, 0.3);
+    }
 
-.form-input {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #86efac;
-  padding: 8px 12px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
-  outline: none;
-  transition: all 0.2s;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-}
+    .form-group {
+      margin-bottom: 16px;
+    }
 
-.form-input:focus {
-  border-color: #f59e0b;
-  color: #fbbf24;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-}
+    .form-label {
+      display: block;
+      font-size: 7px;
+      color: #4ade80;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
 
-.form-input::placeholder {
-  color: rgba(74, 222, 128, 0.4);
-}
+    .form-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #86efac;
+      padding: 8px 12px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      outline: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
 
-.form-textarea {
-  min-height: 80px;
-  resize: vertical;
-  line-height: 1.4;
-}
+    .form-input:focus {
+      border-color: #f59e0b;
+      color: #fbbf24;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
 
-.form-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  padding: 8px 16px;
-  font-size: 7px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  transition: all 0.2s;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
+    .form-input::placeholder {
+      color: rgba(74, 222, 128, 0.4);
+    }
 
-.form-btn:hover {
-  background: #4ade80;
-  color: #000000;
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
-}
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.4;
+    }
 
-.form-btn.danger {
-  border-color: #ef4444;
-  color: #ef4444;
-}
+    .form-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 8px 16px;
+      font-size: 7px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
 
-.form-btn.danger:hover {
-  background: #ef4444;
-  color: #000000;
-}
+    .form-btn:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
 
-.form-btn.warning {
-  border-color: #f59e0b;
-  color: #f59e0b;
-}
+    .form-btn.danger {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
 
-.form-btn.warning:hover {
-  background: #f59e0b;
-  color: #000000;
-}
+    .form-btn.danger:hover {
+      background: #ef4444;
+      color: #000000;
+    }
 
-.items-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 16px;
-}
+    .form-btn.warning {
+      border-color: #f59e0b;
+      color: #f59e0b;
+    }
 
-.items-list::-webkit-scrollbar {
-  width: 6px;
-}
+    .form-btn.warning:hover {
+      background: #f59e0b;
+      color: #000000;
+    }
 
-.items-list::-webkit-scrollbar-track {
-  background: rgba(74, 222, 128, 0.1);
-}
+    .items-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
 
-.items-list::-webkit-scrollbar-thumb {
-  background: #4ade80;
-  box-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
-}
+    .items-list::-webkit-scrollbar {
+      width: 6px;
+    }
 
-.list-item {
-  background: rgba(74, 222, 128, 0.05);
-  border: 1px solid rgba(74, 222, 128, 0.2);
-  padding: 12px;
-  margin-bottom: 8px;
-  transition: all 0.2s;
-}
+    .items-list::-webkit-scrollbar-track {
+      background: rgba(74, 222, 128, 0.1);
+    }
 
-.list-item:hover {
-  background: rgba(74, 222, 128, 0.1);
-  border-color: rgba(74, 222, 128, 0.4);
-}
+    .items-list::-webkit-scrollbar-thumb {
+      background: #4ade80;
+      box-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
+    }
 
-.item-title {
-  font-size: 8px;
-  color: #86efac;
-  margin-bottom: 4px;
-}
+    .list-item {
+      background: rgba(74, 222, 128, 0.05);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      padding: 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
 
-.item-content {
-  font-size: 6px;
-  color: rgba(74, 222, 128, 0.8);
-  line-height: 1.3;
-  margin-bottom: 6px;
-}
+    .list-item:hover {
+      background: rgba(74, 222, 128, 0.1);
+      border-color: rgba(74, 222, 128, 0.4);
+    }
 
-.item-meta {
-  font-size: 5px;
-  color: rgba(147, 51, 234, 0.8);
-  margin-bottom: 8px;
-}
+    .item-title {
+      font-size: 8px;
+      color: #86efac;
+      margin-bottom: 4px;
+    }
 
-.item-actions {
-  display: flex;
-  gap: 6px;
-}
+    .item-content {
+      font-size: 6px;
+      color: rgba(74, 222, 128, 0.8);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
 
-.status-indicator {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid #4ade80;
-  padding: 8px 12px;
-  font-size: 6px;
-  color: #4ade80;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-  z-index: 1000;
-}
+    .item-meta {
+      font-size: 5px;
+      color: rgba(147, 51, 234, 0.8);
+      margin-bottom: 8px;
+    }
 
-.status-indicator.success {
-  border-color: #22c55e;
-  color: #22c55e;
-}
+    .item-actions {
+      display: flex;
+      gap: 6px;
+    }
 
-.status-indicator.error {
-  border-color: #ef4444;
-  color: #ef4444;
-}
+    .status-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #4ade80;
+      padding: 8px 12px;
+      font-size: 6px;
+      color: #4ade80;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+      z-index: 1000;
+    }
 
-.iframe-container {
-  margin-top: 16px;
-  border: 2px solid rgba(74, 222, 128, 0.3);
-  height: 300px;
-  overflow: hidden;
-}
+    .status-indicator.success {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
 
-.iframe-container iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: rgba(5, 5, 5, 0.9);
-}
+    .status-indicator.error {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
 
-.loading {
-  text-align: center;
-  color: rgba(74, 222, 128, 0.6);
-  font-size: 7px;
-  padding: 20px;
-}
+    .iframe-container {
+      margin-top: 16px;
+      border: 2px solid rgba(74, 222, 128, 0.3);
+      height: 300px;
+      overflow: hidden;
+    }
 
-.loading-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(74, 222, 128, 0.3);
-  border-top: 2px solid #4ade80;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 8px;
-}
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: rgba(5, 5, 5, 0.9);
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    .loading {
+      text-align: center;
+      color: rgba(74, 222, 128, 0.6);
+      font-size: 7px;
+      padding: 20px;
+    }
 
-.photo-preview {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border: 1px solid rgba(74, 222, 128, 0.3);
-  margin-right: 8px;
-  display: inline-block;
-}
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(74, 222, 128, 0.3);
+      border-top: 2px solid #4ade80;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 8px;
+    }
 
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
-}
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-.app-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  padding: 12px 8px;
-  font-size: 6px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  transition: all 0.2s;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-  text-align: center;
-}
+    .photo-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      margin-right: 8px;
+      display: inline-block;
+    }
 
-.app-btn:hover {
-  background: #4ade80;
-  color: #000000;
-  transform: scale(1.02);
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
-}
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
-@media (max-width: 768px) {
-  .admin-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .admin-container {
-    padding: 10px;
-  }
-  
-  .admin-section {
-    padding: 16px;
-  }
-}
-```
+    .app-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 12px 8px;
+      font-size: 6px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+      text-align: center;
+    }
 
+    .app-btn:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .admin-container {
+        padding: 10px;
+        padding-top: 70px;
+      }
+      
+      .admin-section {
+        padding: 16px;
+      }
+    }
   </style>
 </head>
 <body>
+  <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
+  
   <div class="admin-container">
     <div class="status-indicator" id="status-indicator">시스템 준비완료</div>
 
-```
-<div class="admin-header">
-  <div class="admin-title">📂 냥쿤OS 관리자 페이지 (Blob 버전)</div>
-  <div class="admin-subtitle">로컬 데이터 관리 시스템</div>
-</div>
+    <div class="admin-header">
+      <div class="admin-title">📂 냥쿤OS 관리자 페이지</div>
+      <div class="admin-subtitle">로컬 데이터 관리 시스템</div>
+    </div>
 
-<div class="admin-grid">
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">📅 연애 타임라인 관리</div>
-    </div>
-    <form id="timeline-form">
-      <div class="form-group">
-        <label class="form-label">날짜</label>
-        <input type="text" class="form-input" id="timeline-date" placeholder="2024.03.11" required />
+    <div class="admin-grid">
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">📅 연애 타임라인 관리</div>
+        </div>
+        <form id="timeline-form">
+          <div class="form-group">
+            <label class="form-label">날짜</label>
+            <input type="text" class="form-input" id="timeline-date" placeholder="2024.03.11" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">제목</label>
+            <input type="text" class="form-input" id="timeline-title" placeholder="첫 만남" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">내용</label>
+            <textarea class="form-input form-textarea" id="timeline-content" placeholder="특별한 순간의 이야기를 적어보세요..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">위치</label>
+            <input type="text" class="form-input" id="timeline-position" placeholder="50%" required />
+          </div>
+          <button type="submit" class="form-btn">추가</button>
+        </form>
+        <div class="items-list" id="timeline-list"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="timeline-title" placeholder="첫 만남" required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">내용</label>
-        <textarea class="form-input form-textarea" id="timeline-content" placeholder="특별한 순간의 이야기를 적어보세요..."></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">위치</label>
-        <input type="text" class="form-input" id="timeline-position" placeholder="50%" required />
-      </div>
-      <button type="submit" class="form-btn">추가</button>
-    </form>
-    <div class="items-list" id="timeline-list"></div>
-  </div>
 
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">📸 사진 업로드</div>
-    </div>
-    <form id="photo-form">
-      <div class="form-group">
-        <label class="form-label">사진 파일</label>
-        <input type="file" class="form-input" id="photo-file" accept="image/*" required />
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">📸 사진 업로드</div>
+        </div>
+        <form id="photo-form">
+          <div class="form-group">
+            <label class="form-label">사진 파일</label>
+            <input type="file" class="form-input" id="photo-file" accept="image/*" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">사진 제목</label>
+            <input type="text" class="form-input" id="photo-title" placeholder="우리의 추억" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">설명</label>
+            <input type="text" class="form-input" id="photo-description" placeholder="짧은 설명" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">날짜</label>
+            <input type="text" class="form-input" id="photo-date" placeholder="2024.04.01" required />
+          </div>
+          <button type="submit" class="form-btn">사진 추가</button>
+        </form>
+        <div class="items-list" id="photo-list"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">사진 제목</label>
-        <input type="text" class="form-input" id="photo-title" placeholder="우리의 추억" required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">설명</label>
-        <input type="text" class="form-input" id="photo-description" placeholder="짧은 설명" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">날짜</label>
-        <input type="text" class="form-input" id="photo-date" placeholder="2024.04.01" required />
-      </div>
-      <button type="submit" class="form-btn">사진 추가</button>
-    </form>
-    <div class="items-list" id="photo-list"></div>
-  </div>
 
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">🧘 오늘의 묵상 관리</div>
-    </div>
-    <form id="quote-form">
-      <div class="form-group">
-        <label class="form-label">묵상 내용</label>
-        <textarea class="form-input form-textarea" id="quote-input" placeholder="마음에 와닿는 말씀을 입력하세요..." required></textarea>
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">🧘 오늘의 묵상 관리</div>
+        </div>
+        <form id="quote-form">
+          <div class="form-group">
+            <label class="form-label">묵상 내용</label>
+            <textarea class="form-input form-textarea" id="quote-input" placeholder="마음에 와닿는 말씀을 입력하세요..." required></textarea>
+          </div>
+          <button type="submit" class="form-btn">어록 추가</button>
+        </form>
+        <div class="items-list" id="quote-list"></div>
       </div>
-      <button type="submit" class="form-btn">어록 추가</button>
-    </form>
-    <div class="items-list" id="quote-list"></div>
-  </div>
 
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">💌 냥쿤에게 쓰는 편지</div>
-    </div>
-    <form id="letter-to-form">
-      <div class="form-group">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="letter-to-title" placeholder="사랑하는 냥쿤에게" required />
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">💌 냥쿤에게 쓰는 편지</div>
+        </div>
+        <form id="letter-to-form">
+          <div class="form-group">
+            <label class="form-label">제목</label>
+            <input type="text" class="form-input" id="letter-to-title" placeholder="사랑하는 냥쿤에게" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">내용</label>
+            <textarea class="form-input form-textarea" id="letter-to-content" placeholder="냥쿤에게 전하고 싶은 마음을 써보세요..." required></textarea>
+          </div>
+          <button type="submit" class="form-btn">편지 작성</button>
+        </form>
+        <div class="items-list" id="letter-to-list"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">내용</label>
-        <textarea class="form-input form-textarea" id="letter-to-content" placeholder="냥쿤에게 전하고 싶은 마음을 써보세요..." required></textarea>
-      </div>
-      <button type="submit" class="form-btn">편지 작성</button>
-    </form>
-    <div class="items-list" id="letter-to-list"></div>
-  </div>
 
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">📨 냥쿤이 나에게 쓴 편지</div>
-    </div>
-    <form id="letter-from-form">
-      <div class="form-group">
-        <label class="form-label">작성자</label>
-        <input type="text" class="form-input" id="letter-from-name" placeholder="냥쿤" value="냥쿤" required />
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">📨 냥쿤이 나에게 쓴 편지</div>
+        </div>
+        <form id="letter-from-form">
+          <div class="form-group">
+            <label class="form-label">작성자</label>
+            <input type="text" class="form-input" id="letter-from-name" placeholder="냥쿤" value="냥쿤" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">편지 내용</label>
+            <textarea class="form-input form-textarea" id="letter-from-content" placeholder="냥쿤이 보내는 편지 내용..." required></textarea>
+          </div>
+          <button type="submit" class="form-btn">편지 추가</button>
+        </form>
+        <div class="items-list" id="letter-from-list"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">편지 내용</label>
-        <textarea class="form-input form-textarea" id="letter-from-content" placeholder="냥쿤이 보내는 편지 내용..." required></textarea>
+
+      <div class="admin-section">
+        <div class="section-header">
+          <div class="section-title">🎮 앱 관리</div>
+        </div>
+        <div class="app-grid">
+          <button class="app-btn" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
+          <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
+          <button class="app-btn" onclick="manageApp('quotes')">🧘 어록 초기화</button>
+          <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
+          <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
+          <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">데이터 가져오기</label>
+          <input type="file" class="form-input" id="import-file" accept=".json" />
+        </div>
       </div>
-      <button type="submit" class="form-btn">편지 추가</button>
-    </form>
-    <div class="items-list" id="letter-from-list"></div>
-  </div>
-
-  <div class="admin-section">
-    <div class="section-header">
-      <div class="section-title">🎮 앱 관리</div>
     </div>
-    <div class="app-grid">
-      <button class="app-btn" onclick="manageApp('timeline')">📅 타임라인 초기화</button>
-      <button class="app-btn" onclick="manageApp('photos')">📸 사진 초기화</button>
-      <button class="app-btn" onclick="manageApp('quotes')">🧘 어록 초기화</button>
-      <button class="app-btn" onclick="manageApp('letters')">💌 편지 초기화</button>
-      <button class="app-btn" onclick="exportData()">📤 데이터 내보내기</button>
-      <button class="app-btn" onclick="importData()">📥 데이터 가져오기</button>
-    </div>
-    <div class="form-group">
-      <label class="form-label">데이터 가져오기</label>
-      <input type="file" class="form-input" id="import-file" accept=".json" />
-    </div>
-  </div>
-</div>
-```
-
   </div>
 
   <script>
@@ -484,7 +504,7 @@ body {
 
     function loadLocalData() {
       try {
-        const saved = localStorage.getItem('nyangkun-admin-data');
+        const saved = localStorage.getItem('nyangkun-data');
         if (saved) {
           localData = { ...localData, ...JSON.parse(saved) };
         }
@@ -496,7 +516,7 @@ body {
 
     function saveLocalData() {
       try {
-        localStorage.setItem('nyangkun-admin-data', JSON.stringify(localData));
+        localStorage.setItem('nyangkun-data', JSON.stringify(localData));
         showStatus('데이터 저장 완료', 'success');
       } catch (error) {
         console.error('데이터 저장 실패:', error);
@@ -831,12 +851,10 @@ body {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('관리자 페이지 초기화 (Blob 버전)');
       loadLocalData();
       renderAll();
       showStatus('시스템 준비완료', 'success');
     });
   </script>
-
 </body>
 </html>

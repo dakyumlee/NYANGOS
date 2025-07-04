@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -13,381 +12,407 @@
       box-sizing: border-box;
     }
 
-```
-body {
-  font-family: 'Press Start 2P', monospace;
-  background: #0a0a0a;
-  color: #4ade80;
-  height: 100vh;
-  overflow: hidden;
-  image-rendering: pixelated;
-}
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      color: #4ade80;
+      height: 100vh;
+      overflow: hidden;
+      image-rendering: pixelated;
+    }
 
-.terminal-container {
-  width: 100%;
-  height: 100vh;
-  background: 
-    radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.02) 0%, transparent 50%),
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 222, 128, 0.01) 2px, rgba(74, 222, 128, 0.01) 4px);
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #4ade80;
-  box-shadow: inset 0 0 30px rgba(74, 222, 128, 0.05), 0 0 20px rgba(74, 222, 128, 0.1);
-}
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 8px 12px;
+      font-size: 8px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
 
-.terminal-header {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  padding: 12px 16px;
-  border-bottom: 2px solid #4ade80;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
-}
+    .back-button:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
 
-.terminal-title {
-  font-size: 10px;
-  color: #4ade80;
-  text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
-  flex: 1;
-}
+    .terminal-container {
+      width: 100%;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.02) 0%, transparent 50%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 222, 128, 0.01) 2px, rgba(74, 222, 128, 0.01) 4px);
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #4ade80;
+      box-shadow: inset 0 0 30px rgba(74, 222, 128, 0.05), 0 0 20px rgba(74, 222, 128, 0.1);
+    }
 
-.status-indicators {
-  display: flex;
-  gap: 8px;
-}
+    .terminal-header {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      padding: 12px 16px;
+      border-bottom: 2px solid #4ade80;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    }
 
-.status-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid #4ade80;
-  background: #4ade80;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
-  animation: pulse 2s ease-in-out infinite;
-}
+    .terminal-title {
+      font-size: 10px;
+      color: #4ade80;
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+      flex: 1;
+    }
 
-.status-dot.error {
-  background: #ef4444;
-  border-color: #ef4444;
-  box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
-}
+    .status-indicators {
+      display: flex;
+      gap: 8px;
+    }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid #4ade80;
+      background: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
 
-.chat-display {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  background: rgba(5, 5, 5, 0.9);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .status-dot.error {
+      background: #ef4444;
+      border-color: #ef4444;
+      box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    }
 
-.chat-display::-webkit-scrollbar {
-  width: 8px;
-}
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
 
-.chat-display::-webkit-scrollbar-track {
-  background: rgba(74, 222, 128, 0.05);
-}
+    .chat-display {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      background: rgba(5, 5, 5, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.chat-display::-webkit-scrollbar-thumb {
-  background: #4ade80;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
-}
+    .chat-display::-webkit-scrollbar {
+      width: 8px;
+    }
 
-.message {
-  display: flex;
-  flex-direction: column;
-  margin: 8px 0;
-  animation: messageSlide 0.3s ease-out;
-}
+    .chat-display::-webkit-scrollbar-track {
+      background: rgba(74, 222, 128, 0.05);
+    }
 
-@keyframes messageSlide {
-  from { 
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    .chat-display::-webkit-scrollbar-thumb {
+      background: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+    }
 
-.message.user {
-  align-items: flex-end;
-}
+    .message {
+      display: flex;
+      flex-direction: column;
+      margin: 8px 0;
+      animation: messageSlide 0.3s ease-out;
+    }
 
-.message.bot {
-  align-items: flex-start;
-}
+    @keyframes messageSlide {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.message-bubble {
-  max-width: 80%;
-  padding: 12px 16px;
-  font-size: 8px;
-  line-height: 1.5;
-  border: 2px solid;
-  position: relative;
-  word-wrap: break-word;
-}
+    .message.user {
+      align-items: flex-end;
+    }
 
-.message.user .message-bubble {
-  background: rgba(248, 113, 113, 0.15);
-  border-color: #f87171;
-  color: #fca5a5;
-  text-shadow: 0 0 3px rgba(248, 113, 113, 0.3);
-  box-shadow: 0 0 10px rgba(248, 113, 113, 0.2), inset 0 0 10px rgba(248, 113, 113, 0.05);
-}
+    .message.bot {
+      align-items: flex-start;
+    }
 
-.message.bot .message-bubble {
-  background: rgba(74, 222, 128, 0.15);
-  border-color: #4ade80;
-  color: #86efac;
-  text-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
-}
+    .message-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      font-size: 8px;
+      line-height: 1.5;
+      border: 2px solid;
+      position: relative;
+      word-wrap: break-word;
+    }
 
-.message-prefix {
-  font-size: 7px;
-  margin-bottom: 4px;
-  opacity: 0.8;
-}
+    .message.user .message-bubble {
+      background: rgba(248, 113, 113, 0.15);
+      border-color: #f87171;
+      color: #fca5a5;
+      text-shadow: 0 0 3px rgba(248, 113, 113, 0.3);
+      box-shadow: 0 0 10px rgba(248, 113, 113, 0.2), inset 0 0 10px rgba(248, 113, 113, 0.05);
+    }
 
-.user .message-prefix {
-  color: #fca5a5;
-}
+    .message.bot .message-bubble {
+      background: rgba(74, 222, 128, 0.15);
+      border-color: #4ade80;
+      color: #86efac;
+      text-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
+    }
 
-.bot .message-prefix {
-  color: #86efac;
-}
+    .message-prefix {
+      font-size: 7px;
+      margin-bottom: 4px;
+      opacity: 0.8;
+    }
 
-.typing-indicator {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  color: #4ade80;
-  font-size: 8px;
-}
+    .user .message-prefix {
+      color: #fca5a5;
+    }
 
-.typing-indicator.show {
-  display: flex;
-}
+    .bot .message-prefix {
+      color: #86efac;
+    }
 
-.typing-dots {
-  display: flex;
-  gap: 4px;
-}
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      color: #4ade80;
+      font-size: 8px;
+    }
 
-.typing-dot {
-  width: 4px;
-  height: 4px;
-  background: #4ade80;
-  border-radius: 50%;
-  animation: typingBounce 1.4s ease-in-out infinite;
-  box-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
-}
+    .typing-indicator.show {
+      display: flex;
+    }
 
-.typing-dot:nth-child(1) { animation-delay: -0.32s; }
-.typing-dot:nth-child(2) { animation-delay: -0.16s; }
-.typing-dot:nth-child(3) { animation-delay: 0s; }
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
 
-@keyframes typingBounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
-}
+    .typing-dot {
+      width: 4px;
+      height: 4px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: typingBounce 1.4s ease-in-out infinite;
+      box-shadow: 0 0 3px rgba(74, 222, 128, 0.3);
+    }
 
-.input-section {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  border-top: 2px solid #4ade80;
-  padding: 16px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    .typing-dot:nth-child(3) { animation-delay: 0s; }
 
-.input-wrapper {
-  flex: 1;
-  position: relative;
-}
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
 
-#user-input {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #86efac;
-  padding: 12px 16px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  outline: none;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
-  transition: all 0.2s;
-}
+    .input-section {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      border-top: 2px solid #4ade80;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
 
-#user-input:focus {
-  border-color: #f87171;
-  box-shadow: 0 0 15px rgba(248, 113, 113, 0.3), inset 0 0 15px rgba(248, 113, 113, 0.05);
-  color: #fca5a5;
-}
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
 
-#user-input::placeholder {
-  color: rgba(74, 222, 128, 0.4);
-}
+    #user-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #86efac;
+      padding: 12px 16px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      outline: none;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2), inset 0 0 10px rgba(74, 222, 128, 0.05);
+      transition: all 0.2s;
+    }
 
-.emoji-panel {
-  display: flex;
-  gap: 4px;
-}
+    #user-input:focus {
+      border-color: #f87171;
+      box-shadow: 0 0 15px rgba(248, 113, 113, 0.3), inset 0 0 15px rgba(248, 113, 113, 0.05);
+      color: #fca5a5;
+    }
 
-.emoji-btn {
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  cursor: pointer;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-}
+    #user-input::placeholder {
+      color: rgba(74, 222, 128, 0.4);
+    }
 
-.emoji-btn:hover {
-  background: rgba(74, 222, 128, 0.1);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-}
+    .emoji-panel {
+      display: flex;
+      gap: 4px;
+    }
 
-.send-btn {
-  width: 48px;
-  height: 48px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
-}
+    .emoji-btn {
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
 
-.send-btn:hover {
-  background: #4ade80;
-  color: #000000;
-  transform: scale(1.02);
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
-}
+    .emoji-btn:hover {
+      background: rgba(74, 222, 128, 0.1);
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+    }
 
-.send-btn:active {
-  transform: scale(0.95);
-}
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    }
 
-.send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+    .send-btn:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+    }
 
-.system-message {
-  text-align: center;
-  color: rgba(74, 222, 128, 0.5);
-  font-size: 7px;
-  margin: 16px 0;
-  padding: 8px;
-  border: 1px dashed rgba(74, 222, 128, 0.2);
-  background: rgba(74, 222, 128, 0.02);
-}
+    .send-btn:active {
+      transform: scale(0.95);
+    }
 
-.connection-status {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid #4ade80;
-  padding: 4px 8px;
-  font-size: 6px;
-  color: #4ade80;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-}
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-@media (max-width: 768px) {
-  .message-bubble {
-    font-size: 7px;
-    padding: 10px 12px;
-    max-width: 90%;
-  }
-  
-  #user-input {
-    font-size: 7px;
-    padding: 10px 12px;
-  }
-  
-  .emoji-panel {
-    flex-wrap: wrap;
-  }
-}
-```
+    .system-message {
+      text-align: center;
+      color: rgba(74, 222, 128, 0.5);
+      font-size: 7px;
+      margin: 16px 0;
+      padding: 8px;
+      border: 1px dashed rgba(74, 222, 128, 0.2);
+      background: rgba(74, 222, 128, 0.02);
+    }
 
+    .connection-status {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #4ade80;
+      padding: 4px 8px;
+      font-size: 6px;
+      color: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .message-bubble {
+        font-size: 7px;
+        padding: 10px 12px;
+        max-width: 90%;
+      }
+      
+      #user-input {
+        font-size: 7px;
+        padding: 10px 12px;
+      }
+      
+      .emoji-panel {
+        flex-wrap: wrap;
+      }
+
+      .back-button {
+        top: 10px;
+        left: 10px;
+        font-size: 7px;
+        padding: 6px 10px;
+      }
+    }
   </style>
 </head>
 <body>
+  <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
+  
   <div class="terminal-container">
     <div class="connection-status" id="connection-status">READY</div>
 
-```
-<div class="terminal-header">
-  <div class="terminal-title">🤖 NYANG-GPT TERMINAL v2.1 - AI CHAT INTERFACE</div>
-  <div class="status-indicators">
-    <div class="status-dot" id="status-dot-1"></div>
-    <div class="status-dot" id="status-dot-2" style="animation-delay: 0.5s;"></div>
-    <div class="status-dot" id="status-dot-3" style="animation-delay: 1s;"></div>
-  </div>
-</div>
+    <div class="terminal-header">
+      <div class="terminal-title">🤖 NYANG-GPT TERMINAL v2.1 - AI CHAT INTERFACE</div>
+      <div class="status-indicators">
+        <div class="status-dot" id="status-dot-1"></div>
+        <div class="status-dot" id="status-dot-2" style="animation-delay: 0.5s;"></div>
+        <div class="status-dot" id="status-dot-3" style="animation-delay: 1s;"></div>
+      </div>
+    </div>
 
-<div class="chat-display" id="chat-display">
-  <div class="system-message">
-    >>> NYANG-GPT SYSTEM INITIALIZED<br>
-    >>> AI LOVE ASSISTANT READY<br>
-    >>> TYPE YOUR MESSAGE TO BEGIN...
-  </div>
-</div>
+    <div class="chat-display" id="chat-display">
+      <div class="system-message">
+        >>> NYANG-GPT SYSTEM INITIALIZED<br>
+        >>> AI LOVE ASSISTANT READY<br>
+        >>> TYPE YOUR MESSAGE TO BEGIN...
+      </div>
+    </div>
 
-<div class="typing-indicator" id="typing-indicator">
-  <span>🤖 냥쿤이 생각중</span>
-  <div class="typing-dots">
-    <div class="typing-dot"></div>
-    <div class="typing-dot"></div>
-    <div class="typing-dot"></div>
-  </div>
-</div>
+    <div class="typing-indicator" id="typing-indicator">
+      <span>🤖 냥쿤이 생각중</span>
+      <div class="typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
 
-<div class="input-section">
-  <div class="emoji-panel">
-    <button class="emoji-btn" onclick="addEmoji('😀')">😀</button>
-    <button class="emoji-btn" onclick="addEmoji('😢')">😢</button>
-    <button class="emoji-btn" onclick="addEmoji('😠')">😠</button>
-    <button class="emoji-btn" onclick="addEmoji('😍')">😍</button>
-    <button class="emoji-btn" onclick="addEmoji('💕')">💕</button>
-  </div>
-  
-  <div class="input-wrapper">
-    <input type="text" id="user-input" placeholder="냥쿤에게 메시지를 입력하세요..." autocomplete="off">
-  </div>
-  
-  <button class="send-btn" id="send-button">▶</button>
-</div>
-```
-
+    <div class="input-section">
+      <div class="emoji-panel">
+        <button class="emoji-btn" onclick="addEmoji('😀')">😀</button>
+        <button class="emoji-btn" onclick="addEmoji('😢')">😢</button>
+        <button class="emoji-btn" onclick="addEmoji('😠')">😠</button>
+        <button class="emoji-btn" onclick="addEmoji('😍')">😍</button>
+        <button class="emoji-btn" onclick="addEmoji('💕')">💕</button>
+      </div>
+      
+      <div class="input-wrapper">
+        <input type="text" id="user-input" placeholder="냥쿤에게 메시지를 입력하세요..." autocomplete="off">
+      </div>
+      
+      <button class="send-btn" id="send-button">▶</button>
+    </div>
   </div>
 
   <script>
@@ -604,6 +629,5 @@ body {
       console.log('현재 상태:', connectionStatus.textContent);
     };
   </script>
-
 </body>
 </html>
