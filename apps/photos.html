@@ -438,7 +438,22 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
+      authDomain: "nyangos-fdbe6.firebaseapp.com",
+      projectId: "nyangos-fdbe6",
+      storageBucket: "nyangos-fdbe6.appspot.com",
+      messagingSenderId: "349621507711",
+      appId: "1:349621507711:web:2201669ae265cfbbfad14a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     let photos = [];
     let currentSlide = 0;
     let viewMode = 'gallery';
@@ -487,11 +502,11 @@
       
       gallery.innerHTML = photos.map((photo, index) => `
         <div class="memory-card" onclick="openSlideshow(${index})">
-          <img class="memory-img" src="${photo.url}" alt="${photo.title}" loading="lazy">
+          <img class="memory-img" src="${photo.url}" alt="${photo.title}" loading="lazy" onerror="this.style.display='none';">
           <div class="memory-info">
-            <div class="memory-title">${photo.title}</div>
-            <div class="memory-description">${photo.description}</div>
-            <div class="memory-date">${photo.date}</div>
+            <div class="memory-title">${photo.title || '제목 없음'}</div>
+            <div class="memory-description">${photo.description || ''}</div>
+            <div class="memory-date">${photo.date || ''}</div>
           </div>
         </div>
       `).join('');
@@ -502,9 +517,9 @@
       
       const photo = photos[currentSlide];
       document.getElementById('slide-img').src = photo.url;
-      document.getElementById('slide-title').textContent = photo.title;
-      document.getElementById('slide-description').textContent = photo.description;
-      document.getElementById('slide-date').textContent = photo.date;
+      document.getElementById('slide-title').textContent = photo.title || '제목 없음';
+      document.getElementById('slide-description').textContent = photo.description || '';
+      document.getElementById('slide-date').textContent = photo.date || '';
       
       document.getElementById('prev-btn').disabled = currentSlide === 0;
       document.getElementById('next-btn').disabled = currentSlide === photos.length - 1;
@@ -516,13 +531,21 @@
       updateConnectionStatus('LOADING...', '#f59e0b');
       
       try {
-        const response = await fetch('/api/data/load');
-        if (!response.ok) {
-          throw new Error('No data found');
-        }
+        const photoRef = collection(db, "photos");
+        const snapshot = await getDocs(photoRef);
         
-        const data = await response.json();
-        photos = data.photos || [];
+        photos = [];
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.url) {
+            photos.push({
+              url: data.url,
+              title: data.title || '제목 없음',
+              description: data.description || '',
+              date: data.date || ''
+            });
+          }
+        });
         
         console.log(`${photos.length}개의 사진을 불러왔습니다`);
         updateConnectionStatus('LOADED', '#00ff41');
@@ -611,7 +634,6 @@
         }
       }
     });
-    //니가 감히 내 배포를 막아? 누가 이기나 해보자...
 
     document.addEventListener('DOMContentLoaded', () => {
       console.log('사진첩 시스템 시작');
