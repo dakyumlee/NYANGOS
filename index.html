@@ -92,6 +92,7 @@
         0 0 20px rgba(0, 255, 65, 0.3),
         inset 0 0 20px rgba(0, 255, 65, 0.1);
       animation: iconGlow 2s ease-in-out infinite alternate;
+      text-decoration: none;
     }
 
     @keyframes iconGlow {
@@ -158,97 +159,6 @@
       line-height: 1.3;
       text-shadow: 0 0 10px currentColor;
       font-weight: bold;
-    }
-
-    .window {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.95);
-      border: 3px solid #00ff41;
-      display: none;
-      flex-direction: column;
-      min-width: 400px;
-      min-height: 300px;
-      z-index: 100;
-      box-shadow: 
-        0 0 30px rgba(0, 255, 65, 0.5),
-        inset 0 0 30px rgba(0, 255, 65, 0.1);
-      backdrop-filter: blur(10px);
-    }
-
-    .window.maximized {
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: calc(100vh - 48px) !important;
-      border-radius: 0;
-    }
-
-    .titlebar {
-      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
-      color: #00ff41;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: move;
-      font-size: 10px;
-      user-select: none;
-      border-bottom: 2px solid #00ff41;
-      text-shadow: 0 0 10px currentColor;
-    }
-
-    .titlebar-text {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .window-controls {
-      display: flex;
-      gap: 4px;
-    }
-
-    .window-controls button {
-      width: 24px;
-      height: 24px;
-      border: 2px solid #00ff41;
-      background: rgba(0, 0, 0, 0.8);
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: bold;
-      color: #00ff41;
-      font-family: 'Press Start 2P', monospace;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
-    }
-
-    .window-controls button:hover {
-      background: #00ff41;
-      color: #000000;
-      box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
-      transform: scale(1.1);
-    }
-
-    .window-controls button:active {
-      transform: scale(0.9);
-    }
-
-    .window-content {
-      flex: 1;
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px inset #00ff41;
-      margin: 4px;
-      overflow: hidden;
-    }
-
-    .window-content iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #000000;
     }
 
     .game-hud {
@@ -411,13 +321,6 @@
       .icon-text {
         font-size: 7px;
       }
-
-      .window {
-        min-width: 95vw;
-        min-height: calc(95vh - 60px);
-        top: 2.5vh !important;
-        left: 2.5vw !important;
-      }
     }
 
     * {
@@ -456,40 +359,30 @@
   </div>
   
   <div id="desktop">
-    <div class="icon" data-app="chatbot">
+    <a href="chatbot.html" class="icon">
       <div class="icon-emoji">🤖</div>
       <div class="icon-text">냥GPT<br>AI_CHAT.EXE</div>
-    </div>
+    </a>
     
-    <div class="icon" data-app="photos">
+    <a href="photos.html" class="icon">
       <div class="icon-emoji">🖼️</div>
       <div class="icon-text">추억보관함<br>MEMORY_BOX.EXE</div>
-    </div>
+    </a>
     
-    <div class="icon" data-app="quotes">
-      <div class="icon-emoji">✨</div>
-      <div class="icon-text">마음챙김<br>WISDOM.EXE</div>
-    </div>
+    <a href="game.html" class="icon">
+      <div class="icon-emoji">🎮</div>
+      <div class="icon-text">게임<br>GAME.EXE</div>
+    </a>
     
-    <div class="icon" data-app="timeline">
+    <a href="timeline.html" class="icon">
       <div class="icon-emoji">🌟</div>
       <div class="icon-text">러브스토리<br>TIMELINE.EXE</div>
-    </div>
+    </a>
 
-    <div class="icon" data-app="letter-to">
-      <div class="icon-emoji">💝</div>
-      <div class="icon-text">편지쓰기<br>LOVE_LETTER.EXE</div>
-    </div>
-
-    <div class="icon" data-app="letter-from">
-      <div class="icon-emoji">💌</div>
-      <div class="icon-text">받은편지함<br>MAILBOX.EXE</div>
-    </div>
-
-    <div class="icon" data-app="admin">
+    <a href="admin.html" class="icon">
       <div class="icon-emoji">🔧</div>
       <div class="icon-text">시스템설정<br>CONFIG.EXE</div>
-    </div>
+    </a>
   </div>
 
   <div class="game-menu">
@@ -500,123 +393,7 @@
     <div class="menu-clock" id="menu-clock"></div>
   </div>
 
-  <div id="chatbot-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>🤖 AI_CHAT.EXE - 냥GPT</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('chatbot')">_</button>
-        <button onclick="toggleMaximize('chatbot')">□</button>
-        <button onclick="closeWindow('chatbot')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./chatbot.html"></iframe>
-    </div>
-  </div>
-
-  <div id="photos-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>🖼️ MEMORY_BOX.EXE - 추억보관함</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('photos')">_</button>
-        <button onclick="toggleMaximize('photos')">□</button>
-        <button onclick="closeWindow('photos')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./photos.html"></iframe>
-    </div>
-  </div>
-
-  <div id="quotes-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>✨ WISDOM.EXE - 마음챙김</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('quotes')">_</button>
-        <button onclick="toggleMaximize('quotes')">□</button>
-        <button onclick="closeWindow('quotes')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./quotes.html"></iframe>
-    </div>
-  </div>
-
-  <div id="timeline-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>🌟 TIMELINE.EXE - 러브스토리</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('timeline')">_</button>
-        <button onclick="toggleMaximize('timeline')">□</button>
-        <button onclick="closeWindow('timeline')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./timeline.html"></iframe>
-    </div>
-  </div>
-
-  <div id="letter-to-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>💝 LOVE_LETTER.EXE - 편지쓰기</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('letter-to')">_</button>
-        <button onclick="toggleMaximize('letter-to')">□</button>
-        <button onclick="closeWindow('letter-to')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./lettersToNyangkun.html"></iframe>
-    </div>
-  </div>
-
-  <div id="letter-from-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>💌 MAILBOX.EXE - 받은편지함</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('letter-from')">_</button>
-        <button onclick="toggleMaximize('letter-from')">□</button>
-        <button onclick="closeWindow('letter-from')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./lettersFromNyangkun.html"></iframe>
-    </div>
-  </div>
-
-  <div id="admin-window" class="window">
-    <div class="titlebar">
-      <div class="titlebar-text">
-        <span>🔧 CONFIG.EXE - 시스템설정</span>
-      </div>
-      <div class="window-controls">
-        <button onclick="minimizeWindow('admin')">_</button>
-        <button onclick="toggleMaximize('admin')">□</button>
-        <button onclick="closeWindow('admin')">×</button>
-      </div>
-    </div>
-    <div class="window-content">
-      <iframe src="./admin.html"></iframe>
-    </div>
-  </div>
-
   <script>
-    let zIndex = 100;
-    let draggedWindow = null;
-    let dragOffset = { x: 0, y: 0 };
-
     setTimeout(() => {
       document.getElementById('loading-screen').style.opacity = '0';
       document.getElementById('loading-screen').style.transition = 'opacity 1s';
@@ -698,220 +475,23 @@
       document.getElementById('love-level').textContent = calculateDday();
     }
 
-    function openApp(appName) {
-      console.log('Opening app:', appName);
-      playClickSound();
-      
-      const windowId = `${appName}-window`;
-      const window = document.getElementById(windowId);
-      
-      console.log('Looking for window:', windowId, window);
-      
-      if (!window) {
-        console.error(`Window not found: ${windowId}`);
-        alert(`윈도우를 찾을 수 없습니다: ${windowId}`);
-        return;
-      }
-
-      window.style.display = 'flex';
-      window.style.zIndex = ++zIndex;
-
-      if (!window.dataset.positioned) {
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        const windowWidth = 600;
-        const windowHeight = 400;
-        
-        const maxX = Math.max(0, screenWidth - windowWidth);
-        const maxY = Math.max(0, screenHeight - windowHeight - 48);
-        
-        const x = Math.random() * maxX + 50;
-        const y = Math.random() * maxY + 50;
-        
-        window.style.left = `${Math.min(x, maxX)}px`;
-        window.style.top = `${Math.min(y, maxY)}px`;
-        window.style.width = `${windowWidth}px`;
-        window.style.height = `${windowHeight}px`;
-        window.dataset.positioned = 'true';
-      }
-
-      focusWindow(window);
-      console.log('App opened successfully:', appName);
-    }
-
-    function closeWindow(appName) {
-      const window = document.getElementById(`${appName}-window`);
-      if (window) {
-        window.style.display = 'none';
-        window.classList.remove('maximized');
-        playClickSound();
-      }
-    }
-
-    function minimizeWindow(appName) {
-      const window = document.getElementById(`${appName}-window`);
-      if (window) {
-        window.style.display = 'none';
-        playClickSound();
-      }
-    }
-
-    function toggleMaximize(appName) {
-      const window = document.getElementById(`${appName}-window`);
-      if (window) {
-        window.classList.toggle('maximized');
-        focusWindow(window);
-        playClickSound();
-      }
-    }
-
-    function focusWindow(window) {
-      document.querySelectorAll('.window').forEach(w => {
-        w.style.borderColor = '#00ff41';
-        w.style.boxShadow = '0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 30px rgba(0, 255, 65, 0.1)';
-      });
-      
-      window.style.zIndex = ++zIndex;
-      window.style.borderColor = '#ff6b6b';
-      window.style.boxShadow = '0 0 40px rgba(255, 107, 107, 0.8), inset 0 0 40px rgba(255, 107, 107, 0.2)';
-    }
-
-    function startDrag(e) {
-      const window = e.target.closest('.window');
-      if (!window || window.classList.contains('maximized')) return;
-
-      draggedWindow = window;
-      const rect = window.getBoundingClientRect();
-      dragOffset.x = e.clientX - rect.left;
-      dragOffset.y = e.clientY - rect.top;
-
-      focusWindow(window);
-
-      document.addEventListener('mousemove', drag);
-      document.addEventListener('mouseup', stopDrag);
-      e.preventDefault();
-    }
-
-    function drag(e) {
-      if (!draggedWindow) return;
-
-      const x = e.clientX - dragOffset.x;
-      const y = e.clientY - dragOffset.y;
-
-      const maxX = window.innerWidth - draggedWindow.offsetWidth;
-      const maxY = window.innerHeight - draggedWindow.offsetHeight - 48;
-
-      draggedWindow.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-      draggedWindow.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-    }
-
-    function stopDrag() {
-      draggedWindow = null;
-      document.removeEventListener('mousemove', drag);
-      document.removeEventListener('mouseup', stopDrag);
-    }
-
     function showGameInfo() {
       playClickSound();
-      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n• 윈도우 타이틀바 → 드래그 이동\n• 윈도우 버튼 → 최소화/최대화/닫기\n• Ctrl+1~7 → 단축키\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
+      alert('🎮 냥쿤OS - LOVE SIMULATOR v2.0\n\n사용법:\n• 아이콘 클릭 → 앱 실행\n\n각 앱에서 편지쓰기, 사진업로드, 채팅 등을 할 수 있어요!\n\n❤️ 사랑을 디지털로 기록하세요 ❤️');
     }
 
     document.querySelectorAll('.icon').forEach(icon => {
       icon.addEventListener('click', function() {
-        const appName = this.getAttribute('data-app');
-        console.log('Clicked icon:', appName);
-        if (appName) {
-          openApp(appName);
-        }
-      });
-      
-      icon.addEventListener('dblclick', function() {
-        const appName = this.getAttribute('data-app');
-        console.log('Double-clicked icon:', appName);
-        if (appName) {
-          openApp(appName);
-        }
+        playClickSound();
       });
     });
 
     setInterval(updateTime, 1000);
     updateTime();
 
-    document.querySelectorAll('.titlebar').forEach(titlebar => {
-      titlebar.addEventListener('mousedown', startDrag);
-    });
-
-    document.querySelectorAll('.window').forEach(window => {
-      window.addEventListener('mousedown', () => {
-        focusWindow(window);
-      });
-    });
-
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'closeWindow') {
-        const windows = [...document.querySelectorAll('.window')].filter(w => 
-          w.style.display === 'flex'
-        );
-        
-        if (windows.length > 0) {
-          const activeWindow = windows.reduce((prev, current) => {
-            return parseInt(current.style.zIndex || 0) > parseInt(prev.style.zIndex || 0) ? current : prev;
-          });
-          
-          const appName = activeWindow.id.replace('-window', '');
-          closeWindow(appName);
-        }
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        switch(e.key) {
-          case '1':
-            e.preventDefault();
-            openApp('chatbot');
-            break;
-          case '2':
-            e.preventDefault();
-            openApp('photos');
-            break;
-          case '3':
-            e.preventDefault();
-            openApp('quotes');
-            break;
-          case '4':
-            e.preventDefault();
-            openApp('timeline');
-            break;
-          case '5':
-            e.preventDefault();
-            openApp('letter-to');
-            break;
-          case '6':
-            e.preventDefault();
-            openApp('letter-from');
-            break;
-          case '7':
-            e.preventDefault();
-            openApp('admin');
-            break;
-        }
-      }
-    });
-
     setTimeout(() => {
       console.log('🎮 냥쿤OS 로드 완료!');
       document.getElementById('status').textContent = 'READY';
-      
-      console.log('Available windows:');
-      document.querySelectorAll('.window').forEach(w => {
-        console.log('- Window ID:', w.id);
-      });
-      
-      console.log('Available icons:');
-      document.querySelectorAll('.icon').forEach(icon => {
-        console.log('- Icon data-app:', icon.getAttribute('data-app'));
-      });
     }, 7000);
   </script>
 </body>
