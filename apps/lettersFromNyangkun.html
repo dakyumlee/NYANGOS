@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -13,571 +12,551 @@
       box-sizing: border-box;
     }
 
-```
-body {
-  font-family: 'Press Start 2P', monospace;
-  background: #0a0a0a;
-  color: #4ade80;
-  height: 100vh;
-  overflow: hidden;
-  image-rendering: pixelated;
-}
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      color: #4ade80;
+      height: 100vh;
+      overflow: hidden;
+      image-rendering: pixelated;
+    }
 
-.mailbox-system {
-  width: 100%;
-  height: 100vh;
-  background: 
-    radial-gradient(circle at 30% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-    repeating-linear-gradient(120deg, transparent, transparent 4px, rgba(74, 222, 128, 0.008) 4px, rgba(74, 222, 128, 0.008) 8px);
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #4ade80;
-  box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
-}
+    .mailbox-system {
+      width: 100%;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 30% 20%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(120deg, transparent, transparent 4px, rgba(74, 222, 128, 0.008) 4px, rgba(74, 222, 128, 0.008) 8px);
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #4ade80;
+      box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05), 0 0 30px rgba(74, 222, 128, 0.1);
+    }
 
-.mailbox-header {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  padding: 12px 16px;
-  border-bottom: 2px solid #4ade80;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-}
+    .mailbox-header {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      padding: 12px 16px;
+      border-bottom: 2px solid #4ade80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+    }
 
-.mailbox-title {
-  font-size: 10px;
-  color: #4ade80;
-  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+    .mailbox-title {
+      font-size: 10px;
+      color: #4ade80;
+      text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-.letter-counter {
-  font-size: 8px;
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-  padding: 4px 8px;
-  border: 1px solid #f59e0b;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-}
+    .letter-counter {
+      font-size: 8px;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 8px;
+      border: 1px solid #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+    }
 
-.mailbox-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+    .mailbox-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
 
-.control-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  padding: 6px 12px;
-  font-size: 7px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  transition: all 0.2s;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-}
+    .control-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 6px 12px;
+      font-size: 7px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
 
-.control-btn:hover {
-  background: rgba(74, 222, 128, 0.1);
-  transform: scale(1.02);
-  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-}
+    .control-btn:hover {
+      background: rgba(74, 222, 128, 0.1);
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+    }
 
-.control-btn.active {
-  background: #4ade80;
-  color: #000000;
-}
+    .control-btn.active {
+      background: #4ade80;
+      color: #000000;
+    }
 
-.control-btn.write {
-  border-color: #f59e0b;
-  color: #f59e0b;
-}
+    .control-btn.write {
+      border-color: #f59e0b;
+      color: #f59e0b;
+    }
 
-.control-btn.write:hover {
-  background: rgba(245, 158, 11, 0.1);
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-}
+    .control-btn.write:hover {
+      background: rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
 
-.control-btn.write.active {
-  background: #f59e0b;
-  color: #000000;
-}
+    .control-btn.write.active {
+      background: #f59e0b;
+      color: #000000;
+    }
 
-.main-area {
-  flex: 1;
-  display: flex;
-  background: rgba(5, 5, 5, 0.9);
-  overflow: hidden;
-}
+    .back-btn {
+      border-color: #f59e0b;
+      color: #f59e0b;
+      display: none;
+    }
 
-.letters-panel {
-  width: 320px;
-  border-right: 2px solid rgba(74, 222, 128, 0.3);
-  overflow-y: auto;
-  background: rgba(0, 0, 0, 0.5);
-}
+    .back-btn:hover {
+      background: rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
 
-.letters-panel.hidden {
-  display: none;
-}
+    @media (max-width: 768px) {
+      .back-btn {
+        display: block;
+      }
+    }
 
-.letters-panel::-webkit-scrollbar {
-  width: 8px;
-}
+    .main-area {
+      flex: 1;
+      display: flex;
+      background: rgba(5, 5, 5, 0.9);
+      overflow: hidden;
+    }
 
-.letters-panel::-webkit-scrollbar-track {
-  background: rgba(74, 222, 128, 0.05);
-}
+    .letters-panel {
+      width: 320px;
+      border-right: 2px solid rgba(74, 222, 128, 0.3);
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.5);
+    }
 
-.letters-panel::-webkit-scrollbar-thumb {
-  background: #4ade80;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
-}
+    .letters-panel.hidden {
+      display: none;
+    }
 
-.letter-item {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
-  cursor: pointer;
-  transition: all 0.2s;
-}
+    .letters-panel::-webkit-scrollbar {
+      width: 8px;
+    }
 
-.letter-item:hover {
-  background: rgba(74, 222, 128, 0.1);
-  border-left: 3px solid #f59e0b;
-  padding-left: 13px;
-}
+    .letters-panel::-webkit-scrollbar-track {
+      background: rgba(74, 222, 128, 0.05);
+    }
 
-.letter-item.active {
-  background: rgba(245, 158, 11, 0.15);
-  border-left: 3px solid #f59e0b;
-  padding-left: 13px;
-  box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.2);
-}
+    .letters-panel::-webkit-scrollbar-thumb {
+      background: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+    }
 
-.letter-title {
-  font-size: 8px;
-  color: #86efac;
-  margin-bottom: 4px;
-  text-shadow: 0 0 3px rgba(134, 239, 172, 0.3);
-}
+    .letter-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-.letter-snippet {
-  font-size: 6px;
-  color: rgba(74, 222, 128, 0.7);
-  line-height: 1.4;
-  max-height: 24px;
-  overflow: hidden;
-}
+    .letter-item:hover {
+      background: rgba(74, 222, 128, 0.1);
+      border-left: 3px solid #f59e0b;
+      padding-left: 13px;
+    }
 
-.letter-date {
-  font-size: 5px;
-  color: rgba(147, 51, 234, 0.8);
-  background: rgba(147, 51, 234, 0.1);
-  padding: 2px 6px;
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  display: inline-block;
-  margin-top: 4px;
-}
+    .letter-item.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid #f59e0b;
+      padding-left: 13px;
+      box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.2);
+    }
 
-.content-area {
-  flex: 1;
-  padding: 24px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+    .letter-title {
+      font-size: 8px;
+      color: #86efac;
+      margin-bottom: 4px;
+      text-shadow: 0 0 3px rgba(134, 239, 172, 0.3);
+    }
 
-.letter-viewer {
-  max-width: 500px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 3px solid #f59e0b;
-  padding: 32px;
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
-  animation: letterGlow 4s ease-in-out infinite;
-}
+    .letter-snippet {
+      font-size: 6px;
+      color: rgba(74, 222, 128, 0.7);
+      line-height: 1.4;
+      max-height: 24px;
+      overflow: hidden;
+    }
 
-@keyframes letterGlow {
-  0%, 100% { 
-    border-color: #f59e0b;
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
-  }
-  50% { 
-    border-color: #fbbf24;
-    box-shadow: 0 0 40px rgba(251, 191, 36, 0.4), inset 0 0 40px rgba(251, 191, 36, 0.08);
-  }
-}
+    .letter-date {
+      font-size: 5px;
+      color: rgba(147, 51, 234, 0.8);
+      background: rgba(147, 51, 234, 0.1);
+      padding: 2px 6px;
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      display: inline-block;
+      margin-top: 4px;
+    }
 
-.letter-header {
-  text-align: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
-}
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-.letter-from {
-  font-size: 7px;
-  color: rgba(74, 222, 128, 0.8);
-  margin-bottom: 8px;
-}
+    .letter-viewer {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #f59e0b;
+      padding: 32px;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
+      animation: letterGlow 4s ease-in-out infinite;
+    }
 
-.letter-display-title {
-  font-size: 12px;
-  color: #fbbf24;
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
-  margin-bottom: 8px;
-}
+    @keyframes letterGlow {
+      0%, 100% { 
+        border-color: #f59e0b;
+        box-shadow: 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 30px rgba(245, 158, 11, 0.05);
+      }
+      50% { 
+        border-color: #fbbf24;
+        box-shadow: 0 0 40px rgba(251, 191, 36, 0.4), inset 0 0 40px rgba(251, 191, 36, 0.08);
+      }
+    }
 
-.letter-display-date {
-  font-size: 6px;
-  color: rgba(147, 51, 234, 0.8);
-  background: rgba(147, 51, 234, 0.1);
-  padding: 4px 8px;
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  display: inline-block;
-}
+    .letter-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+    }
 
-.letter-content {
-  font-size: 9px;
-  line-height: 1.8;
-  color: #86efac;
-  text-shadow: 0 0 3px rgba(134, 239, 172, 0.3);
-  margin-bottom: 24px;
-  text-align: justify;
-}
+    .letter-from {
+      font-size: 7px;
+      color: rgba(74, 222, 128, 0.8);
+      margin-bottom: 8px;
+    }
 
-.letter-signature {
-  text-align: right;
-  font-size: 8px;
-  color: rgba(245, 158, 11, 0.8);
-  font-style: italic;
-}
+    .letter-display-title {
+      font-size: 12px;
+      color: #fbbf24;
+      text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+      margin-bottom: 8px;
+    }
 
-.write-letter-form {
-  max-width: 500px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 3px solid #4ade80;
-  padding: 32px;
-  box-shadow: 0 0 30px rgba(74, 222, 128, 0.3), inset 0 0 30px rgba(74, 222, 128, 0.05);
-  display: none;
-}
+    .letter-display-date {
+      font-size: 6px;
+      color: rgba(147, 51, 234, 0.8);
+      background: rgba(147, 51, 234, 0.1);
+      padding: 4px 8px;
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      display: inline-block;
+    }
 
-.write-letter-form.active {
-  display: block;
-}
+    .letter-content {
+      font-size: 9px;
+      line-height: 1.8;
+      color: #86efac;
+      text-shadow: 0 0 3px rgba(134, 239, 172, 0.3);
+      margin-bottom: 24px;
+      text-align: justify;
+    }
 
-.form-header {
-  text-align: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.3);
-}
+    .letter-signature {
+      text-align: right;
+      font-size: 8px;
+      color: rgba(245, 158, 11, 0.8);
+      font-style: italic;
+    }
 
-.form-title {
-  font-size: 12px;
-  color: #86efac;
-  text-shadow: 0 0 8px rgba(134, 239, 172, 0.5);
-  margin-bottom: 8px;
-}
+    .write-letter-form {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #4ade80;
+      padding: 32px;
+      box-shadow: 0 0 30px rgba(74, 222, 128, 0.3), inset 0 0 30px rgba(74, 222, 128, 0.05);
+      display: none;
+    }
 
-.form-subtitle {
-  font-size: 7px;
-  color: rgba(74, 222, 128, 0.7);
-}
+    .write-letter-form.active {
+      display: block;
+    }
 
-.form-group {
-  margin-bottom: 20px;
-}
+    .form-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.3);
+    }
 
-.form-label {
-  font-size: 7px;
-  color: #86efac;
-  margin-bottom: 8px;
-  display: block;
-}
+    .form-title {
+      font-size: 12px;
+      color: #86efac;
+      text-shadow: 0 0 8px rgba(134, 239, 172, 0.5);
+      margin-bottom: 8px;
+    }
 
-.form-input {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #86efac;
-  padding: 8px 12px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
-  outline: none;
-  transition: all 0.2s;
-}
+    .form-subtitle {
+      font-size: 7px;
+      color: rgba(74, 222, 128, 0.7);
+    }
 
-.form-textarea {
-  min-height: 120px;
-  resize: vertical;
-  line-height: 1.6;
-}
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-.form-input:focus {
-  border-color: #f59e0b;
-  color: #fbbf24;
-}
+    .form-label {
+      font-size: 7px;
+      color: #86efac;
+      margin-bottom: 8px;
+      display: block;
+    }
 
-.form-input::placeholder {
-  color: rgba(74, 222, 128, 0.4);
-}
+    .form-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #86efac;
+      padding: 8px 12px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      outline: none;
+      transition: all 0.2s;
+    }
 
-.form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 24px;
-}
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
 
-.form-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  padding: 8px 16px;
-  font-size: 7px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  transition: all 0.2s;
-}
+    .form-input:focus {
+      border-color: #f59e0b;
+      color: #fbbf24;
+    }
 
-.form-btn:hover {
-  background: #4ade80;
-  color: #000000;
-  transform: scale(1.05);
-}
+    .form-input::placeholder {
+      color: rgba(74, 222, 128, 0.4);
+    }
 
-.form-btn.cancel {
-  border-color: #ef4444;
-  color: #ef4444;
-}
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+    }
 
-.form-btn.cancel:hover {
-  background: #ef4444;
-  color: #000000;
-}
+    .form-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 8px 16px;
+      font-size: 7px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+    }
 
-.empty-state {
-  text-align: center;
-  color: rgba(74, 222, 128, 0.5);
-  font-size: 10px;
-  line-height: 1.8;
-}
+    .form-btn:hover {
+      background: #4ade80;
+      color: #000000;
+      transform: scale(1.05);
+    }
 
-.empty-icon {
-  font-size: 64px;
-  margin-bottom: 20px;
-  opacity: 0.3;
-  animation: floatSlow 4s ease-in-out infinite;
-}
+    .form-btn.cancel {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
 
-@keyframes floatSlow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-}
+    .form-btn.cancel:hover {
+      background: #ef4444;
+      color: #000000;
+    }
 
-.select-letter {
-  text-align: center;
-  color: rgba(74, 222, 128, 0.6);
-  font-size: 9px;
-  line-height: 1.6;
-}
+    .empty-state {
+      text-align: center;
+      color: rgba(74, 222, 128, 0.5);
+      font-size: 10px;
+      line-height: 1.8;
+    }
 
-.select-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.4;
-  animation: floatGentle 3s ease-in-out infinite;
-}
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+      animation: floatSlow 4s ease-in-out infinite;
+    }
 
-@keyframes floatGentle {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
 
-.loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
+    .select-letter {
+      text-align: center;
+      color: rgba(74, 222, 128, 0.6);
+      font-size: 9px;
+      line-height: 1.6;
+    }
 
-.loading.hidden {
-  display: none;
-}
+    .select-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+      animation: floatGentle 3s ease-in-out infinite;
+    }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(74, 222, 128, 0.3);
-  border-top: 3px solid #4ade80;
-  border-radius: 50%;
-  animation: spin 1.2s linear infinite;
-}
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
 
-.loading-text {
-  font-size: 8px;
-  color: #4ade80;
-  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-}
+    .loading.hidden {
+      display: none;
+    }
 
-.connection-status {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid #4ade80;
-  padding: 4px 8px;
-  font-size: 6px;
-  color: #4ade80;
-  box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
-}
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(74, 222, 128, 0.3);
+      border-top: 3px solid #4ade80;
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
 
-@media (max-width: 768px) {
-  .main-area {
-    flex-direction: column;
-  }
-  
-  .letters-panel {
-    width: 100%;
-    height: 200px;
-    border-right: none;
-    border-bottom: 2px solid rgba(74, 222, 128, 0.3);
-  }
-  
-  .content-area {
-    padding: 16px;
-  }
-  
-  .letter-viewer, .write-letter-form {
-    padding: 20px;
-  }
-}
-```
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
+    .loading-text {
+      font-size: 8px;
+      color: #4ade80;
+      text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+    }
+
+    .connection-status {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #4ade80;
+      padding: 4px 8px;
+      font-size: 6px;
+      color: #4ade80;
+      box-shadow: 0 0 5px rgba(74, 222, 128, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .main-area {
+        flex-direction: column;
+      }
+      
+      .letters-panel {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 2px solid rgba(74, 222, 128, 0.3);
+      }
+      
+      .content-area {
+        padding: 16px;
+      }
+      
+      .letter-viewer, .write-letter-form {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="mailbox-system">
-    <div class="connection-status" id="connection-status">CONNECTING...</div>
+    <div class="connection-status" id="connection-status">READY</div>
 
-```
-<div class="mailbox-header">
-  <div class="mailbox-title">
-    <span>💌 MAILBOX.EXE - 냥쿤이 나에게 쓴 편지</span>
-    <div class="letter-counter" id="letter-counter">-</div>
-  </div>
-  <div class="mailbox-controls">
-    <button class="control-btn active" id="read-btn" onclick="setReadMode()">READ</button>
-    <button class="control-btn write" id="write-btn" onclick="setWriteMode()">WRITE</button>
-    <button class="control-btn" onclick="refreshLetters()">REFRESH</button>
-  </div>
-</div>
-
-<div class="main-area">
-  <div class="loading" id="loading">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">편지함 로딩중...</div>
-  </div>
-
-  <div class="letters-panel" id="letters-panel">
-    <div class="empty-state">
-      <div class="empty-icon">📭</div>
-      <div>편지를 불러오는 중...</div>
-    </div>
-  </div>
-  
-  <div class="content-area" id="content-area">
-    <div class="select-letter" id="select-message">
-      <div class="select-icon">📨</div>
-      <div>왼쪽에서 편지를 선택하면<br>여기에 내용이 표시됩니다.</div>
-    </div>
-
-    <div class="write-letter-form" id="write-form">
-      <div class="form-header">
-        <div class="form-title">새 편지 작성</div>
-        <div class="form-subtitle">냥쿤이 나에게 편지를 씁니다</div>
+    <div class="mailbox-header">
+      <div class="mailbox-title">
+        <span>💌 MAILBOX.EXE - 냥쿤이 나에게 쓴 편지</span>
+        <div class="letter-counter" id="letter-counter">-</div>
       </div>
-      
-      <div class="form-group">
-        <label class="form-label">닉네임/별명</label>
-        <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">편지 내용</label>
-        <textarea class="form-input form-textarea" id="letter-content" placeholder="마음을 담은 편지를 써보세요..." required></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">삭제 비밀번호</label>
-        <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
-      </div>
-      
-      <div class="form-actions">
-        <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
-        <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
+      <div class="mailbox-controls">
+        <button class="control-btn back-btn" onclick="goBack()">← BACK</button>
+        <button class="control-btn active" id="read-btn" onclick="setReadMode()">READ</button>
+        <button class="control-btn write" id="write-btn" onclick="setWriteMode()">WRITE</button>
+        <button class="control-btn" onclick="refreshLetters()">REFRESH</button>
       </div>
     </div>
-  </div>
-</div>
-```
 
+    <div class="main-area">
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">편지함 로딩중...</div>
+      </div>
+
+      <div class="letters-panel" id="letters-panel">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div>편지를 불러오는 중...</div>
+        </div>
+      </div>
+      
+      <div class="content-area" id="content-area">
+        <div class="select-letter" id="select-message">
+          <div class="select-icon">📨</div>
+          <div>왼쪽에서 편지를 선택하면<br>여기에 내용이 표시됩니다.</div>
+        </div>
+
+        <div class="write-letter-form" id="write-form">
+          <div class="form-header">
+            <div class="form-title">새 편지 작성</div>
+            <div class="form-subtitle">냥쿤이 나에게 편지를 씁니다</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">닉네임/별명</label>
+            <input type="text" class="form-input" id="sender-name" placeholder="냥쿤" value="냥쿤" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">편지 내용</label>
+            <textarea class="form-input form-textarea" id="letter-content" placeholder="마음을 담은 편지를 써보세요..." required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">삭제 비밀번호</label>
+            <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
+          </div>
+          
+          <div class="form-actions">
+            <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
+            <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script type="module">
+  <script>
     let letters = [];
     let selectedLetter = null;
     let mode = 'read';
-    let db = null;
-    let isConnected = false;
-
-    async function initFirebase() {
-      try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
-        const { getFirestore, collection, getDocs, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBDXhlzkrKOhs-ewl4IDkPL5Oi2bIv0vTg",
-          authDomain: "nyangos-fdbe6.firebaseapp.com",
-          projectId: "nyangos-fdbe6",
-          storageBucket: "nyangos-fdbe6.firebasestorage.app",
-          messagingSenderId: "349621507711",
-          appId: "1:349621507711:web:2201669ae265cfbbfad14a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        
-        await getDocs(collection(db, 'lettersFromNyangkun'));
-        isConnected = true;
-        updateConnectionStatus('CONNECTED', '#00ff41');
-        console.log('Firebase 연결 성공');
-        return true;
-      } catch (error) {
-        console.error('Firebase 연결 실패:', error);
-        isConnected = false;
-        updateConnectionStatus('OFFLINE', '#ff6b6b');
-        return false;
-      }
-    }
 
     function updateConnectionStatus(text, color) {
       const status = document.getElementById('connection-status');
@@ -675,42 +654,27 @@ body {
       `;
     }
 
-    async function loadLetters() {
+    function loadLetters() {
       const loadingEl = document.getElementById('loading');
       loadingEl.classList.remove('hidden');
       updateConnectionStatus('LOADING...', '#f59e0b');
       
-      if (!isConnected) {
-        await initFirebase();
-      }
-      
-      if (isConnected && db) {
-        try {
-          const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-          const snapshot = await getDocs(collection(db, 'lettersFromNyangkun'));
-          
-          letters = [];
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            letters.push({
-              id: doc.id,
-              name: data.name || 'Anonymous',
-              message: data.message || '',
-              timestamp: data.timestamp?.toDate?.()?.toLocaleString('ko-KR') || 'No Date'
-            });
-          });
-          
-          letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          
-          console.log(`${letters.length}개의 편지를 불러왔습니다`);
-          updateConnectionStatus('LOADED', '#00ff41');
-        } catch (error) {
-          console.error('편지 로딩 실패:', error);
-          updateConnectionStatus('ERROR', '#ff6b6b');
+      try {
+        const savedData = localStorage.getItem('nyangkun-admin-data');
+        if (savedData) {
+          const data = JSON.parse(savedData);
+          letters = data.lettersFrom || [];
+        } else {
           letters = [];
         }
-      } else {
-        updateConnectionStatus('NO CONNECTION', '#ff6b6b');
+        
+        letters.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        console.log(`${letters.length}개의 편지를 불러왔습니다`);
+        updateConnectionStatus('LOADED', '#00ff41');
+      } catch (error) {
+        console.error('편지 로딩 실패:', error);
+        updateConnectionStatus('ERROR', '#ff6b6b');
         letters = [];
       }
       
@@ -760,89 +724,108 @@ body {
           <div class="form-group">
             <label class="form-label">편지 내용</label>
             <textarea class="form-input form-textarea" id="letter-content" placeholder="마음을 담은 편지를 써보세요..." required></textarea>
-
-```
-      </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">삭제 비밀번호</label>
+            <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
+          </div>
+          
+          <div class="form-actions">
+            <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
+            <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
+          </div>
+        </div>
+      `;
       
-      <div class="form-group">
-        <label class="form-label">삭제 비밀번호</label>
-        <input type="password" class="form-input" id="delete-password" placeholder="나중에 삭제할 때 필요합니다" required>
-      </div>
+      playSound('write');
+    };
+
+    window.selectLetter = function(index) {
+      const items = document.querySelectorAll('.letter-item');
+      items.forEach(item => item.classList.remove('active'));
+      if (items[index]) items[index].classList.add('active');
       
-      <div class="form-actions">
-        <button class="form-btn" onclick="sendLetter()">💌 편지 보내기</button>
-        <button class="form-btn cancel" onclick="cancelWrite()">❌ 취소</button>
-      </div>
-    </div>
-  `;
-  
-  playSound('write');
-};
+      selectedLetter = letters[index];
+      if (selectedLetter) {
+        displayLetter(selectedLetter);
+      }
+      playSound();
+    };
 
-window.selectLetter = function(index) {
-  const items = document.querySelectorAll('.letter-item');
-  items.forEach(item => item.classList.remove('active'));
-  if (items[index]) items[index].classList.add('active');
-  
-  selectedLetter = letters[index];
-  if (selectedLetter) {
-    displayLetter(selectedLetter);
-  }
-  playSound();
-};
+    window.sendLetter = function() {
+      const name = document.getElementById('sender-name').value.trim();
+      const content = document.getElementById('letter-content').value.trim();
+      const password = document.getElementById('delete-password').value.trim();
+      
+      if (!name || !content || !password) {
+        alert('모든 항목을 입력해주세요!');
+        return;
+      }
+      
+      try {
+        const savedData = localStorage.getItem('nyangkun-admin-data');
+        let data = savedData ? JSON.parse(savedData) : {};
+        
+        if (!data.lettersFrom) {
+          data.lettersFrom = [];
+        }
+        
+        const newLetter = {
+          id: Date.now().toString(),
+          name: name,
+          message: content,
+          password: password,
+          timestamp: new Date().toLocaleString('ko-KR')
+        };
+        
+        data.lettersFrom.push(newLetter);
+        localStorage.setItem('nyangkun-admin-data', JSON.stringify(data));
+        
+        playSound('send');
+        alert('편지가 성공적으로 전송되었습니다! 💌');
+        
+        setReadMode();
+        loadLetters();
+      } catch (error) {
+        console.error('편지 전송 실패:', error);
+        alert('편지 전송에 실패했습니다.');
+      }
+    };
 
-window.sendLetter = async function() {
-  const name = document.getElementById('sender-name').value.trim();
-  const content = document.getElementById('letter-content').value.trim();
-  const password = document.getElementById('delete-password').value.trim();
-  
-  if (!name || !content || !password) {
-    alert('모든 항목을 입력해주세요!');
-    return;
-  }
-  
-  if (!isConnected || !db) {
-    alert('Firebase 연결이 필요합니다!');
-    return;
-  }
-  
-  try {
-    const { collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
-    
-    await addDoc(collection(db, 'lettersFromNyangkun'), {
-      name: name,
-      message: content,
-      password: password,
-      timestamp: serverTimestamp()
+    window.cancelWrite = function() {
+      setReadMode();
+      playSound();
+    };
+
+    window.refreshLetters = function() {
+      playSound();
+      loadLetters();
+    };
+
+    window.goBack = function() {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'closeWindow' }, '*');
+        } else {
+          history.back();
+        }
+      } catch(e) {
+        history.back();
+      }
+      playSound();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('받은편지함 시스템 시작');
+      loadLetters();
     });
-    
-    playSound('send');
-    alert('편지가 성공적으로 전송되었습니다! 💌');
-    
-    setReadMode();
-    loadLetters();
-  } catch (error) {
-    console.error('편지 전송 실패:', error);
-    alert('편지 전송에 실패했습니다.');
-  }
-};
 
-window.cancelWrite = function() {
-  setReadMode();
-  playSound();
-};
-
-window.refreshLetters = function() {
-  playSound();
-  loadLetters();
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('받은편지함 시스템 시작');
-  loadLetters();
-});
-```
-
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'nyangkun-admin-data') {
+        loadLetters();
+      }
+    });
   </script>
 </body>
 </html>

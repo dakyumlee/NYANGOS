@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -13,438 +12,503 @@
       box-sizing: border-box;
     }
 
-```
-body {
-  font-family: 'Press Start 2P', monospace;
-  background: #0a0a0a;
-  color: #4ade80;
-  height: 100vh;
-  overflow: hidden;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      color: #4ade80;
+      height: 100vh;
+      overflow: hidden;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
 
-.tamagotchi-device {
-  width: 100%;
-  height: 100vh;
-  background: 
-    radial-gradient(circle at 30% 20%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 20% 70%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 3px,
-      rgba(74, 222, 128, 0.01) 3px,
-      rgba(74, 222, 128, 0.01) 6px
-    );
-  display: flex;
-  flex-direction: column;
-  border: 3px solid #4ade80;
-  box-shadow: 
-    inset 0 0 40px rgba(74, 222, 128, 0.05),
-    0 0 30px rgba(74, 222, 128, 0.1);
-}
+    .tamagotchi-device {
+      width: 100%;
+      height: 100vh;
+      background: 
+        radial-gradient(circle at 30% 20%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 20% 70%, rgba(74, 222, 128, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 3px,
+          rgba(74, 222, 128, 0.01) 3px,
+          rgba(74, 222, 128, 0.01) 6px
+        );
+      display: flex;
+      flex-direction: column;
+      border: 3px solid #4ade80;
+      box-shadow: 
+        inset 0 0 40px rgba(74, 222, 128, 0.05),
+        0 0 30px rgba(74, 222, 128, 0.1);
+    }
 
-.device-header {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  padding: 12px 16px;
-  border-bottom: 3px solid #4ade80;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-}
+    .device-header {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      padding: 12px 16px;
+      border-bottom: 3px solid #4ade80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+    }
 
-.device-title {
-  font-size: 10px;
-  color: #4ade80;
-  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+    .device-title {
+      font-size: 10px;
+      color: #4ade80;
+      text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-.device-time {
-  font-size: 7px;
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-  padding: 4px 8px;
-  border: 1px solid #f59e0b;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
-}
+    .device-time {
+      font-size: 7px;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 8px;
+      border: 1px solid #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+    }
 
-.nyangkun-screen {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: rgba(5, 5, 5, 0.9);
-  position: relative;
-  border: 2px inset rgba(74, 222, 128, 0.3);
-  margin: 8px;
-}
+    .back-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #f59e0b;
+      color: #f59e0b;
+      padding: 4px 8px;
+      font-size: 6px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      box-shadow: 0 0 5px rgba(245, 158, 11, 0.2);
+      display: none;
+    }
 
-.status-bar {
-  background: rgba(0, 0, 0, 0.8);
-  border-bottom: 2px solid rgba(74, 222, 128, 0.3);
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-}
+    .back-btn:hover {
+      background: rgba(245, 158, 11, 0.1);
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-}
+    @media (max-width: 768px) {
+      .back-btn {
+        display: block;
+      }
+    }
 
-.stat-label {
-  font-size: 6px;
-  color: rgba(74, 222, 128, 0.8);
-}
+    .nyangkun-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(5, 5, 5, 0.9);
+      position: relative;
+      border: 2px inset rgba(74, 222, 128, 0.3);
+      margin: 8px;
+    }
 
-.stat-bar {
-  width: 100%;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(74, 222, 128, 0.5);
-  position: relative;
-  overflow: hidden;
-}
+    .status-bar {
+      background: rgba(0, 0, 0, 0.8);
+      border-bottom: 2px solid rgba(74, 222, 128, 0.3);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
 
-.stat-fill {
-  height: 100%;
-  transition: width 0.5s ease;
-  position: relative;
-}
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
 
-.stat-fill.health { background: linear-gradient(90deg, #ef4444, #f87171); }
-.stat-fill.happiness { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-.stat-fill.energy { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-.stat-fill.love { background: linear-gradient(90deg, #ec4899, #f472b6); }
+    .stat-label {
+      font-size: 6px;
+      color: rgba(74, 222, 128, 0.8);
+    }
 
-.stat-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-  animation: shimmer 2s ease-in-out infinite;
-}
+    .stat-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(74, 222, 128, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
+    .stat-fill {
+      height: 100%;
+      transition: width 0.5s ease;
+      position: relative;
+    }
 
-.nyangkun-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
-}
+    .stat-fill.health { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .stat-fill.happiness { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .stat-fill.energy { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .stat-fill.love { background: linear-gradient(90deg, #ec4899, #f472b6); }
 
-.nyangkun-sprite {
-  font-size: 64px;
-  margin-bottom: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
-  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
-  animation: nyangkunIdle 3s ease-in-out infinite;
-}
+    .stat-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+      animation: shimmer 2s ease-in-out infinite;
+    }
 
-@keyframes nyangkunIdle {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-5px) scale(1.02); }
-}
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
 
-.nyangkun-sprite:hover {
-  transform: scale(1.1) translateY(-3px);
-  filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.6));
-}
+    .nyangkun-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
 
-.nyangkun-sprite.happy {
-  animation: nyangkunHappy 0.5s ease-in-out;
-}
+    .nyangkun-sprite {
+      font-size: 64px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
+      animation: nyangkunIdle 3s ease-in-out infinite;
+    }
 
-@keyframes nyangkunHappy {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.2) rotate(-5deg); }
-  75% { transform: scale(1.2) rotate(5deg); }
-}
+    @keyframes nyangkunIdle {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-5px) scale(1.02); }
+    }
 
-.nyangkun-sprite.sleeping {
-  opacity: 0.7;
-  animation: nyangkunSleep 2s ease-in-out infinite;
-}
+    .nyangkun-sprite:hover {
+      transform: scale(1.1) translateY(-3px);
+      filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.6));
+    }
 
-@keyframes nyangkunSleep {
-  0%, 100% { transform: scale(0.95); }
-  50% { transform: scale(1); }
-}
+    .nyangkun-sprite.happy {
+      animation: nyangkunHappy 0.5s ease-in-out;
+    }
 
-.nyangkun-mood {
-  font-size: 12px;
-  color: #86efac;
-  text-shadow: 0 0 5px rgba(134, 239, 172, 0.5);
-  margin-bottom: 8px;
-  min-height: 20px;
-  text-align: center;
-}
+    @keyframes nyangkunHappy {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.2) rotate(-5deg); }
+      75% { transform: scale(1.2) rotate(5deg); }
+    }
 
-.nyangkun-message {
-  font-size: 8px;
-  color: rgba(74, 222, 128, 0.8);
-  text-align: center;
-  min-height: 32px;
-  line-height: 1.4;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 8px 12px;
-  border: 1px solid rgba(74, 222, 128, 0.3);
-  border-radius: 4px;
-  max-width: 250px;
-}
+    .nyangkun-sprite.sleeping {
+      opacity: 0.7;
+      animation: nyangkunSleep 2s ease-in-out infinite;
+    }
 
-.activity-log {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 5px;
-  color: rgba(74, 222, 128, 0.6);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 4px 6px;
-  border: 1px solid rgba(74, 222, 128, 0.2);
-  max-width: 120px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+    @keyframes nyangkunSleep {
+      0%, 100% { transform: scale(0.95); }
+      50% { transform: scale(1); }
+    }
 
-.activity-log.show {
-  opacity: 1;
-}
+    .nyangkun-mood {
+      font-size: 12px;
+      color: #86efac;
+      text-shadow: 0 0 5px rgba(134, 239, 172, 0.5);
+      margin-bottom: 8px;
+      min-height: 20px;
+      text-align: center;
+    }
 
-.control-panel {
-  background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
-  border-top: 3px solid #4ade80;
-  padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-}
+    .nyangkun-message {
+      font-size: 8px;
+      color: rgba(74, 222, 128, 0.8);
+      text-align: center;
+      min-height: 32px;
+      line-height: 1.4;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      border-radius: 4px;
+      max-width: 250px;
+    }
 
-.control-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #4ade80;
-  color: #4ade80;
-  padding: 12px 8px;
-  font-size: 7px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  transition: all 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
-  position: relative;
-  overflow: hidden;
-}
+    .activity-log {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 5px;
+      color: rgba(74, 222, 128, 0.6);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 4px 6px;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      max-width: 120px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
 
-.control-btn::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #4ade80, #f59e0b, #ec4899, #4ade80);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+    .activity-log.show {
+      opacity: 1;
+    }
 
-.control-btn:hover {
-  transform: scale(1.05) translateY(-2px);
-  box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
-}
+    .control-panel {
+      background: linear-gradient(90deg, #111 0%, #1a1a1a 50%, #111 100%);
+      border-top: 3px solid #4ade80;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+    }
 
-.control-btn:hover::before {
-  opacity: 1;
-}
+    .control-btn {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #4ade80;
+      color: #4ade80;
+      padding: 12px 8px;
+      font-size: 7px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
 
-.control-btn:active {
-  transform: scale(0.95);
-}
+    .control-btn::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #4ade80, #f59e0b, #ec4899, #4ade80);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
 
-.control-btn.feed { border-color: #ef4444; color: #ef4444; }
-.control-btn.play { border-color: #f59e0b; color: #f59e0b; }
-.control-btn.sleep { border-color: #3b82f6; color: #3b82f6; }
-.control-btn.love { border-color: #ec4899; color: #ec4899; }
+    .control-btn:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+    }
 
-.control-btn.feed:hover { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
-.control-btn.play:hover { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-.control-btn.sleep:hover { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
-.control-btn.love:hover { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); }
+    .control-btn:hover::before {
+      opacity: 1;
+    }
 
-.btn-icon {
-  font-size: 16px;
-  margin-bottom: 2px;
-}
+    .control-btn:active {
+      transform: scale(0.95);
+    }
 
-.btn-text {
-  font-size: 5px;
-  text-align: center;
-  line-height: 1.2;
-}
+    .control-btn.feed { border-color: #ef4444; color: #ef4444; }
+    .control-btn.play { border-color: #f59e0b; color: #f59e0b; }
+    .control-btn.sleep { border-color: #3b82f6; color: #3b82f6; }
+    .control-btn.love { border-color: #ec4899; color: #ec4899; }
 
-.floating-emoji {
-  position: absolute;
-  font-size: 24px;
-  pointer-events: none;
-  animation: floatUp 2s ease-out forwards;
-  z-index: 50;
-}
+    .control-btn.feed:hover { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+    .control-btn.play:hover { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+    .control-btn.sleep:hover { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+    .control-btn.love:hover { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); }
 
-@keyframes floatUp {
-  0% {
-    opacity: 1;
-    transform: translateY(0px) scale(0.5);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-100px) scale(1.2);
-  }
-}
+    .btn-icon {
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
 
-.achievement {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid #f59e0b;
-  color: #f59e0b;
-  padding: 8px 16px;
-  font-size: 7px;
-  z-index: 100;
-  opacity: 0;
-  animation: achievementPop 3s ease-out;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-}
+    .btn-text {
+      font-size: 5px;
+      text-align: center;
+      line-height: 1.2;
+    }
 
-@keyframes achievementPop {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  20% { opacity: 1; transform: translateX(-50%) translateY(0px); }
-  80% { opacity: 1; transform: translateX(-50%) translateY(0px); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-}
+    .floating-emoji {
+      position: absolute;
+      font-size: 24px;
+      pointer-events: none;
+      animation: floatUp 2s ease-out forwards;
+      z-index: 50;
+    }
 
-@media (max-width: 768px) {
-  .control-panel {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 12px;
-  }
-  
-  .control-btn {
-    padding: 10px 6px;
-    font-size: 6px;
-  }
-  
-  .btn-icon {
-    font-size: 14px;
-  }
-  
-  .nyangkun-sprite {
-    font-size: 48px;
-  }
-  
-  .device-header {
-    flex-direction: column;
-    gap: 6px;
-    align-items: stretch;
-  }
-}
-```
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0px) scale(0.5);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.2);
+      }
+    }
 
+    .achievement {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #f59e0b;
+      color: #f59e0b;
+      padding: 8px 16px;
+      font-size: 7px;
+      z-index: 100;
+      opacity: 0;
+      animation: achievementPop 3s ease-out;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+    }
+
+    @keyframes achievementPop {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      20% { opacity: 1; transform: translateX(-50%) translateY(0px); }
+      80% { opacity: 1; transform: translateX(-50%) translateY(0px); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    }
+
+    @media (max-width: 768px) {
+      .control-panel {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 12px;
+      }
+      
+      .control-btn {
+        padding: 10px 6px;
+        font-size: 6px;
+      }
+      
+      .btn-icon {
+        font-size: 14px;
+      }
+      
+      .nyangkun-sprite {
+        font-size: 48px;
+      }
+      
+      .device-header {
+        flex-direction: column;
+        gap: 6px;
+        align-items: stretch;
+      }
+    }
+
+    .quote-display {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #9333ea;
+      color: #a855f7;
+      padding: 8px 12px;
+      font-size: 6px;
+      max-width: 80%;
+      text-align: center;
+      line-height: 1.4;
+      box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .quote-display.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-10px);
+    }
+
+    .next-quote-btn {
+      margin-top: 8px;
+      background: rgba(147, 51, 234, 0.2);
+      border: 1px solid #9333ea;
+      color: #a855f7;
+      padding: 4px 8px;
+      font-size: 5px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      transition: all 0.2s;
+    }
+
+    .next-quote-btn:hover {
+      background: rgba(147, 51, 234, 0.4);
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
   <div class="tamagotchi-device">
     <div class="device-header">
+      <button class="back-btn" onclick="goBack()">← BACK</button>
       <div class="device-title">
         <span>🐱 NYANGKUN.EXE - 디지털 펫</span>
       </div>
       <div class="device-time" id="device-time"></div>
     </div>
 
-```
-<div class="nyangkun-screen">
-  <div class="status-bar">
-    <div class="stat">
-      <div class="stat-label">건강</div>
-      <div class="stat-bar">
-        <div class="stat-fill health" id="health-bar"></div>
+    <div class="nyangkun-screen">
+      <div class="status-bar">
+        <div class="stat">
+          <div class="stat-label">건강</div>
+          <div class="stat-bar">
+            <div class="stat-fill health" id="health-bar"></div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">행복</div>
+          <div class="stat-bar">
+            <div class="stat-fill happiness" id="happiness-bar"></div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">에너지</div>
+          <div class="stat-bar">
+            <div class="stat-fill energy" id="energy-bar"></div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">사랑</div>
+          <div class="stat-bar">
+            <div class="stat-fill love" id="love-bar"></div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">행복</div>
-      <div class="stat-bar">
-        <div class="stat-fill happiness" id="happiness-bar"></div>
-      </div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">에너지</div>
-      <div class="stat-bar">
-        <div class="stat-fill energy" id="energy-bar"></div>
-      </div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">사랑</div>
-      <div class="stat-bar">
-        <div class="stat-fill love" id="love-bar"></div>
-      </div>
-    </div>
-  </div>
 
-  <div class="nyangkun-area">
-    <div class="activity-log" id="activity-log"></div>
-    <div class="nyangkun-mood" id="nyangkun-mood">😊 기분 좋음</div>
-    <div class="nyangkun-sprite" id="nyangkun-sprite" onclick="petNyangkun()">🐱</div>
-    <div class="nyangkun-message" id="nyangkun-message">안녕! 나는 냥쿤이야! 🐾</div>
-  </div>
-</div>
+      <div class="nyangkun-area">
+        <div class="activity-log" id="activity-log"></div>
+        <div class="nyangkun-mood" id="nyangkun-mood">😊 기분 좋음</div>
+        <div class="nyangkun-sprite" id="nyangkun-sprite" onclick="petNyangkun()">🐱</div>
+        <div class="nyangkun-message" id="nyangkun-message">안녕! 나는 냥쿤이야! 🐾</div>
 
-<div class="control-panel">
-  <button class="control-btn feed" onclick="feedNyangkun()">
-    <div class="btn-icon">🍽️</div>
-    <div class="btn-text">밥주기<br>+건강</div>
-  </button>
-  <button class="control-btn play" onclick="playWithNyangkun()">
-    <div class="btn-icon">🎾</div>
-    <div class="btn-text">놀아주기<br>+행복</div>
-  </button>
-  <button class="control-btn sleep" onclick="sleepNyangkun()">
-    <div class="btn-icon">😴</div>
-    <div class="btn-text">재우기<br>+에너지</div>
-  </button>
-  <button class="control-btn love" onclick="loveNyangkun()">
-    <div class="btn-icon">💕</div>
-    <div class="btn-text">사랑하기<br>+사랑</div>
-  </button>
-</div>
-```
+        <div class="quote-display" id="quote-display">
+          <div id="quote-text">오늘도 사랑하는 마음으로...</div>
+          <button class="next-quote-btn" onclick="showNextQuote()">다음 말씀</button>
+        </div>
+      </div>
+    </div>
 
+    <div class="control-panel">
+      <button class="control-btn feed" onclick="feedNyangkun()">
+        <div class="btn-icon">🍽️</div>
+        <div class="btn-text">밥주기<br>+건강</div>
+      </button>
+      <button class="control-btn play" onclick="playWithNyangkun()">
+        <div class="btn-icon">🎾</div>
+        <div class="btn-text">놀아주기<br>+행복</div>
+      </button>
+      <button class="control-btn sleep" onclick="sleepNyangkun()">
+        <div class="btn-icon">😴</div>
+        <div class="btn-text">재우기<br>+에너지</div>
+      </button>
+      <button class="control-btn love" onclick="loveNyangkun()">
+        <div class="btn-icon">💕</div>
+        <div class="btn-text">사랑하기<br>+사랑</div>
+      </button>
+    </div>
   </div>
 
   <script>
@@ -461,12 +525,52 @@ body {
       experience: 0
     };
 
+    let quotes = [];
+    let currentQuoteIndex = 0;
+
     function loadNyangkun() {
       const saved = localStorage.getItem('nyangkun-data');
       if (saved) {
         nyangkun = { ...nyangkun, ...JSON.parse(saved) };
       }
       updateDisplay();
+    }
+
+    function loadQuotes() {
+      try {
+        const savedData = localStorage.getItem('nyangkun-admin-data');
+        if (savedData) {
+          const data = JSON.parse(savedData);
+          quotes = data.quotes || [];
+        } else {
+          quotes = [];
+        }
+        
+        if (quotes.length > 0) {
+          showQuote();
+        }
+      } catch (error) {
+        console.error('어록 로딩 실패:', error);
+        quotes = [];
+      }
+    }
+
+    function showQuote() {
+      if (quotes.length === 0) return;
+      
+      const quoteDisplay = document.getElementById('quote-display');
+      const quoteText = document.getElementById('quote-text');
+      
+      if (currentQuoteIndex >= quotes.length) {
+        currentQuoteIndex = 0;
+      }
+      
+      quoteText.textContent = quotes[currentQuoteIndex].text;
+      quoteDisplay.classList.add('show');
+      
+      setTimeout(() => {
+        quoteDisplay.classList.remove('show');
+      }, 5000);
     }
 
     function saveNyangkun() {
@@ -725,6 +829,27 @@ body {
       saveNyangkun();
     };
 
+    window.showNextQuote = function() {
+      if (quotes.length === 0) return;
+      
+      currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+      showQuote();
+      playSound('happy');
+    };
+
+    window.goBack = function() {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'closeWindow' }, '*');
+        } else {
+          history.back();
+        }
+      } catch(e) {
+        history.back();
+      }
+      playSound('happy');
+    };
+
     function autoDecay() {
       const now = Date.now();
       const decayRate = 1;
@@ -754,16 +879,25 @@ body {
     }
 
     loadNyangkun();
+    loadQuotes();
     setInterval(updateTime, 1000);
     setInterval(autoDecay, 60000);
     setInterval(() => {
       if (Math.random() < 0.1) {
         updateMessage();
       }
+      if (Math.random() < 0.05 && quotes.length > 0) {
+        showQuote();
+      }
     }, 30000);
 
     updateTime();
-  </script>
 
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'nyangkun-admin-data') {
+        loadQuotes();
+      }
+    });
+  </script>
 </body>
 </html>
