@@ -414,7 +414,6 @@ body {
       <button class="form-btn warning" onclick="clearData('timeline')">📅 타임라인 초기화</button>
       <button class="form-btn warning" onclick="clearData('photos')">📸 사진 초기화</button>
       <button class="form-btn warning" onclick="clearData('letters')">💌 편지 초기화</button>
-      <button class="form-btn warning" onclick="clearData('quotes')">🧘 묵상 초기화</button>
       <button class="form-btn danger" onclick="clearData('chatlogs')">💬 채팅로그 초기화</button>
     </div>
     <div class="form-group">
@@ -424,7 +423,7 @@ body {
     <div class="form-group">
       <label class="form-label">시스템 상태</label>
       <div style="font-size: 6px; color: #86efac; padding: 8px; background: rgba(74, 222, 128, 0.05); border: 1px solid rgba(74, 222, 128, 0.2);">
-        - 총 관리 항목: 타임라인, 사진, 편지, 채팅로그, 묵상<br>
+        - 총 관리 항목: 타임라인, 사진, 편지, 채팅로그<br>
         - 보안 상태: 활성화<br>
         - 데이터 백업: Vercel Blob 저장소
       </div>
@@ -631,8 +630,7 @@ body {
       photos: [],
       lettersTo: [],
       lettersFrom: [],
-      chatLogs: [],
-      quotes: []
+      chatLogs: []
     };
 
     window.addEventListener('load', async () => {
@@ -704,30 +702,23 @@ body {
       if (letterFromForm) {
         letterFromForm.addEventListener('submit', handleLetterFromSubmit);
       }
-
-      const quotesForm = document.getElementById('quotes-form');
-      if (quotesForm) {
-        quotesForm.addEventListener('submit', handleQuotesSubmit);
-      }
     }
 
     async function loadAllData() {
       showStatus('데이터 로딩 중...', 'info');
       
       try {
-        const [timeline, photos, lettersTo, lettersFrom, quotes] = await Promise.all([
+        const [timeline, photos, lettersTo, lettersFrom] = await Promise.all([
           BlobAPI.loadData('timeline'),
           BlobAPI.loadData('photos'),
           BlobAPI.loadData('lettersTo'),
-          BlobAPI.loadData('lettersFrom'),
-          BlobAPI.loadData('quotes')
+          BlobAPI.loadData('lettersFrom')
         ]);
 
         localData.timeline = timeline;
         localData.photos = photos;
         localData.lettersTo = lettersTo;
         localData.lettersFrom = lettersFrom;
-        localData.quotes = quotes;
 
         renderAll();
         loadChatLogs();
@@ -885,34 +876,6 @@ body {
       }
     }
 
-    async function handleQuotesSubmit(e) {
-      e.preventDefault();
-      
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '저장 중...';
-      
-      try {
-        const newItem = {
-          id: generateId(),
-          text: document.getElementById('quotes-text').value,
-          timestamp: new Date().toLocaleString('ko-KR')
-        };
-        
-        localData.quotes.push(newItem);
-        await BlobAPI.saveData('quotes', localData.quotes);
-        
-        e.target.reset();
-        renderQuotes();
-        showStatus('묵상이 추가되었습니다', 'success');
-      } catch (error) {
-        showStatus('묵상 저장 실패', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '묵상 추가';
-      }
-    }
-
     async function loadChatLogs() {
       showStatus('챗봇 로그 로딩중...', 'info');
       
@@ -1046,30 +1009,11 @@ body {
       `).join('');
     }
 
-    function renderQuotes() {
-      const list = document.getElementById('quotes-list');
-      if (!list) return;
-      
-      if (localData.quotes.length === 0) {
-        list.innerHTML = '<div class="loading">등록된 묵상이 없습니다.</div>';
-        return;
-      }
-      
-      list.innerHTML = localData.quotes.map(item => `
-        <div class="list-item">
-          <div class="item-content">"${item.text}"</div>
-          <div class="item-meta">${item.timestamp}</div>
-          <button class="form-btn danger" onclick="deleteItem('quotes', '${item.id}')">삭제</button>
-        </div>
-      `).join('');
-    }
-
     function renderAll() {
       renderTimeline();
       renderPhotos();
       renderLettersTo();
       renderLettersFrom();
-      renderQuotes();
       renderChatLogs();
     }
 
@@ -1155,7 +1099,6 @@ body {
           photos: localData.photos,
           lettersTo: localData.lettersTo,
           lettersFrom: localData.lettersFrom,
-          quotes: localData.quotes,
           chatLogs: localData.chatLogs,
           exportDate: new Date().toISOString()
         };
@@ -1178,8 +1121,7 @@ body {
           BlobAPI.saveData('timeline', []),
           BlobAPI.saveData('photos', []),
           BlobAPI.saveData('lettersTo', []),
-          BlobAPI.saveData('lettersFrom', []),
-          BlobAPI.saveData('quotes', [])
+          BlobAPI.saveData('lettersFrom', [])
         ]);
         
         localStorage.removeItem('nyangkun_chat_logs');
@@ -1189,8 +1131,7 @@ body {
           photos: [],
           lettersTo: [],
           lettersFrom: [],
-          chatLogs: [],
-          quotes: []
+          chatLogs: []
         };
         
         renderAll();
